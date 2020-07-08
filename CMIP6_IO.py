@@ -80,8 +80,9 @@ class CMIP6_IO:
                             model_object.member_ids.append(member_id)
                             model_object.ocean_vars.append(variable_id)
                             model_object.ds_dict[key] = dset_processed
-                            self.models.append(model_object)
-                            print(self.models)
+                    self.models.append(model_object)
+                    print("Found {} datasets for model {}".format(len(self.models), key))
+
     def perform_cmip6_query(self, config, query_string):
         df_sub = config.df.query(query_string)
         if df_sub.zstore.values.size == 0:

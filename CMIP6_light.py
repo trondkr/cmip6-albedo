@@ -149,28 +149,43 @@ class CMIP6_light:
     2x2 degrees grid and then subsequently to a 1x1 degree grid.
     """
 
-    def extract_data_for_timestep_and_regrid(self, selected_time: int,
+    def extract_data_for_timestep_and_regrid(self, model_obj, selected_time: int,
                                              min_lat: float = None,
                                              max_lat: float = None,
                                              min_lon: float = None,
                                              max_lon: float = None):
         extracted: dict = {}
-
-        ds_out_amon = xe.util.grid_2d(min_lon, max_lon, 2, min_lat, max_lat, 2)
-        ds_out = xe.util.grid_2d(min_lon, max_lon, 1, min_lat, max_lat, 1)
-
         re = CMIP6_regrid.CMIP6_regrid()
-        for varkey in self.variable_ids:
-            key = varkey + key[3:]
-            current_ds = self.config.dset_dict[key].sel(y=slice(min_lat, max_lat), x=slice(min_lon, max_lon)).isel(
+        first=True
+
+        for key in model_obj.ds_dict.keys():
+
+            current_ds = model_obj.ds_dict[key].sel(y=slice(min_lat, max_lat), x=slice(min_lon, max_lon)).isel(
                 time=selected_time)
             current_time = current_ds.time
-            if varkey in ["uas", "vas", "clt"]:
-                out_amon = re.regrid_variable(varkey, current_ds, ds_out_amon, transpose=True).to_dataset()
-                out = re.regrid_variable(varkey, out_amon, ds_out, transpose=False)
+            comps = key.split("_")
+            out_grid_anom={}
+            current_grid={}
+            print(current_ds)
+            if comps[0] in ["uas", "vas", "clt"]:
+                out_grid_anom["lats"] = np.arange(min_lat, max_lat, 2)
+                out_grid_anom["lons"] = np.arange(min_lon, max_lon, 2)
+                current_grid["lats"] = current_ds.lat.values
+                current_grid["lons"] = current_ds.lon.values
+
+                #                ds_out = xe.util.grid_2d(min_lon, max_lon, 1, min_lat, max_lat, 1)
+                srcfield_amon, dstfield_amon, regrid_amon = re.setup_ESMF_regridding(current_grid, out_grid_anom)
+
+                srcfield_amon.data[:, :] = ds_current[varname].T.values
+                dstfield_amon = regrid(srcfield_amon, dstfield_amon)
+
+                print(dstfield_amon)
+
+                first=False
+
             else:
-                out = re.regrid_variable(varkey, current_ds, ds_out, transpose=False)
-            extracted[varkey] = out
+                out = re.regrid_variable(comps[0], current_ds, ds_out, transpose=False)
+            extracted[comps[0]] = out
         return extracted, current_time
 
     def values_for_timestep(self, extracted_ds):
@@ -197,10 +212,6 @@ class CMIP6_light:
         io.get_and_organize_cmip6_data(self.config)
         self.cmip6_models = io.models
 
-        regional = True
-        re = CMIP6_regrid.CMIP6_regrid()
-        southern_limit_latitude = 45
-
         for model in self.cmip6_models:
             print("Preparing light calculations for {}".format(model.description))
             first = True
@@ -209,7 +220,9 @@ class CMIP6_light:
 
             for selected_time in range(0, 120):
 
-                extracted_ds, current_time = self.extract_data_for_timestep_and_regrid(selected_time)
+                extracted_ds, current_time = self.extract_data_for_timestep_and_regrid(model, selected_time, min_lat=20,
+                                                                                       max_lat=30, min_lon=0,
+                                                                                       max_lon=36)
 
                 wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n = self.values_for_timestep(
                     extracted_ds)
@@ -219,9 +232,9 @@ class CMIP6_light:
                 for hour_of_day in range(12, 13, 1):
                     print("Running for hour {}".format(hour_of_day))
                     month = (pd.to_datetime(current_time.values)).month
-
+                    sys.exit()
                     calc_radiation = [
-                        dask.delayed(CMIP6_albedo_utils.radiation)(clt[j, :], lat[j, 0], month, hour_of_day) for
+                        dask.delayed(self.radiation)(clt[j, :], lat[j, 0], month, hour_of_day) for
                         j in
                         range(m)]
 
