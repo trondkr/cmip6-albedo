@@ -1,6 +1,7 @@
 # cmip6-albedo
 
 [![Build status](https://badge.buildkite.com/998b597662a8db957ab524d2660958105de691cc0bc1753594.svg)](https://buildkite.com/rask-dev-llc/cmip6-albedo)
+[![Coverage Status](https://coveralls.io/repos/github/trondkr/cmip6-albedo/badge.svg)](https://coveralls.io/github/trondkr/cmip6-albedo)
 
 ###  Useful links
 http://www.matteodefelice.name/post/aggregating-gridded-data/
