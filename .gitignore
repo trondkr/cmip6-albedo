@@ -16,3 +16,4 @@ Data/*
 *.nc
 PDFs/*
 dask-worker-space/*
+coverage.xml*
