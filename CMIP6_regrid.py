@@ -18,8 +18,7 @@ class CMIP6_regrid:
                                      extrap="inverse_dist")
         else:
             regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
-                                     ignore_degenerate=True,
-                                     periodic=True)
+                                     ignore_degenerate=True)
         regridder._grid_in = None
         regridder._grid_out = None
         print("[CMIP6_regrid] regridding {}".format(varname))
