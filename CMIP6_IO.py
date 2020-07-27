@@ -6,13 +6,16 @@ import geopandas as gpd
 from cmip6_preprocessing.preprocessing import combined_preprocessing
 import CMIP6_model
 import CMIP6_light
+import CMIP6_config
 
 class CMIP6_IO:
 
     def __init__(self):
         self.models = []
 
-    def get_and_organize_cmip6_data(self, config):
+    # Loop over all models and scenarios listed in CMIP6_light.config
+    # and store each CMIP6 variable and scenario into a CMIP6 model object
+    def organize_cmip6_datasets(self, config:CMIP6_config.Config_albedo):
 
         for experiment_id in config.experiment_ids:
             for grid_label in config.grid_labels:
@@ -22,7 +25,7 @@ class CMIP6_IO:
                     else:
                         model_object = CMIP6_model.CMIP6_MODEL(name=source_id)
 
-                    print("MODEL object {}".format(model_object.name))
+                    print("[CMIP6_IO] Organizing CMIP6 model object {}".format(model_object.name))
 
                     for member_id in config.member_ids:
                         for variable_id, table_id in zip(config.variable_ids, config.table_ids):
@@ -60,7 +63,8 @@ class CMIP6_IO:
 
                             # Extract the time period of interest
                             ds = ds.sel(time=slice(config.start_date, config.end_date))
-                            print("{} => Dates extracted range from {} to {}\n".format(source_id,
+                            print("[CMIP6_IO] {} => Dates extracted {} range from {} to {}".format(source_id,
+                                                                                                   variable_id,
                                                                                        ds["time"].values[0],
                                                                                        ds["time"].values[-1]))
 
@@ -72,24 +76,38 @@ class CMIP6_IO:
                                 else:
                                     dset_processed = dset_processed.isel(lev=config.selected_depth)
 
-                            # Save the dataset for variable_id in the dictionary
-                            # Create unique key to hold dataset in dictionary
-                            key = "{}_{}_{}_{}_{}".format(variable_id, experiment_id, grid_label, source_id,
-                                                                  member_id)
-
+                            # Save the info to model object
                             model_object.member_ids.append(member_id)
                             model_object.ocean_vars.append(variable_id)
-                            model_object.ds_dict[key] = dset_processed
-                    self.models.append(model_object)
-                    print("Found {} datasets for model {}".format(len(self.models), key))
+                            self.dataset_into_model_dictionary(member_id, variable_id, dset_processed, model_object)
 
-    def perform_cmip6_query(self, config, query_string):
+                    self.models.append(model_object)
+                    print("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
+                                                                                                model_object.name))
+
+    def dataset_into_model_dictionary(self,
+                                      member_id:str,
+                                      variable_id:str,
+                                      dset:xr.Dataset,
+                                      model_object:CMIP6_model.CMIP6_MODEL):
+        # Store each dataset for each variable as a dictionary of variables for each member_id
+        try:
+            existing_ds = model_object.ds_sets[member_id]
+        except KeyError:
+            existing_ds = {}
+        existing_ds[variable_id] = dset
+
+        model_object.ds_sets[member_id] = existing_ds
+
+    def perform_cmip6_query(self, config:CMIP6_config.Config_albedo, query_string:str) -> xr.Dataset:
         df_sub = config.df.query(query_string)
         if df_sub.zstore.values.size == 0:
             return df_sub
 
         mapper = config.fs.get_mapper(df_sub.zstore.values[-1])
-        ds = xr.open_zarr(mapper, consolidated=True)
+        ds = xr.open_zarr(mapper, consolidated=True) #, mask_and_scale=True)
+       # print("[CMIP6_IO] chunks {}".format(ds.chunks))
+
         # print("Time encoding: {} - {}".format(ds.indexes['time'], ds.indexes['time'].dtype))
         if not ds.indexes["time"].dtype in ["datetime64[ns]", "object"]:
 

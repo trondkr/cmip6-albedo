@@ -1,28 +1,23 @@
+import datetime
+import os
+import sys
 from typing import List, Any
 
-import pandas as pd
-import numpy as np
-import sys
 # Computational modules
 import dask
-import xarray as xr
-import gcsfs
-import datetime
+import numpy as np
+import pandas as pd
 import pvlib
-
-import glob
-import os
-import logging
-import CMIP6_config
-import CMIP6_albedo_utils
-import CMIP6_albedo_plot
-import CMIP6_regrid
-import CMIP6_IO
-import CMIP6_date_tools
-
-from dask.distributed import Client
+import xarray as xr
 import xesmf as xe
 
+import CMIP6_IO
+import CMIP6_albedo_plot
+import CMIP6_config
+import CMIP6_date_tools
+import CMIP6_regrid
+import CMIP6_model
+import CMIP6_albedo_utils
 
 class CMIP6_light:
 
@@ -115,8 +110,8 @@ class CMIP6_light:
         end_date = '{}-12-31'.format(year2)
         ds_chl_2050 = ds_in.sel(time=slice(start_date, end_date))
         re = CMIP6_regrid.CMIP6_regrid()
-        chl2020 = re.regrid_variable("chl", ds_chl_2020, ds_out, transpose=False)
-        chl2050 = re.regrid_variable("chl", ds_chl_2050, ds_out, transpose=False)
+        chl2020 = re.regrid_variable("chl", ds_chl_2020, ds_out)
+        chl2050 = re.regrid_variable("chl", ds_chl_2050, ds_out)
 
         ds_2020 = chl2020.to_dataset()
         ds_2050 = chl2050.to_dataset()
@@ -133,13 +128,15 @@ class CMIP6_light:
         chl2050_diff = ds_diff.sel(season="MAM").chl.values
 
         # kg/m3 to mg/m3 multiply by 1e6
-        CMIP6_albedo_plot.create_plot((chl2020 * 1.e6), lon[0, :], lat[:, 0], "chl2020", nlevels=np.arange(0, 5, 0.2),
+        plotter=CMIP6_albedo_plot.CMIP6_albedo_plot()
+
+        plotter.create_plot((chl2020 * 1.e6), lon[0, :], lat[:, 0], "chl2020", nlevels=np.arange(0, 5, 0.2),
                                       regional=True,
                                       logscale=True)
-        CMIP6_albedo_plot.create_plot((chl2050 * 1.e6), lon[0, :], lat[:, 0], "chl2050", nlevels=np.arange(0, 5, 0.2),
+        plotter.create_plot((chl2050 * 1.e6), lon[0, :], lat[:, 0], "chl2050", nlevels=np.arange(0, 5, 0.2),
                                       regional=True,
                                       logscale=True)
-        CMIP6_albedo_plot.create_plot(chl2050_diff, lon[0, :], lat[:, 0], "chl2050-2020",
+        plotter.create_plot(chl2050_diff, lon[0, :], lat[:, 0], "chl2050-2020",
                                       nlevels=np.arange(-101, 101, 1), regional=True)
 
     """
@@ -149,54 +146,60 @@ class CMIP6_light:
     2x2 degrees grid and then subsequently to a 1x1 degree grid.
     """
 
-    def extract_data_for_timestep_and_regrid(self, model_obj, selected_time: int,
-                                             min_lat: float = None,
-                                             max_lat: float = None,
-                                             min_lon: float = None,
-                                             max_lon: float = None):
+    def extract_dataset_and_regrid(self, model_obj, member_id,
+                                   min_lat: float = None,
+                                   max_lat: float = None,
+                                   min_lon: float = None,
+                                   max_lon: float = None):
         extracted: dict = {}
+
+        ds_out_amon = xe.util.grid_2d(min_lon, max_lon, 2, min_lat, max_lat, 2)
+        ds_out = xe.util.grid_2d(min_lon, max_lon, 1, min_lat, max_lat, 1)
+
         re = CMIP6_regrid.CMIP6_regrid()
-        first=True
+        for key in model_obj.ds_sets[member_id].keys():
 
-        for key in model_obj.ds_dict.keys():
+            current_ds = model_obj.ds_sets[member_id][key].sel(y=slice(min_lat, max_lat),
+                                                    x=slice(min_lon, max_lon))
 
-            current_ds = model_obj.ds_dict[key].sel(y=slice(min_lat, max_lat), x=slice(min_lon, max_lon)).isel(
-                time=selected_time)
             current_time = current_ds.time
-            comps = key.split("_")
-            out_grid_anom={}
-            current_grid={}
-            print(current_ds)
-            if comps[0] in ["uas", "vas", "clt"]:
-                out_grid_anom["lats"] = np.arange(min_lat, max_lat, 2)
-                out_grid_anom["lons"] = np.arange(min_lon, max_lon, 2)
-                current_grid["lats"] = current_ds.lat.values
-                current_grid["lons"] = current_ds.lon.values
 
-                #                ds_out = xe.util.grid_2d(min_lon, max_lon, 1, min_lat, max_lat, 1)
-                srcfield_amon, dstfield_amon, regrid_amon = re.setup_ESMF_regridding(current_grid, out_grid_anom)
-
-                srcfield_amon.data[:, :] = ds_current[varname].T.values
-                dstfield_amon = regrid(srcfield_amon, dstfield_amon)
-
-                print(dstfield_amon)
-
-                first=False
-
+            print("Key: ",key)
+            if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
             else:
-                out = re.regrid_variable(comps[0], current_ds, ds_out, transpose=False)
-            extracted[comps[0]] = out
-        return extracted, current_time
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
 
-    def values_for_timestep(self, extracted_ds):
-        lat = extracted_ds["uas"].lat.values
-        lon = extracted_ds["uas"].lon.values
-        clt = extracted_ds["clt"].values
-        chl = extracted_ds["chl"].values
-        sisnconc = extracted_ds["sisnconc"].values
-        sisnthick = extracted_ds["sisnthick"].values
-        siconc = extracted_ds["siconc"].values
-        sithick = extracted_ds["sithick"].values
+            if key in ["uas", "vas", "clt"]:
+                out_amon = re.regrid_variable(key,
+                                              ds_trans,
+                                              ds_out_amon,
+                                              interpolation_method=self.config.interp).to_dataset()
+
+                out = re.regrid_variable(key, out_amon, ds_out)
+            else:
+                out = re.regrid_variable(key, ds_trans,
+                                         ds_out,
+                                         interpolation_method=self.config.interp)
+
+            outfile = "{}_{}_{}.nc".format(key,model_obj.name,member_id)
+           # if os.path.exists(outfile): os.remove(outfile)
+          #  out.to_dataset().to_netcdf(outfile)
+            print("[CMIP6_light] wrote variable {} to file".format(key))
+
+            extracted[key] = out
+        return extracted
+
+    def values_for_timestep(self, extracted_ds,selected_time):
+
+        lat = extracted_ds["uas"].isel(time=selected_time).lat.values
+        lon = extracted_ds["uas"].isel(time=selected_time).lon.values
+        clt = extracted_ds["clt"].isel(time=selected_time).values
+        chl = extracted_ds["chl"].isel(time=selected_time).values
+        sisnconc = extracted_ds["sisnconc"].isel(time=selected_time).values
+        sisnthick = extracted_ds["sisnthick"].isel(time=selected_time).values
+        siconc = extracted_ds["siconc"].isel(time=selected_time).values
+        sithick = extracted_ds["sithick"].isel(time=selected_time).values
 
         # Calculate scalar wind and organize the data arrays to be used for  given time-step (month-year)
         wind = np.sqrt(extracted_ds["uas"] ** 2 + extracted_ds["vas"] ** 2).values
@@ -204,83 +207,103 @@ class CMIP6_light:
         n = len(wind[0, :])
         return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n
 
-    def calculate_light(self):
-        wavelengths, refractive_indexes, alpha_chl, alpha_w, beta_w, alpha_wc, solar_energy = self.config.setup_parameters()
+    def perform_light_calculations(self, extracted_ds, model_name, member_id):
         startdate = datetime.datetime.now()
+        print(extracted_ds)
+        print(extracted_ds["uas"])
+        times=extracted_ds["uas"].time
+        data_list = []
 
-        io = CMIP6_IO.CMIP6_IO()
-        io.get_and_organize_cmip6_data(self.config)
-        self.cmip6_models = io.models
+        for selected_time in range(0, len(times)):
+            current_time=pd.to_datetime(times[selected_time].values)
+            print("[CMIP6_light] Running for timestep {}".format(current_time))
 
-        for model in self.cmip6_models:
-            print("Preparing light calculations for {}".format(model.description))
-            first = True
-            data_list = []
-            time_list = []
+            wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n = self.values_for_timestep(
+                extracted_ds, selected_time)
 
-            for selected_time in range(0, 120):
+            for hour_of_day in range(12, 13, 1):
+                print("[CMIP6_light] Running for hour {}".format(hour_of_day))
 
-                extracted_ds, current_time = self.extract_data_for_timestep_and_regrid(model, selected_time, min_lat=20,
-                                                                                       max_lat=30, min_lon=0,
-                                                                                       max_lon=36)
+                calc_radiation = [
+                    dask.delayed(self.radiation)(clt[j, :], lat[j, 0], current_time.month, hour_of_day) for
+                    j in
+                    range(m)]
 
-                wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n = self.values_for_timestep(
-                    extracted_ds)
+                # https://github.com/dask/dask/issues/5464
+                rad = dask.compute(calc_radiation, scheduler='processes')
+                rads = np.asarray(rad).reshape((m, n, 3))
 
-                all_direct = []
-                all_OSA = []
-                for hour_of_day in range(12, 13, 1):
-                    print("Running for hour {}".format(hour_of_day))
-                    month = (pd.to_datetime(current_time.values)).month
-                    sys.exit()
-                    calc_radiation = [
-                        dask.delayed(self.radiation)(clt[j, :], lat[j, 0], month, hour_of_day) for
-                        j in
-                        range(m)]
+                zr = [CMIP6_albedo_utils.calculate_OSA(rads[i, j, 2], wind[i, j], chl[i, j],
+                                         self.config.wavelengths,
+                                         self.config.refractive_indexes,
+                                         self.config.alpha_chl,
+                                         self.config.alpha_w,
+                                         self.config.beta_w,
+                                         self.config.alpha_wc,
+                                         self.config.solar_energy)
+                      for i in range(m)
+                      for j in range(n)]
 
-                    # https://github.com/dask/dask/issues/5464
-                    rad = dask.compute(calc_radiation, scheduler='processes')
-                    rads = np.asarray(rad).reshape((m, n, 3))
+                OSA = np.asarray(dask.compute(zr)).reshape((m, n, 2))
 
-                    zr = [self.calculate_OSA(rads[i, j, 2], wind[i, j], chl[i, j], wavelengths,
-                                             refractive_indexes,
-                                             alpha_chl, alpha_w, beta_w, alpha_wc, solar_energy)
-                          for i in range(m)
-                          for j in range(n)]
+                irradiance_water = (rads[:, :, 0] * OSA[:, :, 0] + rads[:, :, 1] * OSA[:, :, 1]) / (
+                        OSA[:, :, 0] + OSA[:, :, 1])
 
-                    OSA = np.asarray(dask.compute(zr)).reshape((m, n, 2))
+                print("[CMIP6_light] Time to finish {} with mean OSA {}".format(datetime.datetime.now() - startdate,
+                                                                                np.mean(irradiance_water)))
 
-                    irradiance_water = (rads[:, :, 0] * OSA[:, :, 0] + rads[:, :, 1] * OSA[:, :, 1]) / (
-                            OSA[:, :, 0] + OSA[:, :, 1])
+                # Write to file
+                coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': current_time.values}
+                plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
+                plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
+                                               irradiance_water, wind, OSA,
+                                               lon, lat)
 
-                    print("Time to finish {} with mean OSA {}".format(datetime.datetime.now() - startdate,
-                                                                      np.mean(irradiance_water)))
+                data_array = xr.DataArray(name="irradiance", data=irradiance_water, coords=coords,
+                                          dims=['lat', 'lon'])
+                data_list.append(data_array)
 
-                    # Write to file
-                    coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': current_time.values}
-                    CMIP6_albedo_plot.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
-                                                   irradiance_water, wind, OSA,
-                                                   lon, lat)
+        self.save_irradiance_to_netcdf(model_name, member_id, data_list)
 
-                    data_array = xr.DataArray(name="irradiance", data=irradiance_water, coords=coords,
-                                              dims=['lat', 'lon'])
-                    data_list.append(data_array)
 
-        result_file = "ncfiles/irradiance_{}.nc".format(model_name)
-        if first:
-            if not os.path.exists("ncfiles"): os.mkdir("ncfiles")
+    def save_irradiance_to_netcdf(self, model_name, member_id, data_list):
+        result_file = "ncfiles/Irradiance_{}_{}.nc".format(model_name, member_id)
+
+        if not os.path.exists("ncfiles"): os.mkdir("ncfiles")
         if os.path.exists(result_file): os.remove(result_file)
         expanded_da = xr.concat(data_list, 'time')
         expanded_da.to_netcdf(result_file, 'w')
-        first = False
+
+    def calculate_light(self):
+
+        io = CMIP6_IO.CMIP6_IO()
+        io.organize_cmip6_datasets(self.config)
+        self.cmip6_models = io.models
+        print("[CMIP6_light] Light calculations will involve {} CMIP6 models".format(len(self.cmip6_models)))
+
+        for model in self.cmip6_models:
+            print("[CMIP6_light] Model {}".format(model.description))
+
+            for member_id in model.member_ids:
+                print("[CMIP6_light] Preparing light calculations for member {}".format(member_id))
+
+                # Interpolate all variables for all time-steps in one go
+                extracted_ds = self.extract_dataset_and_regrid(model, member_id,
+                                                                             min_lat=20,
+                                                                             max_lat=90,
+                                                                             min_lon=0,
+                                                                             max_lon=360)
+
+                self.perform_light_calculations(extracted_ds, model.name, member_id)
 
 
 def main():
     light = CMIP6_light()
+    light.config.setup_parameters()
     light.calculate_light()
 
 
 if __name__ == '__main__':
-    client = Client()
-    print(client)
+    # client = dask.distributed.client._get_global_client() or Client()
+    # print(client)
     main()

@@ -13,12 +13,13 @@ sys.path.append("./subroutines/")
 class CMIP6_MODEL():
     def __init__(self, name):
         self.name = name
-        self.ocean_vars=[]
-        self.ds_dict={}
+        self.ocean_vars = []
+        self.ds_sets = {}
+        self.member_ids = []
 
     def description(self):
         logging.info("----- {} -----".format(self.name))
-        for ds in self.ds_dict.keys():
+        for ds in self.ds_sets.keys():
             logging.info("Model dataset: {} ".format(ds))
         logging.info("members: {}".format(self.member_ids))
         logging.info("variables: {}".format(self.ocean_vars))

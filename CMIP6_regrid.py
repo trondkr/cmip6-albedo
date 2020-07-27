@@ -1,11 +1,25 @@
 import ESMF
 import xarray as xr
 import numpy as np
+import xesmf as xe
+from cmip6_preprocessing.preprocessing import combined_preprocessing
 
 ESMF.Manager(debug=True)
 
 
 class CMIP6_regrid:
+
+    def regrid_variable(self, varname, ds_in, ds_out, interpolation_method="bilinear"):
+
+        regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
+                                 ignore_degenerate=True,
+                                 periodic=True,
+                                 extrap="inverse_dist")
+        regridder._grid_in = None
+        regridder._grid_out = None
+        print("[CMIP6_regrid] regridding {}".format(varname))
+
+        return regridder(ds_in[varname])
 
     def setup_source_and_destination_2D_grids(self, current_grid, out_grid_anom):
         print("In grid {} vs {}".format(np.shape(current_grid["lats"]),np.shape(current_grid["lons"])))
