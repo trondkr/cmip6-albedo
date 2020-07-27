@@ -177,7 +177,9 @@ class CMIP6_light:
                                               interpolation_method=self.config.interp,
                                               use_esmf_v801=self.config.use_esmf_v801).to_dataset()
 
-                out = re.regrid_variable(key, out_amon, ds_out)
+                out = re.regrid_variable(key, out_amon, ds_out,
+                                         interpolation_method=self.config.interp,
+                                         use_esmf_v801=self.config.use_esmf_v801)
             else:
                 out = re.regrid_variable(key, ds_trans,
                                          ds_out,
