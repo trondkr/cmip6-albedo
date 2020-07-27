@@ -9,12 +9,17 @@ ESMF.Manager(debug=True)
 
 class CMIP6_regrid:
 
-    def regrid_variable(self, varname, ds_in, ds_out, interpolation_method="bilinear"):
+    def regrid_variable(self, varname, ds_in, ds_out, interpolation_method="bilinear", use_esmf_v801=True):
 
-        regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
-                                 ignore_degenerate=True,
-                                 periodic=True,
-                                 extrap="inverse_dist")
+        if use_esmf_v801:
+            regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
+                                     ignore_degenerate=True,
+                                     periodic=True,
+                                     extrap="inverse_dist")
+        else:
+            regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
+                                     ignore_degenerate=True,
+                                     periodic=True)
         regridder._grid_in = None
         regridder._grid_out = None
         print("[CMIP6_regrid] regridding {}".format(varname))

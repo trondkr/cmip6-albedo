@@ -174,13 +174,15 @@ class CMIP6_light:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
                                               ds_out_amon,
-                                              interpolation_method=self.config.interp).to_dataset()
+                                              interpolation_method=self.config.interp,
+                                              use_esmf_v801=self.config.use_esmf_v801).to_dataset()
 
                 out = re.regrid_variable(key, out_amon, ds_out)
             else:
                 out = re.regrid_variable(key, ds_trans,
                                          ds_out,
-                                         interpolation_method=self.config.interp)
+                                         interpolation_method=self.config.interp,
+                                         use_esmf_v801=self.config.use_esmf_v801)
 
             outfile = "{}_{}_{}.nc".format(key,model_obj.name,member_id)
            # if os.path.exists(outfile): os.remove(outfile)
