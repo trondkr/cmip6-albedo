@@ -308,6 +308,6 @@ def main():
 
 
 if __name__ == '__main__':
-     client = dask.distributed.client._get_global_client() or Client()
-     print(client)
+    client = dask.distributed.client._get_global_client() or Client()
+    print(client)
     main()
