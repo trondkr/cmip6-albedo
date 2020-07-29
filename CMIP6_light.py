@@ -5,6 +5,7 @@ from typing import List, Any
 
 # Computational modules
 import dask
+from distributed import Client, LocalCluster
 import numpy as np
 import pandas as pd
 import pvlib
@@ -187,7 +188,7 @@ class CMIP6_light:
                                          use_esmf_v801=self.config.use_esmf_v801)
 
             outfile = "{}_{}_{}.nc".format(key,model_obj.name,member_id)
-           # if os.path.exists(outfile): os.remove(outfile)
+            if os.path.exists(outfile): os.remove(outfile)
           #  out.to_dataset().to_netcdf(outfile)
             print("[CMIP6_light] wrote variable {} to file".format(key))
 
@@ -308,6 +309,14 @@ def main():
 
 
 if __name__ == '__main__':
-    client = dask.distributed.client._get_global_client() or Client()
-    print(client)
+
+    #try:
+    #    client = Client('tcp://localhost:8786', timeout='2s')
+    #except OSError:
+    #    cluster = LocalCluster(scheduler_port=8786)
+    cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True, local_directory='/tmp')
+    client = Client(cluster)
+   # client.restart()
+    client
+
     main()
