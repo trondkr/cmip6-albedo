@@ -118,6 +118,7 @@ def calculate_OSA(µ_deg, uv, chl, wavelengths, refractive_indexes, alpha_chl, a
     # Solar zenith angle
     # wind is wind at 10 m height (m/s)
     σ = np.sqrt(0.003 + 0.00512 * uv)
+    print("SHAPE sigma",np.shape(σ))
 
     # Vectorize the functions
     #  vec_calculate_direct_reflection=np.vectorize(calculate_direct_reflection)
