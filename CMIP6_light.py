@@ -11,6 +11,7 @@ import pandas as pd
 import pvlib
 import xarray as xr
 import xesmf as xe
+import tables
 
 import CMIP6_IO
 import CMIP6_albedo_plot
