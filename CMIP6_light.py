@@ -251,7 +251,6 @@ class CMIP6_light:
                                          self.config.solar_energy)
                       for i in range(m)
                       for j in range(n)]
-                print("zr",zr)
 
                 OSA = np.asarray(dask.compute(zr)).reshape((m, n, 2))
 
@@ -259,15 +258,16 @@ class CMIP6_light:
                         OSA[:, :, 0] + OSA[:, :, 1])
 
                 print("[CMIP6_light] Time to finish {} with mean OSA {}".format(datetime.datetime.now() - startdate,
-                                                                                np.mean(irradiance_water)))
+                                                                                np.nanmean(irradiance_water)))
 
                 # Write to file
-                coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': current_time.values}
+
                 plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
                 plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
                                                irradiance_water, wind, OSA,
                                                lon, lat)
 
+                coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': current_time}
                 data_array = xr.DataArray(name="irradiance", data=irradiance_water, coords=coords,
                                           dims=['lat', 'lon'])
                 data_list.append(data_array)
