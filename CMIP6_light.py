@@ -201,7 +201,6 @@ class CMIP6_light:
         lat = extracted_ds["uas"].isel(time=selected_time).lat.values
         lon = extracted_ds["uas"].isel(time=selected_time).lon.values
         clt = extracted_ds["clt"].isel(time=selected_time).values
-        print(extracted_ds["chl"])
 
         chl = extracted_ds["chl"].isel(time=selected_time).values
         sisnconc = extracted_ds["sisnconc"].isel(time=selected_time).values
@@ -217,10 +216,8 @@ class CMIP6_light:
 
     def perform_light_calculations(self, extracted_ds, model_name, member_id):
         startdate = datetime.datetime.now()
-        print("\PERFORM LIGHT CALCS")
 
         print(extracted_ds)
-        print(extracted_ds["uas"])
         times=extracted_ds["uas"].time
         data_list = []
 
@@ -233,11 +230,10 @@ class CMIP6_light:
 
             for hour_of_day in range(12, 13, 1):
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
-                print(np.shape(lat),np.shape(lon),m,n)
+
                 calc_radiation = [
                     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], current_time.month, hour_of_day) for
-                    j in
-                    range(m)]
+                    j in range(m)]
 
                 # https://github.com/dask/dask/issues/5464
                 rad = dask.compute(calc_radiation, scheduler='processes')

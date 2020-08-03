@@ -34,7 +34,7 @@ def calculate_direct_reflection(n_λ, µ, σ):
     # Direct reflection following Jin et al. 2014 equation 1
     f_0 = calculate_alpha_dir(1.34, µ)
     f_λ = calculate_alpha_dir(n_λ, µ)
-
+    print("step 2 cal direct")
     return f_λ - (surface_roughness(µ, σ) * f_λ / f_0)
 
 
@@ -126,8 +126,10 @@ def calculate_OSA(µ_deg, uv, chl, wavelengths, refractive_indexes, alpha_chl, a
     #  vec_calculate_diffuse_reflection_from_chl=np.vectorize(calculate_diffuse_reflection_from_chl)
 
     # Direct reflection
-    alpha_direct = calculate_direct_reflection(refractive_indexes, µ, σ)
+    print("refractive_indexes, µ, σ",refractive_indexes, µ, σ)
 
+    alpha_direct = calculate_direct_reflection(refractive_indexes, µ, σ)
+    print("PASSED ALPHA_DIRECT")
     # Diffuse reflection
     alpha_diffuse = calculate_diffuse_reflection(refractive_indexes, σ)
 
