@@ -230,7 +230,7 @@ class CMIP6_light:
 
             for hour_of_day in range(12, 13, 1):
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
-
+                print(np.shape(lat),np.shape(lon),m,n)
                 calc_radiation = [
                     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], current_time.month, hour_of_day) for
                     j in
