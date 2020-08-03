@@ -208,12 +208,14 @@ class CMIP6_light:
 
         # Calculate scalar wind and organize the data arrays to be used for  given time-step (month-year)
         wind = np.sqrt(extracted_ds["uas"] ** 2 + extracted_ds["vas"] ** 2).values
-        m = len(wind[:, 0])
-        n = len(wind[0, :])
+        m = len(wind[:, 0])-1
+        n = len(wind[0, :])-1
         return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n
 
     def perform_light_calculations(self, extracted_ds, model_name, member_id):
         startdate = datetime.datetime.now()
+        print("\PERFORM LIGHT CALCS")
+
         print(extracted_ds)
         print(extracted_ds["uas"])
         times=extracted_ds["uas"].time
