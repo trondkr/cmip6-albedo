@@ -296,7 +296,7 @@ class CMIP6_light:
                 # Interpolate all variables for all time-steps in one go
                 extracted_ds = self.extract_dataset_and_regrid(model, member_id,
                                                                              min_lat=40,
-                                                                             max_lat=90,
+                                                                             max_lat=50,
                                                                              min_lon=0,
                                                                              max_lon=360)
 

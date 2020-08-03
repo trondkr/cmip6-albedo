@@ -35,6 +35,7 @@ def calculate_direct_reflection(n_λ, µ, σ):
     f_0 = calculate_alpha_dir(1.34, µ)
     f_λ = calculate_alpha_dir(n_λ, µ)
     print("step 2 cal direct")
+    print("(surface_roughness(µ, σ)", surface_roughness(µ, σ))
     return f_λ - (surface_roughness(µ, σ) * f_λ / f_0)
 
 
