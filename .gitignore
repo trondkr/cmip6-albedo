@@ -12,6 +12,8 @@ __pycache__/*
 *with_corners/*
 *PET0.ESMF*
 Data/*
+.coverage*
+*coveralls*
 *.nc
 PDFs/*
 dask-worker-space/*

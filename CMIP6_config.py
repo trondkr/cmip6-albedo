@@ -21,7 +21,7 @@ class Config_albedo():
         self.end_date = "2100-01-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
-        self.use_esmf_v801=True
+        self.use_esmf_v801=False
 
         # ESMF and Dask related
         self.dask_chunk = 30
