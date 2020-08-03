@@ -294,7 +294,7 @@ class CMIP6_light:
 
                 # Interpolate all variables for all time-steps in one go
                 extracted_ds = self.extract_dataset_and_regrid(model, member_id,
-                                                                             min_lat=20,
+                                                                             min_lat=40,
                                                                              max_lat=90,
                                                                              min_lon=0,
                                                                              max_lon=360)
@@ -310,13 +310,7 @@ def main():
 
 if __name__ == '__main__':
 
-    #try:
-    #    client = Client('tcp://localhost:8786', timeout='2s')
-    #except OSError:
-    #    cluster = LocalCluster(scheduler_port=8786)
-    cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True, local_directory='/tmp')
-    client = Client(cluster)
-   # client.restart()
-    client
+    client = Client()
+    print(client)
 
     main()
