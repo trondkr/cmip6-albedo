@@ -200,8 +200,8 @@ class CMIP6_light:
         lat = extracted_ds["uas"].isel(time=selected_time).lat.values
         lon = extracted_ds["uas"].isel(time=selected_time).lon.values
         clt = extracted_ds["clt"].isel(time=selected_time).values
-        print(chl)
-        print(np.shape(chl))
+        print(extracted_ds["chl"])
+
         chl = extracted_ds["chl"].isel(time=selected_time).values
         sisnconc = extracted_ds["sisnconc"].isel(time=selected_time).values
         sisnthick = extracted_ds["sisnthick"].isel(time=selected_time).values
