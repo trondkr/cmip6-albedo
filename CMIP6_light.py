@@ -6,6 +6,8 @@ from typing import List, Any
 # Computational modules
 import dask
 from distributed import Client, LocalCluster
+from dask_gateway import Gateway
+
 import numpy as np
 import pandas as pd
 import pvlib
@@ -20,6 +22,7 @@ import CMIP6_date_tools
 import CMIP6_regrid
 import CMIP6_model
 import CMIP6_albedo_utils
+
 
 class CMIP6_light:
 
@@ -314,7 +317,12 @@ def main():
 
 if __name__ == '__main__':
 
-    client = Client()
-    print(client)
+    #client = Client()
+    #print(client)
+
+    gateway = Gateway()
+    cluster = gateway.new_cluster()
+    cluster.adapt(minimum=1, maximum=50)
+    client = Client(cluster)
 
     main()

@@ -7,7 +7,7 @@ import dateutil
 from cartopy.util import add_cyclic_point
 import matplotlib.pyplot as plt
 import numpy as np
-
+import os
 
 class CMIP6_albedo_plot():
 
@@ -30,7 +30,8 @@ class CMIP6_albedo_plot():
     def create_streamplot(self, indata_u, indata_v, uv, lon, lat, name, nlevels=None):
         # Make data cyclic around dateline
         fig = plt.figure(figsize=(12, 12))
-        crs_latlon = ccrs.PlateCarree()
+        proj = ccrs.PlateCarree()
+        ax = plt.axes(projection=proj)
 
         indata_u_cyclic, lon_cyclic = add_cyclic_point(indata_u, coord=lon)
         indata_v_cyclic, lon_cyclic = add_cyclic_point(indata_v, coord=lon)
@@ -99,9 +100,9 @@ class CMIP6_albedo_plot():
             os.mkdir("Figures")
         plotfilename = "{}_anomaly_2050_2020.png".format(name)
 
-    #   plt.savefig(plotfilename, dpi=150, bbox_inches='tight')
+        plt.savefig(plotfilename, dpi=150, bbox_inches='tight')
 
-    def create_plots(self, ds2020, ds2050):  # only used for comparisons
+    def create_plots_compare(self, ds2020, ds2050):  # only used for comparisons
 
         ds_diff = ds2050 - ds2020
 
