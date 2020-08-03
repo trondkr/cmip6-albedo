@@ -317,12 +317,12 @@ def main():
 
 if __name__ == '__main__':
 
-    #client = Client()
-    #print(client)
+    client = Client()
+    print(client)
 
-    gateway = Gateway()
-    cluster = gateway.new_cluster()
-    cluster.adapt(minimum=1, maximum=50)
-    client = Client(cluster)
+   # gateway = Gateway()
+   # cluster = gateway.new_cluster()
+   # cluster.adapt(minimum=1, maximum=50)
+   # client = Client(cluster)
 
     main()
