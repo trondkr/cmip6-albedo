@@ -34,8 +34,7 @@ def calculate_direct_reflection(n_λ, µ, σ):
     # Direct reflection following Jin et al. 2014 equation 1
     f_0 = calculate_alpha_dir(1.34, µ)
     f_λ = calculate_alpha_dir(n_λ, µ)
-    print("step 2 cal direct")
-    print("(surface_roughness(µ, σ)", surface_roughness(µ, σ))
+
     return f_λ - (surface_roughness(µ, σ) * f_λ / f_0)
 
 
@@ -119,7 +118,6 @@ def calculate_OSA(µ_deg, uv, chl, wavelengths, refractive_indexes, alpha_chl, a
     # Solar zenith angle
     # wind is wind at 10 m height (m/s)
     σ = np.sqrt(0.003 + 0.00512 * uv)
-    print("SHAPE sigma",np.shape(σ))
 
     # Vectorize the functions
     #  vec_calculate_direct_reflection=np.vectorize(calculate_direct_reflection)

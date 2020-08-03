@@ -207,11 +207,13 @@ class CMIP6_light:
         sisnthick = extracted_ds["sisnthick"].isel(time=selected_time).values
         siconc = extracted_ds["siconc"].isel(time=selected_time).values
         sithick = extracted_ds["sithick"].isel(time=selected_time).values
+        uas = extracted_ds["uas"].isel(time=selected_time).values
+        vas = extracted_ds["vas"].isel(time=selected_time).values
 
         # Calculate scalar wind and organize the data arrays to be used for  given time-step (month-year)
-        wind = np.sqrt(extracted_ds["uas"] ** 2 + extracted_ds["vas"] ** 2).values
-        m = len(wind[0, :, 0])
-        n = len(wind[0, 0, :])
+        wind = np.sqrt(uas ** 2 + vas ** 2)
+        m = len(wind[:, 0])
+        n = len(wind[0, :])
         return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n
 
     def perform_light_calculations(self, extracted_ds, model_name, member_id):
@@ -249,6 +251,7 @@ class CMIP6_light:
                                          self.config.solar_energy)
                       for i in range(m)
                       for j in range(n)]
+                print("zr",zr)
 
                 OSA = np.asarray(dask.compute(zr)).reshape((m, n, 2))
 
