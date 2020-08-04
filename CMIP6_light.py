@@ -157,9 +157,9 @@ class CMIP6_light:
         ds_out = xe.util.grid_2d(min_lon, max_lon, 1, min_lat, max_lat, 1)
 
         re = CMIP6_regrid.CMIP6_regrid()
-        for key in model_obj.ds_sets[model_obj.member_id].keys():
+        for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.member_id][key].sel(y=slice(min_lat, max_lat),
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].sel(y=slice(min_lat, max_lat),
                                                                          x=slice(min_lon, max_lon))
 
             if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
@@ -183,7 +183,7 @@ class CMIP6_light:
                                          interpolation_method=self.config.interp,
                                          use_esmf_v801=self.config.use_esmf_v801)
 
-            #   outfile = "{}_{}_{}.nc".format(key,model_obj.name,model_obj.member_id)
+            #   outfile = "{}_{}_{}.nc".format(key,model_obj.name,model_obj.current_member_id)
             #   if os.path.exists(outfile): os.remove(outfile)
             #  out.to_dataset().to_netcdf(outfile)
             print("[CMIP6_light] wrote variable {} to file".format(key))
@@ -268,7 +268,7 @@ class CMIP6_light:
                 data_list.append(data_array)
 
         self.save_irradiance_to_netcdf(model_object.name,
-                                       model_object.member_id,
+                                       model_object.current_member_id,
                                        data_list)
 
     def save_irradiance_to_netcdf(self, model_name, member_id, data_list):

@@ -101,7 +101,7 @@ class CMIP6_albedo_plot():
             os.mkdir("Figures")
         plotfilename = "{}_{}_{}_{}.png".format(name,
                                         model_object.name,
-                                        model_object.member_id,
+                                        model_object.current_member_id,
                                         model_object.current_time)
 
         if os.path.exists(plotfilename):os.remove(plotfilename)
