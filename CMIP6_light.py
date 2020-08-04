@@ -41,6 +41,7 @@ class CMIP6_light:
                   'surface_azimuth': 180}
         altitude = 0.0
         system['surface_tilt'] = latitude
+        print("Inside radiation")
 
         # Some calculations are done only on greenwhich meridian line as they are identical around the globe
         # at the same latitude. For that reason longitude is set to greenwhich meridian and do not change. The only reason
@@ -74,7 +75,7 @@ class CMIP6_light:
                                                                 irrads['dni'], irrads['ghi'], irrads['dhi'],
                                                                 dni_extra=dni_extra,
                                                                 model='haydavies')
-
+            print("cloud index", cloud_index)
             results[cloud_index, 0] = total_irrad['poa_direct']
             results[cloud_index, 1] = total_irrad['poa_diffuse']
             results[cloud_index, 2] = solpos['zenith']
@@ -236,7 +237,7 @@ class CMIP6_light:
 
             for hour_of_day in range(12, 13, 1):
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
-
+                print("Clouds", np.shape(clt))
                 calc_radiation = [
                     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
                     j in range(m)]
