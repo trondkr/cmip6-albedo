@@ -195,16 +195,16 @@ class CMIP6_light:
 
     def values_for_timestep(self, extracted_ds, selected_time):
 
-        lat = extracted_ds["uas"].isel(time=selected_time).lat.values
-        lon = extracted_ds["uas"].isel(time=selected_time).lon.values
-        clt = extracted_ds["clt"].isel(time=selected_time).values
-        chl = extracted_ds["chl"].isel(time=selected_time).values
-        sisnconc = extracted_ds["sisnconc"].isel(time=selected_time).values
-        sisnthick = extracted_ds["sisnthick"].isel(time=selected_time).values
-        siconc = extracted_ds["siconc"].isel(time=selected_time).values
-        sithick = extracted_ds["sithick"].isel(time=selected_time).values
-        uas = extracted_ds["uas"].isel(time=selected_time).values
-        vas = extracted_ds["vas"].isel(time=selected_time).values
+        lat = extracted_ds["uas"].lat.values
+        lon = extracted_ds["uas"].lon.values
+        clt = extracted_ds["clt"].values
+        chl = extracted_ds["chl"].values
+        sisnconc = extracted_ds["sisnconc"].values
+        sisnthick = extracted_ds["sisnthick"].values
+        siconc = extracted_ds["siconc"].values
+        sithick = extracted_ds["sithick"].values
+        uas = extracted_ds["uas"].values
+        vas = extracted_ds["vas"].values
 
         # Calculate scalar wind and organize the data arrays to be used for  given time-step (month-year)
         wind = np.sqrt(uas ** 2 + vas ** 2)
