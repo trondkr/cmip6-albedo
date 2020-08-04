@@ -16,6 +16,8 @@ class CMIP6_MODEL():
         self.ocean_vars = []
         self.ds_sets = {}
         self.member_ids = []
+        self.current_time=None
+        self.current_member_id=None
 
     def description(self):
         logging.info("----- {} -----".format(self.name))

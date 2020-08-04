@@ -11,7 +11,7 @@ import os
 
 class CMIP6_albedo_plot():
 
-    def create_plots(self, sisnconc, sisnthick, sithick, siconc, clt, chl, rads, irradiance_water, wind, OSA, lon, lat):
+    def create_plots(self, sisnconc, sisnthick, sithick, siconc, clt, chl, rads, irradiance_water, wind, OSA, lon, lat, model_object):
         # create_streamplot(dr_out_uas,dr_out_vas,wind,lon[0,:],lat[:,0],"wind",nlevels=None)
         # create_plot(wind,lon[0,:],lat[:,0],"wind",regional=True)
         # create_plot(sisnconc,lon[0,:],lat[:,0],"sisnconc",regional=True)
@@ -25,7 +25,8 @@ class CMIP6_albedo_plot():
         # create_plot(rads[:,:,0],lon[0,:],lat[:,0],"Direct radiation",regional=True)
         # create_plot(rads[:,:,1],lon[0,:],lat[:,0],"Diffuse radiation",regional=True)
         # create_plot(rads[:,:,2],lon[0,:],lat[:,0],"Apparent zenith",regional=True)
-        self.create_plot(irradiance_water, lon[0, :], lat[:, 0], "irradiance_water", regional=True)
+
+        self.create_plot(irradiance_water, lon[0, :], lat[:, 0], "irradiance_water", model_object, regional=True)
 
     def create_streamplot(self, indata_u, indata_v, uv, lon, lat, name, nlevels=None):
         # Make data cyclic around dateline
@@ -55,7 +56,7 @@ class CMIP6_albedo_plot():
         ax.add_feature(cfeature.COASTLINE, edgecolor="black")
         plt.show()
 
-    def create_plot(self, indata, lon, lat, name, nlevels=None, regional=False, logscale=False):
+    def create_plot(self, indata, lon, lat, name, model_object, nlevels=None, regional=False, logscale=False):
 
         proj = ccrs.NorthPolarStereo(true_scale_latitude=70)
         ax = plt.axes(projection=proj)
@@ -98,8 +99,12 @@ class CMIP6_albedo_plot():
         plt.show()
         if not os.path.exists("Figures"):
             os.mkdir("Figures")
-        plotfilename = "{}_anomaly_2050_2020.png".format(name)
+        plotfilename = "{}_{}_{}_{}.png".format(name,
+                                        model_object.name,
+                                        model_object.member_id,
+                                        model_object.current_time)
 
+        if os.path.exists(plotfilename):os.remove(plotfilename)
         plt.savefig(plotfilename, dpi=150, bbox_inches='tight')
 
     def create_plots_compare(self, ds2020, ds2050):  # only used for comparisons
