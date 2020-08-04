@@ -228,12 +228,15 @@ class CMIP6_light:
             for hour_of_day in range(12, 13, 1):
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
 
-                calc_radiation = [
-                    dask.delayed(self.radiation)(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
+               # calc_radiation = [
+               #     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
+               #     j in range(m)]
+                # https://github.com/dask/dask/issues/5464
+              #  rad = dask.compute(calc_radiation, scheduler='processes')
+
+                rad = [self.radiation(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
                     j in range(m)]
 
-                # https://github.com/dask/dask/issues/5464
-                rad = dask.compute(calc_radiation, scheduler='processes')
                 rads = np.asarray(rad).reshape((m, n, 3))
 
                 zr = [CMIP6_albedo_utils.calculate_OSA(rads[i, j, 2], wind[i, j], chl[i, j],
