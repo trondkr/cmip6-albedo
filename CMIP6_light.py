@@ -316,8 +316,11 @@ def main():
 
 
 if __name__ == '__main__':
-    client = Client()
-    print(client)
+   # client = Client()
+   # print(client)
+    cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True,
+                           local_directory='../oceanography/tmp')
+    client = Client(cluster)
 
     # gateway = Gateway()
     # cluster = gateway.new_cluster()
