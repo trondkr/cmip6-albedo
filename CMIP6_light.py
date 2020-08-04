@@ -257,10 +257,10 @@ class CMIP6_light:
 
                 # Write to file
 
-                plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
-                plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
-                                     irradiance_water, wind, OSA,
-                                     lon, lat, model_object)
+            #    plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
+            #    plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
+            #                         irradiance_water, wind, OSA,
+            #                         lon, lat, model_object)
 
                 coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
                 data_array = xr.DataArray(name="irradiance", data=irradiance_water, coords=coords,
