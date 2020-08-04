@@ -222,7 +222,6 @@ class CMIP6_light:
     def perform_light_calculations(self, extracted_ds, model_name, member_id):
         startdate = datetime.datetime.now()
 
-        print(extracted_ds)
         times=extracted_ds["uas"].time
         data_list = []
 
@@ -279,9 +278,13 @@ class CMIP6_light:
 
 
     def save_irradiance_to_netcdf(self, model_name, member_id, data_list):
-        result_file = "ncfiles/Irradiance_{}_{}.nc".format(model_name, member_id)
+        out = self.config.outdir + "ncfiles/"
+        result_file = out+"irradiance_{}_{}_{}-{}.nc".format(model_name,
+                                                             member_id,
+                                                             self.config.start_date,
+                                                             self.config.end_date)
 
-        if not os.path.exists("ncfiles"): os.mkdir("ncfiles")
+        if not os.path.exists(out): os.mkdir(out)
         if os.path.exists(result_file): os.remove(result_file)
         expanded_da = xr.concat(data_list, 'time')
         expanded_da.to_netcdf(result_file, 'w')

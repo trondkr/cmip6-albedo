@@ -126,10 +126,8 @@ def calculate_OSA(µ_deg, uv, chl, wavelengths, refractive_indexes, alpha_chl, a
     #  vec_calculate_diffuse_reflection_from_chl=np.vectorize(calculate_diffuse_reflection_from_chl)
 
     # Direct reflection
-    print("refractive_indexes, µ, σ",refractive_indexes, µ, σ)
-
     alpha_direct = calculate_direct_reflection(refractive_indexes, µ, σ)
-    print("PASSED ALPHA_DIRECT")
+
     # Diffuse reflection
     alpha_diffuse = calculate_diffuse_reflection(refractive_indexes, σ)
 

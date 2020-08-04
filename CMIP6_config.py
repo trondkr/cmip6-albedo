@@ -18,7 +18,7 @@ class Config_albedo():
 
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "2100-01-01"
+        self.end_date = "1950-04-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801=False
@@ -26,7 +26,7 @@ class Config_albedo():
         # ESMF and Dask related
         self.dask_chunk = 30
         self.interp = 'bilinear'
-
+        self.outdir="../oceanography/light/"
         self.selected_depth = 0
         self.models = {}
         self.regional_plot_region = np.array([[45, 49], [-126, -120]])
