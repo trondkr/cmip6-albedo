@@ -314,7 +314,8 @@ def main():
 
 
 if __name__ == '__main__':
-   # client = Client()
+#scheduler-address:8786)
+    with Client() as client:
    # print(client)
  #   cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True,
  #                          local_directory='../oceanography/tmp')
@@ -325,4 +326,4 @@ if __name__ == '__main__':
     # cluster.adapt(minimum=1, maximum=50)
     # client = Client(cluster)
 
-    main()
+        main()
