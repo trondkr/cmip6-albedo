@@ -228,16 +228,14 @@ class CMIP6_light:
             for hour_of_day in range(12, 13, 1):
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
 
-               # calc_radiation = [
-               #     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
-               #     j in range(m)]
-                # https://github.com/dask/dask/issues/5464
-              #  rad = dask.compute(calc_radiation, scheduler='processes')
-
-                rad = [self.radiation(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
+                calc_radiation = [
+                    dask.delayed(self.radiation)(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
                     j in range(m)]
-
+                # https://github.com/dask/dask/issues/5464
+                rad = dask.compute(calc_radiation, scheduler='processes')
                 rads = np.asarray(rad).reshape((m, n, 3))
+
+                print("[CMIP6_light] Time to finish with radiation{}".format(datetime.datetime.now() - startdate))
 
                 zr = [CMIP6_albedo_utils.calculate_OSA(rads[i, j, 2], wind[i, j], chl[i, j],
                                                        self.config.wavelengths,
@@ -318,9 +316,9 @@ def main():
 if __name__ == '__main__':
    # client = Client()
    # print(client)
-    cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True,
-                           local_directory='../oceanography/tmp')
-    client = Client(cluster)
+ #   cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True,
+ #                          local_directory='../oceanography/tmp')
+ #   client = Client(cluster)
 
     # gateway = Gateway()
     # cluster = gateway.new_cluster()
