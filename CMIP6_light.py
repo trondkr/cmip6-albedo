@@ -146,7 +146,7 @@ class CMIP6_light:
     2x2 degrees grid and then subsequently to a 1x1 degree grid.
     """
 
-    def extract_dataset_and_regrid(self, model_obj,
+    def extract_dataset_and_regrid(self, model_obj,t_index,
                                    min_lat: float = None,
                                    max_lat: float = None,
                                    min_lon: float = None,
@@ -158,15 +158,16 @@ class CMIP6_light:
 
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
-
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].sel(time=model_obj.current_time,
-                                                                                 y=slice(min_lat, max_lat),
+            print(model_obj.ds_sets[model_obj.current_member_id][key],key)
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).sel(y=slice(min_lat, max_lat),
                                                                          x=slice(min_lon, max_lon))
 
             if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
-                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
+              #  ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'vertex', 'y', 'x')
+                ds_trans = current_ds.transpose('bnds', 'vertex', 'y', 'x')
             else:
-                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
+               # ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'y', 'x')
+                ds_trans = current_ds.transpose('bnds', 'y', 'x')
 
             if key in ["uas", "vas", "clt"]:
                 out_amon = re.regrid_variable(key,
@@ -220,7 +221,7 @@ class CMIP6_light:
         for selected_time in range(0, len(times)):
             model_object.current_time = pd.to_datetime(times[selected_time].values)
 
-            extracted_ds = self.extract_dataset_and_regrid(model_object,
+            extracted_ds = self.extract_dataset_and_regrid(model_object,selected_time,
                                                            min_lat=30,
                                                            max_lat=90,
                                                            min_lon=0,
