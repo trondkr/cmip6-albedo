@@ -9,7 +9,7 @@ import pandas as pd
 import pvlib
 import xarray as xr
 import xesmf as xe
-from distributed import Client
+from distributed import Client, LocalCluster
 
 import CMIP6_IO
 import CMIP6_albedo_plot
