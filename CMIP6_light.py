@@ -159,7 +159,8 @@ class CMIP6_light:
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].sel(y=slice(min_lat, max_lat),
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].sel(time=model_obj.current_time,
+                                                                                 y=slice(min_lat, max_lat),
                                                                          x=slice(min_lon, max_lon))
 
             if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
@@ -210,7 +211,7 @@ class CMIP6_light:
         n = len(wind[0, :])
         return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n
 
-    def perform_light_calculations(self, extracted_ds, model_object):
+    def perform_light_calculations(self, model_object):
         startdate = datetime.datetime.now()
 
         times = extracted_ds["uas"].time
@@ -218,6 +219,13 @@ class CMIP6_light:
 
         for selected_time in range(0, len(times)):
             model_object.current_time = pd.to_datetime(times[selected_time].values)
+
+            extracted_ds = self.extract_dataset_and_regrid(model_object,
+                                                           min_lat=30,
+                                                           max_lat=90,
+                                                           min_lon=0,
+                                                           max_lon=360)
+
 
             print("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                           model_object.name))
@@ -298,13 +306,8 @@ class CMIP6_light:
                 print("[CMIP6_light] Preparing light calculations for member {}".format(member_id))
                 model.current_member_id = member_id
                 # Interpolate all variables for all time-steps in one go
-                extracted_ds = self.extract_dataset_and_regrid(model,
-                                                               min_lat=30,
-                                                               max_lat=90,
-                                                               min_lon=0,
-                                                               max_lon=360)
 
-                self.perform_light_calculations(extracted_ds, model)
+                self.perform_light_calculations(model)
 
 
 def main():
