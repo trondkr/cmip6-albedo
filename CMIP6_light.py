@@ -214,7 +214,7 @@ class CMIP6_light:
     def perform_light_calculations(self, model_object):
         startdate = datetime.datetime.now()
 
-        times = extracted_ds["uas"].time
+        times = model_object.ds_sets[model_object.current_member_id]["uas"].time
         data_list = []
 
         for selected_time in range(0, len(times)):
