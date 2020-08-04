@@ -158,7 +158,7 @@ class CMIP6_light:
 
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
-            print(model_obj.ds_sets[model_obj.current_member_id][key],key)
+
             current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).sel(y=slice(min_lat, max_lat),
                                                                          x=slice(min_lon, max_lon))
 
