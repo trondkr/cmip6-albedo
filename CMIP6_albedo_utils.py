@@ -127,7 +127,7 @@ def calculate_OSA(µ_deg, uv, chl, wavelengths, refractive_indexes, alpha_chl, a
 
     # Direct reflection
     alpha_direct = calculate_direct_reflection(refractive_indexes, µ, σ)
-    print("alpha_direct", alpha_direct)
+
     # Diffuse reflection
     alpha_diffuse = calculate_diffuse_reflection(refractive_indexes, σ)
 
@@ -138,7 +138,7 @@ def calculate_OSA(µ_deg, uv, chl, wavelengths, refractive_indexes, alpha_chl, a
     # Diffuse reflection interior of water from chlorophyll
     alpha_diffuse_chl = calculate_diffuse_reflection_from_chl(wavelengths, chl, alpha_chl, alpha_w, beta_w, σ,
                                                               alpha_direct)
-    print("alpha_diffuse_chl",alpha_diffuse_chl)
+
     # OSA
     return calculate_spectral_and_broadband_OSA(uv, alpha_wc, alpha_direct, alpha_diffuse, alpha_direct_chl,
                                                 alpha_diffuse_chl, solar_energy)

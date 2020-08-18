@@ -26,22 +26,26 @@ class CMIP6_light:
         self.config = CMIP6_config.Config_albedo()
         self.cmip6_models: List[Any] = []
 
-    def radiation(self, cloud_covers, latitude, month, hour_of_day):
-        results = np.zeros((np.shape(cloud_covers)[0], 3))
+    # Required setup for doing light calculations, but only required once per timestep.
+    def setup_pv_system(self, month, hour_of_day):
         offset = 0  # int(lon_180/15.)
         when = [datetime.datetime(2006, month, 15, hour_of_day, 0, 0,
                                   tzinfo=datetime.timezone(datetime.timedelta(hours=offset)))]
         time = pd.DatetimeIndex(when)
+
         sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
         sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
 
         module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
         inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
-        system = {'module': module, 'inverter': inverter,
+        pv_system = {'module': module, 'inverter': inverter,
                   'surface_azimuth': 180}
+
+        return time, pv_system
+
+    def radiation(self, cloud_covers, latitude, ctime, system):
+        results = np.zeros((np.shape(cloud_covers)[0], 3))
         altitude = 0.0
-        system['surface_tilt'] = latitude
-        print("Inside radiation")
 
         # Some calculations are done only on greenwhich meridian line as they are identical around the globe
         # at the same latitude. For that reason longitude is set to greenwhich meridian and do not change. The only reason
@@ -50,35 +54,48 @@ class CMIP6_light:
         # and only change with latitude.
 
         longitude = 0.0
-        solpos = pvlib.solarposition.get_solarposition(time, latitude, longitude)
+        # get_solar-position returns a Pandas dataframe with index so we convert the value
+        # to numpy after calculating
 
-        dni_extra = pvlib.irradiance.get_extra_radiation(time)
-        airmass = pvlib.atmosphere.get_relative_airmass(solpos['apparent_zenith'])
+        solpos = pvlib.solarposition.get_solarposition(ctime, latitude, longitude)
 
+        airmass = pvlib.atmosphere.get_relative_airmass(solpos['apparent_zenith'].to_numpy())
         pressure = pvlib.atmosphere.alt2pres(altitude)
+
         am_abs = pvlib.atmosphere.get_absolute_airmass(airmass, pressure)
-        tl = pvlib.clearsky.lookup_linke_turbidity(time, latitude, longitude)
 
-        for cloud_index, cloud_cover in enumerate(cloud_covers):
-            # cloud cover in percentage units here
-            transmittance = ((100.0 - cloud_cover) / 100.0) * 0.75
-            # irrads is a DataFrame containing ghi, dni, dhi
-            irrads = pvlib.irradiance.liujordan(solpos['apparent_zenith'], transmittance, am_abs)
+        am_abs_array = np.zeros((np.shape(cloud_covers)))
+        am_abs_array = am_abs_array + am_abs
 
-            aoi = pvlib.irradiance.aoi(system['surface_tilt'], system['surface_azimuth'],
-                                       solpos['apparent_zenith'], solpos['azimuth'])
+        apparent_zenith = np.ones((np.shape(cloud_covers)))
+        apparent_zenith = apparent_zenith * solpos['apparent_zenith'].to_numpy()
 
-            total_irrad = pvlib.irradiance.get_total_irradiance(system['surface_tilt'],
-                                                                system['surface_azimuth'],
-                                                                solpos['apparent_zenith'],
-                                                                solpos['azimuth'],
-                                                                irrads['dni'], irrads['ghi'], irrads['dhi'],
-                                                                dni_extra=dni_extra,
-                                                                model='haydavies')
-            print("cloud index", cloud_index)
-            results[cloud_index, 0] = total_irrad['poa_direct']
-            results[cloud_index, 1] = total_irrad['poa_diffuse']
-            results[cloud_index, 2] = solpos['zenith']
+        azimuth = np.ones((np.shape(cloud_covers)))
+        azimuth = azimuth * solpos['azimuth'].to_numpy()
+
+        surface_tilt = np.ones((np.shape(cloud_covers)))
+        surface_tilt = surface_tilt * latitude
+
+        surface_azimuth = np.ones((np.shape(cloud_covers)))
+        surface_azimuth = surface_azimuth * system['surface_azimuth']
+
+        # cloud cover in percentage units here
+        transmittance = ((100.0 - cloud_covers) / 100.0) * 0.75
+        # irrads is a DataFrame containing ghi, dni, dhi
+
+        irrads = pvlib.irradiance.liujordan(solpos['apparent_zenith'].to_numpy(), transmittance, am_abs_array)
+
+        total_irrad = pvlib.irradiance.get_total_irradiance(surface_tilt,
+                                                            surface_azimuth,
+                                                            apparent_zenith,
+                                                            azimuth,
+                                                            irrads['dni'],
+                                                            irrads['ghi'],
+                                                            irrads['dhi'])
+
+        results[:, 0] = total_irrad['poa_direct']
+        results[:, 1] = total_irrad['poa_diffuse']
+        results[:, 2] = solpos['zenith']
 
         return results
 
@@ -147,7 +164,7 @@ class CMIP6_light:
     2x2 degrees grid and then subsequently to a 1x1 degree grid.
     """
 
-    def extract_dataset_and_regrid(self, model_obj,t_index,
+    def extract_dataset_and_regrid(self, model_obj, t_index,
                                    min_lat: float = None,
                                    max_lat: float = None,
                                    min_lon: float = None,
@@ -160,14 +177,15 @@ class CMIP6_light:
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).sel(y=slice(min_lat, max_lat),
-                                                                         x=slice(min_lon, max_lon))
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).sel(
+                y=slice(min_lat, max_lat),
+                x=slice(min_lon, max_lon))
 
             if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
-              #  ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'vertex', 'y', 'x')
+                #  ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'vertex', 'y', 'x')
                 ds_trans = current_ds.transpose('bnds', 'vertex', 'y', 'x')
             else:
-               # ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'y', 'x')
+                # ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'y', 'x')
                 ds_trans = current_ds.transpose('bnds', 'y', 'x')
 
             if key in ["uas", "vas", "clt"]:
@@ -222,12 +240,11 @@ class CMIP6_light:
         for selected_time in range(0, len(times)):
             model_object.current_time = pd.to_datetime(times[selected_time].values)
 
-            extracted_ds = self.extract_dataset_and_regrid(model_object,selected_time,
+            extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time,
                                                            min_lat=30,
                                                            max_lat=90,
                                                            min_lon=0,
                                                            max_lon=360)
-
 
             print("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                           model_object.name))
@@ -237,10 +254,13 @@ class CMIP6_light:
 
             for hour_of_day in range(12, 13, 1):
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
-                print("Clouds", clt[10, :])
-                calc_radiation = [
-                    dask.delayed(self.radiation)(clt[j, :], lat[j, 0], model_object.current_time.month, hour_of_day) for
-                    j in range(m)]
+
+
+
+                ctime, pv_system = self.setup_pv_system(model_object.current_time.month, hour_of_day)
+                calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system) for j in range(m)]
+               # rad = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system) for j in range(m)]
+
                 # https://github.com/dask/dask/issues/5464
                 rad = dask.compute(calc_radiation, scheduler='processes')
                 rads = np.asarray(rad).reshape((m, n, 3))
@@ -268,10 +288,10 @@ class CMIP6_light:
 
                 # Write to file
 
-            #    plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
-            #    plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
-            #                         irradiance_water, wind, OSA,
-            #                         lon, lat, model_object)
+                plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
+                plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
+                                        irradiance_water, wind, OSA,
+                                         lon, lat, model_object)
 
                 coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
                 data_array = xr.DataArray(name="irradiance", data=irradiance_water, coords=coords,
@@ -319,16 +339,16 @@ def main():
 
 
 if __name__ == '__main__':
-#scheduler-address:8786)
+    # scheduler-address:8786)
   #  with Client() as client:
-   # print(client)
- #   cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True,
- #                          local_directory='../oceanography/tmp')
- #   client = Client(cluster)
+  #      print(client)
+    #   cluster = LocalCluster(host='127.0.0.1', scheduler_port=8786, dashboard_address='127.0.0.1:8787', processes=True,
+    #                          local_directory='../oceanography/tmp')
+    #   client = Client(cluster)
 
     # gateway = Gateway()
     # cluster = gateway.new_cluster()
     # cluster.adapt(minimum=1, maximum=50)
     # client = Client(cluster)
 
-    main()
+        main()
