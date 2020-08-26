@@ -15,13 +15,21 @@ class Config_albedo():
         self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
                           "SImon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
+       # self.variable_ids = ["uas","vas"]
+       # self.table_ids = ["Amon","Amon"]
 
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "2099-12-01"
+        self.end_date = "2051-12-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801=True
+
+        # Cut the region of the global data to these longitude and latitudes
+        self.min_lat=30
+        self.max_lat=90
+        self.min_lon=0
+        self.max_lon=360
 
         # ESMF and Dask related
         self.dask_chunk = 30
