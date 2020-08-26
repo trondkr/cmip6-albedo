@@ -23,7 +23,7 @@ class Config_albedo():
         self.end_date = "2051-12-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
-        self.use_esmf_v801=True
+        self.use_esmf_v801=False
 
         # Cut the region of the global data to these longitude and latitudes
         self.min_lat=30
