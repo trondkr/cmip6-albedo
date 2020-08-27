@@ -133,6 +133,8 @@ class CMIP6_IO:
     """
     def extract_dataset_and_save_to_netcdf(self, model_obj, config:CMIP6_config.Config_albedo):
 
+        if not os.path.exists(config.cmip6_outdir): os.mkdir(config.cmip6_outdir)
+
         ds_out_amon = xe.util.grid_2d(config.min_lon,
                                       config.max_lon, 2,
                                       config.min_lat,
@@ -170,11 +172,11 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
 
-            outfile = "{}_{}_{}.nc".format(key, model_obj.name, model_obj.current_member_id)
+            outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir, key, model_obj.name, model_obj.current_member_id)
             if os.path.exists(outfile): os.remove(outfile)
 
-            test=out.to_dataset()
-            print(test)
-            test2=test.chunk({'time': -1,'y':10, 'x':50})
-            test2.to_netcdf(path=outfile,format='NETCDF4',engine='netcdf4')
+            # Convert to dataset before writing to netcdf file. Writing to file downlods and concatenates all
+            # of the data and we therefore re-chunk to split the process into several using dask
+            ds=out.to_dataset()
+            ds.chunk({'time': -1,'y':10, 'x':50}).to_netcdf(path=outfile,format='NETCDF4',engine='netcdf4')
             print("[CMIP6_light] wrote variable {} to file".format(key))

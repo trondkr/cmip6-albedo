@@ -39,7 +39,7 @@ class CMIP6_light:
         module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
         inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
         pv_system = {'module': module, 'inverter': inverter,
-                  'surface_azimuth': 180}
+                     'surface_azimuth': 180}
 
         return time, pv_system
 
@@ -219,11 +219,11 @@ class CMIP6_light:
         vas = extracted_ds["vas"].values
 
         if np.nanmax(sisnconc) > 5:
-            percentage_to_ratio=1/100.
-            sisnconc=sisnconc * percentage_to_ratio
+            percentage_to_ratio = 1 / 100.
+            sisnconc = sisnconc * percentage_to_ratio
         if np.nanmax(siconc) > 5:
-            percentage_to_ratio=1/100.
-            siconc=siconc * percentage_to_ratio
+            percentage_to_ratio = 1 / 100.
+            siconc = siconc * percentage_to_ratio
 
         # Calculate scalar wind and organize the data arrays to be used for  given time-step (month-year)
         wind = np.sqrt(uas ** 2 + vas ** 2)
@@ -231,7 +231,7 @@ class CMIP6_light:
         n = len(wind[0, :])
         return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n
 
-    def calculate_diffuse_albedo_per_grid_point(self, sisnconc:np.ndarray, siconc:np.ndarray):
+    def calculate_diffuse_albedo_per_grid_point(self, sisnconc: np.ndarray, siconc: np.ndarray):
         return siconc * (sisnconc * 0.65 + (siconc - sisnconc) * 0.5) + (1 - siconc) * 0.06
 
     def perform_light_calculations(self, model_object):
@@ -252,17 +252,17 @@ class CMIP6_light:
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
 
-            albedo = self.calculate_diffuse_albedo_per_grid_point(sisnconc=sisnconc,siconc=siconc)
+            albedo = self.calculate_diffuse_albedo_per_grid_point(sisnconc=sisnconc, siconc=siconc)
 
             for hour_of_day in range(12, 13, 1):
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
 
                 ctime, pv_system = self.setup_pv_system(model_object.current_time.month, hour_of_day)
-               # calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
+                # calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
                 rad = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
 
                 # https://github.com/dask/dask/issues/5464
-               # rad = dask.compute(calc_radiation)
+                # rad = dask.compute(calc_radiation)
                 rads = np.asarray(rad).reshape((m, n, 3))
 
                 print("[CMIP6_light] Time to finish with radiation{}".format(datetime.datetime.now() - startdate))
@@ -288,10 +288,10 @@ class CMIP6_light:
 
                 # Write to file
 
-              #  plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
-              #  plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
-              #                          irradiance_water, wind, OSA,
-              #                           lon, lat, model_object)
+                #  plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
+                #  plotter.create_plots(sisnconc, sisnthick, sithick, siconc, clt, chl, rads,
+                #                          irradiance_water, wind, OSA,
+                #                           lon, lat, model_object)
 
                 coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
                 data_array = xr.DataArray(name="irradiance", data=irradiance_water, coords=coords,
@@ -320,7 +320,6 @@ class CMIP6_light:
         io.organize_cmip6_datasets(self.config)
         self.cmip6_models = io.models
 
-
         for model in self.cmip6_models:
             print("[CMIP6_light] Model {}".format(model.description))
 
@@ -338,7 +337,6 @@ class CMIP6_light:
 
 
 def main():
-
     light = CMIP6_light()
     light.config.setup_parameters()
     light.calculate_light()
@@ -348,10 +346,11 @@ if __name__ == '__main__':
     np.warnings.filterwarnings('ignore')
     # https://docs.dask.org/en/latest/diagnostics-distributed.html
     from dask.distributed import Client
+
     dask.config.set(scheduler='processes')
 
     client = Client()
-    status=client.scheduler_info()['services']
+    status = client.scheduler_info()['services']
     print("Dask started with status at: http://localhost:{}/status".format(status["dashboard"]))
     print(client)
 
