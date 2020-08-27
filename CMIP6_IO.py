@@ -1,13 +1,12 @@
 import xarray as xr
 import cftime
 import numpy as np
-import pandas as pd
-import geopandas as gpd
 from cmip6_preprocessing.preprocessing import combined_preprocessing
 import CMIP6_model
-import CMIP6_light
 import CMIP6_config
-
+import CMIP6_regrid
+import xesmf as xe
+import os
 class CMIP6_IO:
 
     def __init__(self):
@@ -125,3 +124,57 @@ class CMIP6_IO:
                 ds["time"].values = times_plus_2000
                 ds = xr.decode_cf(ds)
         return ds
+
+    """
+        Regrid to cartesian grid and save to NetCDF:
+        For any Amon related variables (wind, clouds), the resolution from CMIP6 models is less than
+        1 degree longitude x latitude. To interpolate to a 1x1 degree grid we therefore first interpolate to a
+        2x2 degrees grid and then subsequently to a 1x1 degree grid.
+    """
+    def extract_dataset_and_save_to_netcdf(self, model_obj, config:CMIP6_config.Config_albedo):
+
+        ds_out_amon = xe.util.grid_2d(config.min_lon,
+                                      config.max_lon, 2,
+                                      config.min_lat,
+                                      config.max_lat, 2)
+        ds_out = xe.util.grid_2d(config.min_lon,
+                                 config.max_lon, 1,
+                                 config.min_lat,
+                                 config.max_lat, 1)
+
+        re = CMIP6_regrid.CMIP6_regrid()
+
+        for key in model_obj.ds_sets[model_obj.current_member_id].keys():
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].sel(
+                y=slice(config.min_lat, config.max_lat),
+                x=slice(config.min_lon, config.max_lon))
+
+            if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
+            else:
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
+
+            if key in ["uas", "vas", "clt", "chl"]:
+                out_amon = re.regrid_variable(key,
+                                              ds_trans,
+                                              ds_out_amon,
+                                              interpolation_method=config.interp,
+                                              use_esmf_v801=config.use_esmf_v801).to_dataset()
+
+                out = re.regrid_variable(key, out_amon, ds_out,
+                                         interpolation_method=config.interp,
+                                         use_esmf_v801=config.use_esmf_v801)
+            else:
+                out = re.regrid_variable(key, ds_trans,
+                                         ds_out,
+                                         interpolation_method=config.interp,
+                                         use_esmf_v801=config.use_esmf_v801)
+
+            outfile = "{}_{}_{}.nc".format(key, model_obj.name, model_obj.current_member_id)
+            if os.path.exists(outfile): os.remove(outfile)
+
+            test=out.to_dataset()
+            print(test)
+            test2=test.chunk({'time': -1,'y':10, 'x':50})
+            test2.to_netcdf(path=outfile,format='NETCDF4',engine='netcdf4')
+            print("[CMIP6_light] wrote variable {} to file".format(key))

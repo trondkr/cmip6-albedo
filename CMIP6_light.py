@@ -162,41 +162,6 @@ class CMIP6_light:
     1 degree longitude x latitude. To interpolate to a 1x1 degree grid we therefore first interpolate to a
     2x2 degrees grid and then subsequently to a 1x1 degree grid.
     """
-    def extract_variable(self, key, ds_out_amon, ds_out, model_obj, t_index) -> dask.delayed:
-        re = CMIP6_regrid.CMIP6_regrid()
-        current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).sel(
-            y=slice(self.config.min_lat, self.config.max_lat),
-            x=slice(self.config.min_lon, self.config.max_lon))
-
-        if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
-            #  ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'vertex', 'y', 'x')
-            ds_trans = current_ds.transpose('bnds', 'vertex', 'y', 'x')
-        else:
-            # ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'y', 'x')
-            ds_trans = current_ds.transpose('bnds', 'y', 'x')
-
-        if key in ["uas", "vas", "clt"]:
-            out_amon = re.regrid_variable(key,
-                                          ds_trans,
-                                          ds_out_amon,
-                                          interpolation_method=self.config.interp,
-                                          use_esmf_v801=self.config.use_esmf_v801).to_dataset()
-
-            out = re.regrid_variable(key, out_amon, ds_out,
-                                     interpolation_method=self.config.interp,
-                                     use_esmf_v801=self.config.use_esmf_v801)
-        else:
-            out = re.regrid_variable(key, ds_trans,
-                                     ds_out,
-                                     interpolation_method=self.config.interp,
-                                     use_esmf_v801=self.config.use_esmf_v801)
-
-        #   outfile = "{}_{}_{}.nc".format(key,model_obj.name,model_obj.current_member_id)
-        #   if os.path.exists(outfile): os.remove(outfile)
-        #  out.to_dataset().to_netcdf(outfile)
-      #  print("[CMIP6_light] wrote variable {} to file".format(key))
-
-        return out
 
     def extract_dataset_and_regrid(self, model_obj, t_index):
         extracted: dict = {}
@@ -205,20 +170,39 @@ class CMIP6_light:
                                       self.config.max_lon, 2,
                                       self.config.min_lat,
                                       self.config.max_lat, 2)
-
         ds_out = xe.util.grid_2d(self.config.min_lon,
                                  self.config.max_lon, 1,
                                  self.config.min_lat,
                                  self.config.max_lat, 1)
 
-        extract = [dask.delayed(self.extract_variable)(key, ds_out_amon, ds_out, model_obj, t_index) \
-                   for key in model_obj.ds_sets[model_obj.current_member_id].keys()]
+        re = CMIP6_regrid.CMIP6_regrid()
+        for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-        tasks = dask.compute(extract)
-        # Organize the list of dataArrays resulting from the delayed operations and
-        # store in dictionary
-        for da in tasks[0]:
-            extracted[da.name] = da
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).sel(
+                y=slice(self.config.min_lat, self.config.max_lat),
+                x=slice(self.config.min_lon, self.config.max_lon))
+
+            if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
+                ds_trans = current_ds.transpose('bnds', 'vertex', 'y', 'x')
+            else:
+                ds_trans = current_ds.transpose('bnds', 'y', 'x')
+
+            if key in ["uas", "vas", "clt"]:
+                out_amon = re.regrid_variable(key,
+                                              ds_trans,
+                                              ds_out_amon,
+                                              interpolation_method=self.config.interp,
+                                              use_esmf_v801=self.config.use_esmf_v801).to_dataset()
+
+                out = re.regrid_variable(key, out_amon, ds_out,
+                                         interpolation_method=self.config.interp,
+                                         use_esmf_v801=self.config.use_esmf_v801)
+            else:
+                out = re.regrid_variable(key, ds_trans,
+                                         ds_out,
+                                         interpolation_method=self.config.interp,
+                                         use_esmf_v801=self.config.use_esmf_v801)
+            extracted[key] = out
         return extracted
 
     def values_for_timestep(self, extracted_ds, selected_time):
@@ -250,7 +234,6 @@ class CMIP6_light:
     def calculate_diffuse_albedo_per_grid_point(self, sisnconc:np.ndarray, siconc:np.ndarray):
         return siconc * (sisnconc * 0.65 + (siconc - sisnconc) * 0.5) + (1 - siconc) * 0.06
 
-
     def perform_light_calculations(self, model_object):
         startdate = datetime.datetime.now()
 
@@ -260,7 +243,8 @@ class CMIP6_light:
         for selected_time in range(0, len(times)):
             model_object.current_time = pd.to_datetime(times[selected_time].values)
 
-            extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
+            if not self.config.use_local_CMIP6_files:
+                extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
 
             print("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                           model_object.name))
@@ -274,11 +258,11 @@ class CMIP6_light:
                 print("[CMIP6_light] Running for hour {}".format(hour_of_day))
 
                 ctime, pv_system = self.setup_pv_system(model_object.current_time.month, hour_of_day)
-                calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
-               # rad = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
+               # calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
+                rad = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
 
                 # https://github.com/dask/dask/issues/5464
-                rad = dask.compute(calc_radiation)
+               # rad = dask.compute(calc_radiation)
                 rads = np.asarray(rad).reshape((m, n, 3))
 
                 print("[CMIP6_light] Time to finish with radiation{}".format(datetime.datetime.now() - startdate))
@@ -335,7 +319,7 @@ class CMIP6_light:
         io = CMIP6_IO.CMIP6_IO()
         io.organize_cmip6_datasets(self.config)
         self.cmip6_models = io.models
-        print("[CMIP6_light] Light calculations will involve {} CMIP6 models".format(len(self.cmip6_models)))
+
 
         for model in self.cmip6_models:
             print("[CMIP6_light] Model {}".format(model.description))
@@ -343,9 +327,14 @@ class CMIP6_light:
             for member_id in model.member_ids:
                 print("[CMIP6_light] Preparing light calculations for member {}".format(member_id))
                 model.current_member_id = member_id
-                # Interpolate all variables for all time-steps in one go
 
-                self.perform_light_calculations(model)
+                print("[CMIP6_light] Light calculations will involve {} CMIP6 model(s)".format(
+                    len(self.cmip6_models)))
+
+                if self.config.generate_local_CMIP6_files:
+                    io.extract_dataset_and_save_to_netcdf(model, self.config)
+                if self.config.perform_light_calculations:
+                    self.perform_light_calculations(model)
 
 
 def main():
@@ -359,6 +348,7 @@ if __name__ == '__main__':
     np.warnings.filterwarnings('ignore')
     # https://docs.dask.org/en/latest/diagnostics-distributed.html
     from dask.distributed import Client
+    dask.config.set(scheduler='processes')
 
     client = Client()
     status=client.scheduler_info()['services']

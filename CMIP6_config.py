@@ -11,19 +11,22 @@ class Config_albedo():
         self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r1i1p1f1"]  #
         self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
-        self.source_ids = ["ACCESS-ESM1-5"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
+        self.source_ids = ["ACCESS-ESM1-5"] #["ACCESS-ESM1-5"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
         self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
                           "SImon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
-       # self.variable_ids = ["uas","vas"]
-       # self.table_ids = ["Amon","Amon"]
+        self.variable_ids = ["chl"]
+        self.table_ids = ["Omon"]
 
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "2051-12-01"
+        self.end_date = "2099-12-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801=False
+        self.use_local_CMIP6_files = False
+        self.generate_local_CMIP6_files=True
+        self.perform_light_calculations=False
 
         # Cut the region of the global data to these longitude and latitudes
         self.min_lat=30
