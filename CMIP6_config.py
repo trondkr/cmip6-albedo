@@ -11,7 +11,7 @@ class Config_albedo():
         self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r1i1p1f1"]  #
         self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
-        self.source_ids = ["ACCESS-ESM1-5", "ACCESS-ESM1-5","MPI-ESM1-2-LR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
+        self.source_ids = ["ACCESS-ESM1-5", "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
         self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
                           "SImon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables

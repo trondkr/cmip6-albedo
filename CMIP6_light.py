@@ -319,16 +319,19 @@ class CMIP6_light:
         io = CMIP6_IO.CMIP6_IO()
         io.organize_cmip6_datasets(self.config)
         self.cmip6_models = io.models
+        print("[CMIP6_light] Light calculations will involve {} CMIP6 model(s)".format(
+            len(self.cmip6_models)))
+        for ind, model in enumerate(self.cmip6_models):
+            print("[CMIP6_light] {} : {}".format(ind, model.name))
+            for member_id in model.member_ids:
+                print("[CMIP6_light] Members : {}".format(member_id))
 
         for model in self.cmip6_models:
             print("[CMIP6_light] Model {}".format(model.description))
 
             for member_id in model.member_ids:
-                print("[CMIP6_light] Preparing light calculations for member {}".format(member_id))
+                print("[CMIP6_light] Model member {}".format(member_id))
                 model.current_member_id = member_id
-
-                print("[CMIP6_light] Light calculations will involve {} CMIP6 model(s)".format(
-                    len(self.cmip6_models)))
 
                 if self.config.generate_local_CMIP6_files:
                     io.extract_dataset_and_save_to_netcdf(model, self.config)
