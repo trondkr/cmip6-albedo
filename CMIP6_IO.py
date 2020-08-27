@@ -77,7 +77,7 @@ class CMIP6_IO:
                             # Save the info to model object
                             if member_id in model_object.member_ids is False:
                                 model_object.member_ids.append(member_id)
-                            if variable_id  in model_object.ocean_vars is False:
+                            if variable_id in model_object.ocean_vars is False:
                                 model_object.ocean_vars.append(variable_id)
                             self.dataset_into_model_dictionary(member_id, variable_id, dset_processed, model_object)
 
@@ -134,13 +134,9 @@ class CMIP6_IO:
     """
 
     def extract_dataset_and_save_to_netcdf(self, model_obj, config: CMIP6_config.Config_albedo):
-        for key in model_obj.ds_sets[model_obj.current_member_id].keys():
-            outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir, model_obj.name, model_obj.current_member_id,
-                                                   key)
-            print(outfile)
-        return
 
-        if not os.path.exists(config.cmip6_outdir): os.mkdir(config.cmip6_outdir)
+        if os.path.exists(config.cmip6_outdir) is False:
+            os.mkdir(config.cmip6_outdir)
 
         ds_out_amon = xe.util.grid_2d(config.min_lon,
                                       config.max_lon, 2,
@@ -184,7 +180,7 @@ class CMIP6_IO:
                                                    key)
             if os.path.exists(outfile): os.remove(outfile)
 
-            # Convert to dataset before writing to netcdf file. Writing to file downlods and concatenates all
+            # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
             # of the data and we therefore re-chunk to split the process into several using dask
             ds = out.to_dataset()
             ds.chunk({'time': -1, 'y': 10, 'x': 50}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
