@@ -1,6 +1,7 @@
 import pandas as pd
 import gcsfs
 import numpy as np
+import logging
 
 class Config_albedo():
 
@@ -40,6 +41,26 @@ class Config_albedo():
         self.selected_depth = 0
         self.models = {}
         self.regional_plot_region = np.array([[45, 49], [-126, -120]])
+
+        self.setup_logging()
+
+    def setup_logging(self):
+        # create logger with 'spam_application'
+        logger = logging.getLogger('CMIP6-albedo-logger')
+        logger.setLevel(logging.DEBUG)
+        # create file handler which logs even debug messages
+        fh = logging.FileHandler('CMIP6-albedo-logger.log')
+        fh.setLevel(logging.DEBUG)
+        # create console handler with a higher log level
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.ERROR)
+
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
+        # add the handlers to the logger
+        logger.addHandler(fh)
+        logger.addHandler(ch)
 
     def setup_parameters(self):
         wl = pd.read_csv("data/Wavelength/Fresnels_refraction.csv", header=0, sep=";", decimal=",")
