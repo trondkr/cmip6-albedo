@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 from typing import List, Any
 
@@ -246,7 +247,7 @@ class CMIP6_light:
             if not self.config.use_local_CMIP6_files:
                 extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
 
-            print("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
+            logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                           model_object.name))
 
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, m, n = self.values_for_timestep(
@@ -255,7 +256,7 @@ class CMIP6_light:
             albedo = self.calculate_diffuse_albedo_per_grid_point(sisnconc=sisnconc, siconc=siconc)
 
             for hour_of_day in range(12, 13, 1):
-                print("[CMIP6_light] Running for hour {}".format(hour_of_day))
+                logging.info("[CMIP6_light] Running for hour {}".format(hour_of_day))
 
                 ctime, pv_system = self.setup_pv_system(model_object.current_time.month, hour_of_day)
                 # calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, albedo[j, :]) for j in range(m)]
@@ -265,7 +266,7 @@ class CMIP6_light:
                 # rad = dask.compute(calc_radiation)
                 rads = np.asarray(rad).reshape((m, n, 3))
 
-                print("[CMIP6_light] Time to finish with radiation{}".format(datetime.datetime.now() - startdate))
+                logging.info("[CMIP6_light] Time to finish with radiation{}".format(datetime.datetime.now() - startdate))
 
                 zr = [CMIP6_albedo_utils.calculate_OSA(rads[i, j, 2], wind[i, j], chl[i, j],
                                                        self.config.wavelengths,
@@ -283,7 +284,7 @@ class CMIP6_light:
                 irradiance_water = (rads[:, :, 0] * OSA[:, :, 0] + rads[:, :, 1] * OSA[:, :, 1]) / (
                         OSA[:, :, 0] + OSA[:, :, 1])
 
-                print("[CMIP6_light] Time to finish {} with mean OSA {}".format(datetime.datetime.now() - startdate,
+                logging.info("[CMIP6_light] Time to finish {} with mean OSA {}".format(datetime.datetime.now() - startdate,
                                                                                 np.nanmean(irradiance_water)))
 
                 # Write to file
@@ -319,18 +320,18 @@ class CMIP6_light:
         io = CMIP6_IO.CMIP6_IO()
         io.organize_cmip6_datasets(self.config)
         self.cmip6_models = io.models
-        print("[CMIP6_light] Light calculations will involve {} CMIP6 model(s)".format(
+        logging.info("[CMIP6_light] Light calculations will involve {} CMIP6 model(s)".format(
             len(self.cmip6_models)))
         for ind, model in enumerate(self.cmip6_models):
-            print("[CMIP6_light] {} : {}".format(ind, model.name))
+            logging.info("[CMIP6_light] {} : {}".format(ind, model.name))
             for member_id in model.member_ids:
-                print("[CMIP6_light] Members : {}".format(member_id))
+                logging.info("[CMIP6_light] Members : {}".format(member_id))
 
         for model in self.cmip6_models:
-            print("[CMIP6_light] Model {}".format(model.description()))
+            logging.info("[CMIP6_light] Model {}".format(model.description()))
 
             for member_id in model.member_ids:
-                print("[CMIP6_light] Model member {}".format(member_id))
+                logging.info("[CMIP6_light] Model member {}".format(member_id))
                 model.current_member_id = member_id
 
                 if self.config.generate_local_CMIP6_files:
@@ -342,6 +343,7 @@ class CMIP6_light:
 def main():
     light = CMIP6_light()
     light.config.setup_parameters()
+    light.config.setup_logging()
     light.calculate_light()
 
 

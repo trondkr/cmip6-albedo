@@ -1,5 +1,4 @@
 import logging
-
 import xarray as xr
 import cftime
 import numpy as np
@@ -62,7 +61,7 @@ class CMIP6_IO:
 
                             # Extract the time period of interest
                             ds = ds.sel(time=slice(config.start_date, config.end_date))
-                            print("[CMIP6_IO] {} => Extracted {} range from {} to {}".format(source_id,
+                            logging.info("[CMIP6_IO] {} => Extracted {} range from {} to {}".format(source_id,
                                                                                              variable_id,
                                                                                              ds["time"].values[0],
                                                                                              ds["time"].values[-1]))
@@ -107,7 +106,7 @@ class CMIP6_IO:
 
         mapper = config.fs.get_mapper(df_sub.zstore.values[-1])
         ds = xr.open_zarr(mapper, consolidated=True)  # , mask_and_scale=True)
-        # print("[CMIP6_IO] chunks {}".format(ds.chunks))
+        # logging.info("[CMIP6_IO] chunks {}".format(ds.chunks))
 
         # print("Time encoding: {} - {}".format(ds.indexes['time'], ds.indexes['time'].dtype))
         if not ds.indexes["time"].dtype in ["datetime64[ns]", "object"]:

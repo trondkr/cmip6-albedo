@@ -42,8 +42,6 @@ class Config_albedo():
         self.models = {}
         self.regional_plot_region = np.array([[45, 49], [-126, -120]])
 
-        self.setup_logging()
-
     def setup_logging(self):
         # create logger with 'spam_application'
         logger = logging.getLogger('CMIP6-albedo-logger')
@@ -61,6 +59,7 @@ class Config_albedo():
         # add the handlers to the logger
         logger.addHandler(fh)
         logger.addHandler(ch)
+        logging.info("[CMIP6_config] logging started")
 
     def setup_parameters(self):
         wl = pd.read_csv("data/Wavelength/Fresnels_refraction.csv", header=0, sep=";", decimal=",")
