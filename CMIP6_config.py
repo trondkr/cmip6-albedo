@@ -44,7 +44,7 @@ class Config_albedo():
 
     def setup_logging(self):
         logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
 
     def setup_parameters(self):
         wl = pd.read_csv("data/Wavelength/Fresnels_refraction.csv", header=0, sep=";", decimal=",")
