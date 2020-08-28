@@ -327,7 +327,7 @@ class CMIP6_light:
                 print("[CMIP6_light] Members : {}".format(member_id))
 
         for model in self.cmip6_models:
-            print("[CMIP6_light] Model {}".format(model.description))
+            print("[CMIP6_light] Model {}".format(model.description()))
 
             for member_id in model.member_ids:
                 print("[CMIP6_light] Model member {}".format(member_id))

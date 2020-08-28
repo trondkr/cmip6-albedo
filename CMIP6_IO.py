@@ -1,3 +1,5 @@
+import logging
+
 import xarray as xr
 import cftime
 import numpy as np
@@ -26,7 +28,7 @@ class CMIP6_IO:
                     else:
                         model_object = CMIP6_model.CMIP6_MODEL(name=source_id)
 
-                    print("[CMIP6_IO] Organizing CMIP6 model object {}".format(model_object.name))
+                    logging.info("[CMIP6_IO] Organizing CMIP6 model object {}".format(model_object.name))
 
                     for member_id in config.member_ids:
                         for variable_id, table_id in zip(config.variable_ids, config.table_ids):
@@ -60,11 +62,10 @@ class CMIP6_IO:
 
                             # Extract the time period of interest
                             ds = ds.sel(time=slice(config.start_date, config.end_date))
-                            print("[CMIP6_IO] {} => Dates extracted {} range from {} to {}".format(source_id,
-                                                                                                   variable_id,
-                                                                                                   ds["time"].values[0],
-                                                                                                   ds["time"].values[
-                                                                                                       -1]))
+                            print("[CMIP6_IO] {} => Extracted {} range from {} to {}".format(source_id,
+                                                                                             variable_id,
+                                                                                             ds["time"].values[0],
+                                                                                             ds["time"].values[-1]))
 
                             # pass the pre-processing directly
                             dset_processed = combined_preprocessing(ds)
@@ -82,7 +83,7 @@ class CMIP6_IO:
                             self.dataset_into_model_dictionary(member_id, variable_id, dset_processed, model_object)
 
                     self.models.append(model_object)
-                    print("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
+                    logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
                                                                                model_object.name))
 
     def dataset_into_model_dictionary(self,
@@ -176,7 +177,9 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
 
-            outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir, model_obj.name, model_obj.current_member_id,
+            outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir,
+                                                   model_obj.name,
+                                                   model_obj.current_member_id,
                                                    key)
             if os.path.exists(outfile): os.remove(outfile)
 
@@ -184,4 +187,4 @@ class CMIP6_IO:
             # of the data and we therefore re-chunk to split the process into several using dask
             ds = out.to_dataset()
             ds.chunk({'time': -1, 'y': 10, 'x': 50}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
-            print("[CMIP6_light] wrote variable {} to file".format(key))
+            logging.info("[CMIP6_light] wrote variable {} to file".format(key))
