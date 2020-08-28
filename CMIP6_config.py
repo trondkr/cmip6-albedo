@@ -43,22 +43,7 @@ class Config_albedo():
         self.regional_plot_region = np.array([[45, 49], [-126, -120]])
 
     def setup_logging(self):
-        # create logger with 'spam_application'
-        logger = logging.getLogger('CMIP6-albedo-logger')
-        logger.setLevel(logging.DEBUG)
-        # create file handler which logs even debug messages
-        fh = logging.FileHandler('CMIP6-albedo-logger.log')
-        fh.setLevel(logging.DEBUG)
-        # create console handler with a higher log level
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.ERROR)
-
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        fh.setFormatter(formatter)
-        ch.setFormatter(formatter)
-        # add the handlers to the logger
-        logger.addHandler(fh)
-        logger.addHandler(ch)
+        logging.basicConfig(filename='cmip6-albedo.log', level=logging.DEBUG)
         logging.info("[CMIP6_config] logging started")
 
     def setup_parameters(self):
