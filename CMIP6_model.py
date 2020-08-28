@@ -1,14 +1,8 @@
-import os, sys
-import pandas as pd
-import xarray as xr
-import datetime
-import dateutil
-from cartopy.util import add_cyclic_point
-import os
+import sys
 import logging
-
 # Local files and utility functions
 sys.path.append("./subroutines/")
+
 
 class CMIP6_MODEL():
     def __init__(self, name):
@@ -16,15 +10,13 @@ class CMIP6_MODEL():
         self.ocean_vars = []
         self.ds_sets = {}
         self.member_ids = []
-        self.current_time=None
-        self.current_member_id=None
+        self.current_time = None
+        self.current_member_id = None
 
     def description(self):
-        logging.info("----- {} -----".format(self.name))
+        logging.info("[CMIP6_model] {} ".format(self.name))
         for ds in self.ds_sets.keys():
-            logging.info("Model dataset: {} ".format(ds))
-        logging.info("members: {}".format(self.member_ids))
-        logging.info("variables: {}".format(self.ocean_vars))
-        logging.info("--------------".format(self.name))
-
-
+            logging.info("[CMIP6_model] Model dataset: {} ".format(ds))
+        logging.info("[CMIP6_model] members: {}".format(self.member_ids))
+        logging.info("[CMIP6_model] variables: {}".format(self.ocean_vars))
+        logging.info("[CMIP6_model] --------------".format(self.name))

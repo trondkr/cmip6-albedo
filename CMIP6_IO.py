@@ -76,9 +76,9 @@ class CMIP6_IO:
                                     dset_processed = dset_processed.isel(lev=config.selected_depth)
 
                             # Save the info to model object
-                            if member_id in model_object.member_ids is False:
+                            if not member_id in model_object.member_ids:
                                 model_object.member_ids.append(member_id)
-                            if variable_id in model_object.ocean_vars is False:
+                            if not variable_id in model_object.ocean_vars:
                                 model_object.ocean_vars.append(variable_id)
                             self.dataset_into_model_dictionary(member_id, variable_id, dset_processed, model_object)
 
