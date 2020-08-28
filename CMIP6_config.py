@@ -42,10 +42,6 @@ class Config_albedo():
         self.models = {}
         self.regional_plot_region = np.array([[45, 49], [-126, -120]])
 
-    def setup_logging(self):
-        logging.basicConfig(filename='cmip6-albedo.log', level=logging.DEBUG)
-        logging.info("[CMIP6_config] logging started")
-
     def setup_parameters(self):
         wl = pd.read_csv("data/Wavelength/Fresnels_refraction.csv", header=0, sep=";", decimal=",")
         self.wavelengths = wl["λ"].values

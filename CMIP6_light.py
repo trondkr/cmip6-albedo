@@ -343,7 +343,8 @@ class CMIP6_light:
 def main():
     light = CMIP6_light()
     light.config.setup_parameters()
-    light.config.setup_logging()
+    logging.basicConfig(filename='cmip6-albedo.log', level=logging.DEBUG)
+    logging.info("[CMIP6_config] logging started")
     light.calculate_light()
 
 
