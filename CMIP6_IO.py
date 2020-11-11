@@ -15,6 +15,51 @@ class CMIP6_IO:
     def __init__(self):
         self.models = []
 
+    # Format the input/output file to be the same formatting. This is useful when we write datasets to
+    # netcdf files we can use the same formatting for reading back in with exception of the input/output directory
+
+    def format_netcdf_filename(self, dir, model_name, member_id, key):
+        return "{}CMIP6_{}_{}_{}.nc".format(dir, model_name, member_id, key)
+
+    def organize_cmip6_netcdf_files_into_datasets(self, config: CMIP6_config.Config_albedo):
+
+        for experiment_id in config.experiment_ids:
+
+            for source_id in config.source_ids:
+                if source_id in config.models.keys():
+                    model_object = config.models[source_id]
+                else:
+                    model_object = CMIP6_model.CMIP6_MODEL(name=source_id)
+
+                logging.info("[CMIP6_IO] Organizing netCDF CMIP6 model object {}".format(model_object.name))
+
+                for member_id in config.member_ids:
+                    for variable_id, table_id in zip(config.variable_ids, config.table_ids):
+
+                        netcdf_filename = self.format_netcdf_filename(config.cmip6_netcdf_dir,
+                                                                      model_object.name,
+                                                                      member_id,
+                                                                      variable_id)
+
+                        ds = xr.open_dataset(netcdf_filename)
+
+                        # Extract the time period of interest
+                        ds = ds.sel(time=slice(config.start_date, config.end_date))
+                        logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
+                                                                                                variable_id,
+                                                                                                ds["time"].values[0],
+                                                                                                ds["time"].values[-1]))
+                        # Save the info to model object
+                        if not member_id in model_object.member_ids:
+                            model_object.member_ids.append(member_id)
+                        if not variable_id in model_object.ocean_vars:
+                            model_object.ocean_vars.append(variable_id)
+                        self.dataset_into_model_dictionary(member_id, variable_id, ds, model_object)
+
+                self.models.append(model_object)
+                logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
+                                                                                  model_object.name))
+
     # Loop over all models and scenarios listed in CMIP6_light.config
     # and store each CMIP6 variable and scenario into a CMIP6 model object
     def organize_cmip6_datasets(self, config: CMIP6_config.Config_albedo):
@@ -62,9 +107,11 @@ class CMIP6_IO:
                             # Extract the time period of interest
                             ds = ds.sel(time=slice(config.start_date, config.end_date))
                             logging.info("[CMIP6_IO] {} => Extracted {} range from {} to {}".format(source_id,
-                                                                                             variable_id,
-                                                                                             ds["time"].values[0],
-                                                                                             ds["time"].values[-1]))
+                                                                                                    variable_id,
+                                                                                                    ds["time"].values[
+                                                                                                        0],
+                                                                                                    ds["time"].values[
+                                                                                                        -1]))
 
                             # pass the pre-processing directly
                             dset_processed = combined_preprocessing(ds)
@@ -83,7 +130,7 @@ class CMIP6_IO:
 
                     self.models.append(model_object)
                     logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
-                                                                               model_object.name))
+                                                                                      model_object.name))
 
     def dataset_into_model_dictionary(self,
                                       member_id: str,
@@ -176,10 +223,9 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
 
-            outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir,
-                                                   model_obj.name,
-                                                   model_obj.current_member_id,
-                                                   key)
+            outfile = self.format_netcdf_filename(config.cmip6_outdir, model_obj.name,
+                                                  model_obj.current_member_id, key)
+
             if os.path.exists(outfile): os.remove(outfile)
 
             # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all

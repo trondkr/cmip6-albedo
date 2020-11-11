@@ -8,25 +8,40 @@ from cartopy.util import add_cyclic_point
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import matplotlib
+matplotlib.use('Qt5Agg')
+import logging
 
 class CMIP6_albedo_plot():
 
-    def create_plots(self, sisnconc, sisnthick, sithick, siconc, clt, chl, rads, irradiance_water, wind, OSA, lon, lat, model_object):
+    def create_plots(self, lon, lat, model_object, sisnconc=None, sisnthick=None, sithick=None, siconc=None, \
+                     clt=None, chl=None, rads=None, irradiance_water=None, wind=None, OSA=None, OSA_UV=None, \
+                     OSA_VIS=None, OSA_NIR=None, albedo=None, direct_sw=None, plotname_postfix=None):
         # create_streamplot(dr_out_uas,dr_out_vas,wind,lon[0,:],lat[:,0],"wind",nlevels=None)
-        # create_plot(wind,lon[0,:],lat[:,0],"wind",regional=True)
-        # create_plot(sisnconc,lon[0,:],lat[:,0],"sisnconc",regional=True)
-        # create_plot(sisnthick,lon[0,:],lat[:,0],"sisnthick",regional=True)
-        # create_plot(siconc,lon[0,:],lat[:,0],"siconc",regional=True)
-        # create_plot(sithick,lon[0,:],lat[:,0],"sithick",regional=True)
-        # create_plot(clt,lon[0,:],lat[:,0],"clouds",regional=True)
-        # create_plot(np.log(chl),lon[0,:],lat[:,0],"chl (np.lon)",regional=True)
-        # create_plot(OSA[:,:,0],lon[0,:],lat[:,0],"OSA_direct_broadband",np.arange(0.01,0.04,0.001),regional=True)
-        # create_plot(OSA[:,:,1],lon[0,:],lat[:,0],"OSA_diffuse_broadband",regional=True)
-        # create_plot(rads[:,:,0],lon[0,:],lat[:,0],"Direct radiation",regional=True)
-        # create_plot(rads[:,:,1],lon[0,:],lat[:,0],"Diffuse radiation",regional=True)
-        # create_plot(rads[:,:,2],lon[0,:],lat[:,0],"Apparent zenith",regional=True)
+        # self.create_plot(wind,lon[0,:],lat[:,0],"wind",model_object,regional=True)
+        #self.create_plot(sisnconc,lon[0,:],lat[:,0],"sisnconc",model_object,regional=True)
+        #self.create_plot(sisnthick,lon[0,:],lat[:,0],"sisnthick",model_object,regional=True)
+        if siconc is not None: self.create_plot(siconc,lon[0,:],lat[:,0],"siconc",model_object,regional=True)
+        if sithick is not None: self.create_plot(sithick,lon[0,:],lat[:,0],"sithick",model_object,regional=True)
+        if direct_sw is not None: self.create_plot(direct_sw, lon[0, :], lat[:, 0], "direct_sw", model_object, regional=True, plotname_postfix=plotname_postfix)
+        # self.create_plot(clt,lon[0,:],lat[:,0],"clouds",model_object,regional=True)
+        # self.create_plot(np.log(chl),lon[0,:],lat[:,0],"chl (np.lon)",model_object,regional=True)
+        #self.create_plot(OSA[:,:,0],lon[0,:],lat[:,0],"OSA_direct_broadband",model_object,regional=True)
 
-        self.create_plot(irradiance_water, lon[0, :], lat[:, 0], "irradiance_water", model_object, regional=True)
+        # self.create_plot(OSA[:, :, 4], lon[0, :], lat[:, 0], "OSA_direct_uv", model_object, nlevels=np.arange(0.01, 0.04, 0.001), regional=True)
+        # self.create_plot(OSA[:, :, 2], lon[0, :], lat[:, 0], "OSA_direct_par", model_object, nlevels=np.arange(0.01, 0.04, 0.001), regional=True)
+        #self.create_plot(OSA[:,:,1],lon[0,:],lat[:,0],"OSA_diffuse_broadband",model_object,regional=True)
+        # self.create_plot(rads[:,:,0],lon[0,:],lat[:,0],"Direct radiation",model_object,regional=True)
+        # self.create_plot(rads[:,:,1],lon[0,:],lat[:,0],"Diffuse radiation",model_object, regional=True)
+        # self.create_plot(rads[:,:,2],lon[0,:],lat[:,0],"Apparent zenith",model_object, regional=True)
+
+        if OSA_VIS is not None:  self.create_plot(OSA_VIS[:,:,0], lon[0, :], lat[:, 0], "OSA_VIS_DIRECT", model_object, regional=True)
+      #  self.create_plot(OSA_UV[:,:,0], lon[0, :], lat[:, 0], "OSA_UV_DIRECT", model_object, regional=True)
+        if OSA_VIS is not None:  self.create_plot(OSA_VIS[:, :, 1], lon[0, :], lat[:, 0], "OSA_VIS_DIFFUSE", model_object, regional=True)
+      #  self.create_plot(OSA_UV[:, :, 1], lon[0, :], lat[:, 0], "OSA_UV_DIFFUSE", model_object, regional=True)
+
+        # self.create_plot(irradiance_water, lon[0, :], lat[:, 0], "irradiance_water", model_object, regional=True)
+        if albedo is not None: self.create_plot(albedo, lon[0, :], lat[:, 0], "albedo", model_object, nlevels=[0.02,0.025, 0.03, 0.035, 0.04,0.045, 0.05, 0.06], regional=True)
 
     def create_streamplot(self, indata_u, indata_v, uv, lon, lat, name, nlevels=None):
         # Make data cyclic around dateline
@@ -56,8 +71,10 @@ class CMIP6_albedo_plot():
         ax.add_feature(cfeature.COASTLINE, edgecolor="black")
         plt.show()
 
-    def create_plot(self, indata, lon, lat, name, model_object, nlevels=None, regional=False, logscale=False):
-
+    def create_plot(self, indata, lon, lat, name, model_object, nlevels=None, regional=False, logscale=False, plotname_postfix=None):
+        plt.interactive(False)
+        logging.info("[CMIP6_albedo_plot] Plotting variable {} ({})".format(name,np.shape(indata)))
+        plt.clf()
         proj = ccrs.NorthPolarStereo(true_scale_latitude=70)
         ax = plt.axes(projection=proj)
         land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m')
@@ -96,13 +113,14 @@ class CMIP6_albedo_plot():
         ax.add_feature(cfeature.BORDERS, linestyle=':')
 
         plt.colorbar(cs, shrink=0.5)
-        plt.show()
+      #  plt.show(block=True)
         if not os.path.exists("Figures"):
             os.mkdir("Figures")
-        plotfilename = "{}_{}_{}_{}.png".format(name,
+        plotfilename = "Figures/{}_{}_{}_{}_{}.png".format(name,
                                         model_object.name,
                                         model_object.current_member_id,
-                                        model_object.current_time)
+                                        model_object.current_time,
+                                                           plotname_postfix)
 
         if os.path.exists(plotfilename):os.remove(plotfilename)
         plt.savefig(plotfilename, dpi=150, bbox_inches='tight')

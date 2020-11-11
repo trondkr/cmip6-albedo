@@ -13,9 +13,11 @@ class CMIP6_regrid:
 
         if use_esmf_v801:
             regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
-                                     ignore_degenerate=True,
                                      periodic=True,
-                                     extrap="inverse_dist")
+                                     extrap_method='inverse_dist',
+                                     extrap_num_src_pnts=30,
+                                     extrap_dist_exponent=2,
+                                     ignore_degenerate=True)
         else:
             regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
                                      periodic=True,
