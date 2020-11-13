@@ -3,30 +3,70 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-# Data exported from publication Warren et al. 2008 (Fig. 1) but originated in
-# Perovich and Govoni 1991.
-# Data are interpolated to a fixed wavelength grid that fits with the wavelengths of
-# Seferian et al. 2018
 
-infile = "ice-absorption/sea_ice_absorption_perovich_and_govoni.csv"
-df = pd.read_csv(infile)
-print(df.head())
-# Define the grid to interpolate to
-wavelengths = np.arange(200, 1000, 10)
-k_ice = np.arange(0, 25, 0.01)
-# Get values from dataframe
-k_ice_pg = df["k_ice_pg"].values
-x_k_ice_pg = df["wavelength"].values
-# Do the interpolation
-interp_k_ice = np.interp(wavelengths, x_k_ice_pg, k_ice_pg)
-# Store data to csv file as dataframe
-data = {"wavelength": wavelengths, "k_ice_pg": interp_k_ice}
-df_out = pd.DataFrame(data, index=wavelengths)
-csv_filename = "ice-absorption/sea_ice_absorption_perovich_and_govoni_interpolated.csv"
-if os.path.exists(csv_filename): os.remove(csv_filename)
-df_out.to_csv(csv_filename, index=False)
+def export_ice_absoprtion():
+    # Data exported from publication Warren et al. 2008 (Fig. 1) but originated in
+    # Perovich and Govoni 1991.
+    # Data are interpolated to a fixed wavelength grid that fits with the wavelengths of
+    # Seferian et al. 2018
+    infile = "ice-absorption/sea_ice_absorption_perovich_and_govoni.csv"
+    df = pd.read_csv(infile)
+    print(df.head())
+    # Define the grid to interpolate to
+    wavelengths = np.arange(200, 1000, 10)
+    k_ice = np.arange(0, 25, 0.01)
+    # Get values from dataframe
+    k_ice_pg = df["k_ice_pg"].values
+    x_k_ice_pg = df["wavelength"].values
+    # Do the interpolation
+    interp_k_ice = np.interp(wavelengths, x_k_ice_pg, k_ice_pg)
+    # Store data to csv file as dataframe
+    data = {"wavelength": wavelengths, "k_ice_pg": interp_k_ice}
+    df_out = pd.DataFrame(data, index=wavelengths)
+    csv_filename = "ice-absorption/sea_ice_absorption_perovich_and_govoni_interpolated.csv"
+    if os.path.exists(csv_filename): os.remove(csv_filename)
+    df_out.to_csv(csv_filename, index=False)
+
+    # Plot the result
+    plt.plot(wavelengths, interp_k_ice, c="r", marker="o")
+    plt.title("Absorption through sea-ice as  function of wavelength (Perovich and Govani 1991)")
+    plt.show()
+
+
+def export_chl_absoprtion():
+    # Data exported from publication Matsuoka et al. 2007 (Table. 3)
+    # Data are interpolated to a fixed wavelength grid that fits with the wavelengths of
+    # Seferian et al. 2018
+    infile = "chl-absorption/Matsuoka2007-chla_wavelength_absorption.csv"
+    df = pd.read_csv(infile,sep=" ")
+
+    # Get values from dataframe
+    A_chl = df["A"].values
+    B_chl = df["B"].values
+    x_chl = df["wavelength"].values
+
+    chl = np.arange(0, 10, 0.1)
+    all_a = np.empty((len(x_chl), len(chl)))
+
+    for i_chl, c in enumerate(chl):
+        for i_wave, x in enumerate(x_chl):
+            all_a[i_wave, i_chl] = A_chl[i_wave] * c ** B_chl[i_wave]
+
+        plt.plot(x_chl, all_a[:, i_chl], c="k", alpha=0.5, linewidth=1)
+        plt.plot(x_chl, all_a[:, i_chl], c="r", marker="o",markersize=1)
+
+    plt.title("Absorption a($\lambda$) for chl 0-10 mg/m$^{3}$ (Matsuoka et al. 2007)")
+    plt.xlabel("Wavelength (nm)")
+    plt.ylabel("absorption (m$^{-1}$)")
+
+    plt.show()
+
+
+# df_out = pd.DataFrame(data, index=wavelengths)
+# csv_filename = "ice-absorption/sea_ice_absorption_perovich_and_govoni_interpolated.csv"
+# if os.path.exists(csv_filename): os.remove(csv_filename)
+# df_out.to_csv(csv_filename, index=False)
 
 # Plot the result
-plt.plot(wavelengths, interp_k_ice, c="r", marker="o")
-plt.title("Absorption through sea-ice as  function of wavelength (Perovich and Govani 1991)")
-plt.show()
+
+export_chl_absoprtion()

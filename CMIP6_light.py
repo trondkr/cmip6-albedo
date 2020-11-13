@@ -236,6 +236,7 @@ class CMIP6_light:
         vas = np.squeeze(extracted_ds["vas"].values)
         #   tas = np.squeeze(extracted_ds["tas"].values)
 
+
         if np.nanmax(sisnconc) > 5:
             percentage_to_ratio = 1 / 100.
             sisnconc = sisnconc * percentage_to_ratio
@@ -357,6 +358,7 @@ class CMIP6_light:
                                                                albedo_dfvis,
                                                                direct_sw,
                                                                diffuse_sw,
+                        chl*chl_scale,
                                                                spectrum="vis")
 
                     direct_sw_albedo_ice_snow_corrected_uv = self.cmip6_ccsm3.compute_surface_solar_for_specific_wavelength_band(
@@ -364,6 +366,7 @@ class CMIP6_light:
                         albedo_dfuv,
                         direct_sw,
                         diffuse_sw,
+                        chl * chl_scale,
                         spectrum="uv")
 
                     plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()

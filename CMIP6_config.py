@@ -7,7 +7,7 @@ import logging
 class Config_albedo():
 
     def __init__(self):
-        print("[CMIP6_config] Defining the config file for the calculations")
+        logging.info("[CMIP6_config] Defining the config file for the calculations")
         self.fs = gcsfs.GCSFileSystem(token="anon", access="read_only")
         self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r1i1p1f1"]  #
@@ -19,7 +19,7 @@ class Config_albedo():
 
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "1950-12-01"
+        self.end_date = "1953-12-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
@@ -94,6 +94,21 @@ class Config_albedo():
 
         self.wavelengths_ice = ice_wl["wavelength"].values
         self.absorption_ice_pg = ice_wl["k_ice_pg"].values
+
+    def setup_absorption_chl(self):
+
+        # Data exported from publication Matsuoka et al. 2007 (Table. 3)
+        # Data are interpolated to a fixed wavelength grid that fits with the wavelengths of
+        # Seferian et al. 2018
+        infile = "chl-absorption/Matsuoka2007-chla_wavelength_absorption.csv"
+        df = pd.read_csv(infile, sep=" ")
+
+        # Get values from dataframe
+        chl_abs_A = df["A"].values
+        chl_abs_B = df["B"].values
+        chl_abs_wavelength = df["wavelength"].values
+        return chl_abs_A, chl_abs_B, chl_abs_wavelength
+
 
     # import matplotlib.pyplot as plt
     # plt.plot(self.wavelengths,self.solar_energy)

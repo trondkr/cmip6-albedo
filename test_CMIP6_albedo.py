@@ -27,6 +27,11 @@ class TestMethods(TestCMIP6_light):
 class TestIO(TestCMIP6_light):
 
     def test_query_returns_dataset_with_timesteps(self):
+        # We avoid calling the read_cmip6_repository in other tests as it is time consuming
+        try:
+            self.cmip6.config.df
+        except:
+            self.cmip6.config.read_cmip6_repository()
         ds_hist = self.cmip6_IO.perform_cmip6_query(self.cmip6.config, self.query_string)
         self.assertIsNotNone(ds_hist)
         self.assertIsInstance(ds_hist, xr.Dataset)

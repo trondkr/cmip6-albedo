@@ -7,6 +7,7 @@ class MyCMIP6IOCase(unittest.TestCase):
 
         expected_formatted_name = "test_dir/CMIP6_model_name_member_id_key.nc"
         formatted_name = cmip6_io.format_netcdf_filename(dir="test_dir/", model_name="model_name", member_id="member_id", key="key")
+        print(expected_formatted_name)
         self.assertEqual(expected_formatted_name, formatted_name)
 
 if __name__ == '__main__':
