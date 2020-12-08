@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 import gcsfs
 import numpy as np
@@ -13,27 +14,27 @@ class Config_albedo():
         self.member_ids = ["r1i1p1f1"]  #
         self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
         self.source_ids = ["ACCESS-ESM1-5"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
-        self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc"]
+        self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas","toz"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
-                          "SImon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
+                          "SImon","Amon","AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
 
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "1953-12-01"
+        self.end_date = "2099-12-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
         self.use_local_CMIP6_files = True
         self.cmip6_netcdf_dir = "/Volumes/DATASETS/cmip6/"
-        self.generate_local_CMIP6_files = False
-        self.perform_light_calculations = True
+        self.generate_local_CMIP6_files = True
+        self.perform_light_calculations = False
         self.cmip6_outdir = "../oceanography/cmip6/"
 
         # Cut the region of the global data to these longitude and latitudes
-        self.min_lat = 30
+        self.min_lat = 0
         self.max_lat = 90
         self.min_lon = 0
-        self.max_lon = 360
+        self.max_lon = 361
 
         # ESMF and Dask related
         self.dask_chunk = 30
@@ -43,9 +44,7 @@ class Config_albedo():
         self.models = {}
         self.regional_plot_region = np.array([[45, 49], [-126, -120]])
 
-        self.fraction_shortwave_to_uv = None
-        self.fraction_shortwave_to_vis = None
-        self.fraction_shortwave_to_nir = None
+        self.setup_erythema_action_spectrum()
 
     def setup_logging(self):
         logger = logging.getLogger()
@@ -63,30 +62,32 @@ class Config_albedo():
         self.beta_w = wl["b_w(λ)"].values
         self.alpha_wc = wl["a_wc(λ)"].values
         self.solar_energy = wl["E(λ)"].values
-        print("[CMIP6_config] {}".format(wl.head()))
-        start_index_uv = 0
-        end_index_uv = len(np.arange(200, 400, 10))
+        logging.info("[CMIP6_config] {}".format(wl.head()))
+        start_index_uv = len(np.arange(200, 280, 10))
+        end_index_uv = len(np.arange(200, 390, 10))
         start_index_visible = len(np.arange(200, 400, 10))
-        end_index_visible = len(np.arange(200, 700, 10))
+        end_index_visible = len(np.arange(200, 710, 10))
         start_index_nir = len(np.arange(200, 800, 10))
         end_index_nir = len(np.arange(200, 2500, 10))
 
-        self.fraction_shortwave_to_uv = np.sum(self.solar_energy[start_index_uv:end_index_uv])
-        self.fraction_shortwave_to_vis = np.sum(self.solar_energy[start_index_visible:end_index_visible])
-        self.fraction_shortwave_to_nir = np.sum(self.solar_energy[start_index_nir:end_index_nir])
+        self.fractions_shortwave_uv = self.solar_energy[start_index_uv:end_index_uv]
+        self.fractions_shortwave_vis = self.solar_energy[start_index_visible:end_index_visible]
+        self.fractions_shortwave_nir = self.solar_energy[start_index_nir:end_index_nir]
 
         logging.info("[CMIP6_config] Energy fraction UV ({} to {}): {:3.3f}".format(self.wavelengths[start_index_uv],
                                                                                     self.wavelengths[end_index_uv],
-                                                                                    self.fraction_shortwave_to_uv))
+                                                                                    np.sum(
+                                                                                        self.fractions_shortwave_uv)))
 
         logging.info(
             "[CMIP6_config] Energy fraction PAR ({} to {}): {:3.3f}".format(self.wavelengths[start_index_visible],
                                                                             self.wavelengths[end_index_visible],
-                                                                            self.fraction_shortwave_to_vis))
+                                                                            np.sum(self.fractions_shortwave_vis)))
 
         logging.info("[CMIP6_config] Energy fraction NIR ({} to {}): {:3.3f}".format(self.wavelengths[start_index_nir],
                                                                                      self.wavelengths[end_index_nir],
-                                                                                     self.fraction_shortwave_to_nir))
+                                                                                     np.sum(
+                                                                                         self.fractions_shortwave_nir)))
 
         # Read in the ice values for how ice absorbs irradiance as a function of wavelength
         ice_wl = pd.read_csv("ice-absorption/sea_ice_absorption_perovich_and_govoni_interpolated.csv", header=0,
@@ -94,6 +95,44 @@ class Config_albedo():
 
         self.wavelengths_ice = ice_wl["wavelength"].values
         self.absorption_ice_pg = ice_wl["k_ice_pg"].values
+
+    def setup_erythema_action_spectrum(self):
+        # https://www.esrl.noaa.gov/gmd/grad/antuv/docs/version2/doserates.CIE.txt
+        # A = 	1		for  250 <= W <= 298
+        # A = 	10^(0.094(298- W))	for 298 < W < 328
+        # A = 	10^(0.015(139-W-))	for 328 < W < 400
+        wavelengths = np.arange(280, 390, 10)
+        self.erythema_spectrum = np.zeros(len(wavelengths))
+
+        for i, wavelength in enumerate(wavelengths):
+            if 250 <= wavelength <= 298:
+                self.erythema_spectrum[i] = 1.0
+            elif 298 <= wavelength <= 328:
+                self.erythema_spectrum[i] = 10.0 ** (0.094 * (298 - wavelength))
+            elif 328 < wavelength < 400:
+                self.erythema_spectrum[i] = 10.0 ** (0.015 * (139 - wavelength))
+        logging.info("[CMIP6_config] Calculated erythema action spectrum for wavelengths 280-400 at 10 nm increment")
+
+    def setup_ozone_uv_spectrum(self):
+        # Data collected from Figure 4
+        # http://html.rhhz.net/qxxb_en/html/20190207.htm#rhhz
+        infile = "ozone-absorption/O3_UV_absorption_edited.csv"
+        df = pd.read_csv(infile, sep="\t")
+        print(df)
+        # Get values from dataframe
+        o3_wavelength = df["wavelength"].values
+        o3_abs = df["o3_absorption"].values
+        print(o3_wavelength)
+        print(o3_abs)
+        wavelengths = np.arange(280, 390, 10)
+
+        # Do the linear interpolation
+        o3_abs_interp = np.interp(wavelengths, o3_wavelength, o3_abs)
+        print(o3_abs_interp)
+        print(wavelengths)
+
+        logging.info("[CMIP6_config] Calculated erythema action spectrum for wavelengths 280-400 at 10 nm increment")
+        return o3_abs_interp, wavelengths
 
     def setup_absorption_chl(self):
 
@@ -107,8 +146,17 @@ class Config_albedo():
         chl_abs_A = df["A"].values
         chl_abs_B = df["B"].values
         chl_abs_wavelength = df["wavelength"].values
-        return chl_abs_A, chl_abs_B, chl_abs_wavelength
 
+        # Interpolate to 10 nm wavelength bands - only visible
+        # This is because all other wavelength calculations are done at 10 nm bands.
+        # Original Matsuoka et al. 2007 operates at 5 nm bands.
+        wavelengths = np.arange(400, 710, 10)
+
+        # Do the linear interpolation
+        A_chl_interp = np.interp(wavelengths, chl_abs_wavelength, chl_abs_A)
+        B_chl_interp = np.interp(wavelengths, chl_abs_wavelength, chl_abs_B)
+
+        return A_chl_interp, B_chl_interp, wavelengths
 
     # import matplotlib.pyplot as plt
     # plt.plot(self.wavelengths,self.solar_energy)

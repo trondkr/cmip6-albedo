@@ -16,14 +16,17 @@ class CMIP6_albedo_plot():
 
     def create_plots(self, lon, lat, model_object, sisnconc=None, sisnthick=None, sithick=None, siconc=None, \
                      clt=None, chl=None, rads=None, irradiance_water=None, wind=None, OSA=None, OSA_UV=None, \
-                     OSA_VIS=None, OSA_NIR=None, albedo=None, direct_sw=None, plotname_postfix=None):
+                     OSA_VIS=None, OSA_NIR=None, albedo=None, direct_sw=None, uvi=None, plotname_postfix=None):
         # create_streamplot(dr_out_uas,dr_out_vas,wind,lon[0,:],lat[:,0],"wind",nlevels=None)
         # self.create_plot(wind,lon[0,:],lat[:,0],"wind",model_object,regional=True)
         #self.create_plot(sisnconc,lon[0,:],lat[:,0],"sisnconc",model_object,regional=True)
         #self.create_plot(sisnthick,lon[0,:],lat[:,0],"sisnthick",model_object,regional=True)
         if siconc is not None: self.create_plot(siconc,lon[0,:],lat[:,0],"siconc",model_object,regional=True)
         if sithick is not None: self.create_plot(sithick,lon[0,:],lat[:,0],"sithick",model_object,regional=True)
-        if direct_sw is not None: self.create_plot(direct_sw, lon[0, :], lat[:, 0], "direct_sw", model_object, regional=True, plotname_postfix=plotname_postfix)
+        if direct_sw is not None: self.create_plot(direct_sw, lon[0, :], lat[:, 0], "direct_sw", model_object,
+                                                   regional=False, plotname_postfix=plotname_postfix)
+        if uvi is not None: self.create_plot(uvi, lon[0, :], lat[:, 0], "UVI", model_object,
+                                                   regional=False, plotname_postfix=plotname_postfix)
         # self.create_plot(clt,lon[0,:],lat[:,0],"clouds",model_object,regional=True)
         # self.create_plot(np.log(chl),lon[0,:],lat[:,0],"chl (np.lon)",model_object,regional=True)
         #self.create_plot(OSA[:,:,0],lon[0,:],lat[:,0],"OSA_direct_broadband",model_object,regional=True)
