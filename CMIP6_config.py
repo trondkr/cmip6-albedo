@@ -24,9 +24,8 @@ class Config_albedo():
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = True
+        self.use_local_CMIP6_files = False
         self.cmip6_netcdf_dir = "/Volumes/DATASETS/cmip6/"
-        self.generate_local_CMIP6_files = True
         self.perform_light_calculations = False
         self.cmip6_outdir = "../oceanography/cmip6/"
 
