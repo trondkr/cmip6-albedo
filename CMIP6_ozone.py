@@ -59,9 +59,11 @@ class CMIP6_ozone():
         # P is the pressure in hPa, VMR is the colume mixing ration in ppm and TOZ is the trace gas
         # column amount in Dobson Units (DU):
         VMR = ds["vmro3"].values
+        plev = ds["plev"].values
         print("VMR", np.shape(VMR))
-        TOZ = 10 * (R * T0 / g0 * P0) * np.sum(0.5 * (VMR[0:-2:1] + VMR[1:-1:1]) * (p[0:-2:1] - p[1:-1:1]))
-
+        print("plev", np.shape(plev))
+        TOZ = 10 * (R * T0 / g0 * P0) * np.sum(0.5 * (VMR[:,0:-2:1,:,:] + VMR[:,1:-1:1:,:]) * (plev[0:-2:1] - plev[1:-1:1]))
+        TOZ.to_netcdf("../oceanography/cmip6/ozone/TOZ.nc")
         print(TOZ)
 
     def setup_logging(self):
