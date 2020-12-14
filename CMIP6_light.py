@@ -287,6 +287,14 @@ class CMIP6_light:
 
         return rads
 
+    def calculate_the_effect_of_ozone(self, dr_uv, toz):
+        """
+        Method that estimates the effect of ozone on total UV assuming
+        simple relationship from here:
+        https://www.sciencedirect.com/science/article/pii/S1309104215305419
+        """
+        dr_uv = dr_uv * 57 * (toz) ** (-1.05)
+        return dr_uv
 
     def perform_light_calculations(self, model_object):
 
@@ -398,7 +406,9 @@ class CMIP6_light:
                         tas,
                         spectrum="uv")
 
-                    uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone)
+                    dr_uv = self.calculate_the_effect_of_ozone(direct_sw_albedo_ice_snow_corrected_uv)
+
+                    uvi = self.cmip6_ccsm3.calculate_uvi(dr_uv)
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi),np.nanmin(uvi),np.nanmax(uvi)))
 
                     plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
@@ -419,7 +429,7 @@ class CMIP6_light:
                         data_array["irradiance_vis_{}".format(scenario)] = (
                             ['lat', 'lon'], direct_sw_albedo_ice_snow_corrected_vis)
                     data_array["irradiance_uv_{}".format(scenario)] = (
-                    ['lat', 'lon'], direct_sw_albedo_ice_snow_corrected_uv)
+                    ['lat', 'lon'], dr_uv)
 
                     data_list.append(data_array)
 
