@@ -59,7 +59,8 @@ class CMIP6_ozone():
         # Integrating the total column of a trace gas from input4MPI forcing data. Here
         # P is the pressure in hPa, VMR is the colume mixing ration in ppm and TOZ is the trace gas
         # column amount in Dobson Units (DU):'bnds', 'lat', 'lon', 'plev', 'time'
-        VMR = ds["vmro3"].values
+        mole2ppmv = 1e6
+        VMR = ds["vmro3"].values * mole2ppmv
         plev = ds["plev"].values
           
         times=ds["time"].values
