@@ -93,7 +93,7 @@ class CMIP6_CCSM3():
 
         # bare ice, thickness dependence
         fh = np.where(np.arctan(ice_thickness * 4.0) / fhtan > 1.0, 1, np.arctan(ice_thickness * 4.0) / fhtan)
-
+        print(np.shape(ice_thickness),np.shape(osa_diffuse))
         albo_df = osa_diffuse * (1.0 - fh)
         albo_dr = osa_direct * (1.0 - fh)
         alvdfni = albicev * fh + albo_df
@@ -276,6 +276,7 @@ class CMIP6_CCSM3():
             snow_thickness,
             ice_thickness,
             air_temp)
+
         # Effect of snow and ice
         # Albedo from snow and ice - direct where sea ice concentration is above zero
         direct_sw_ice = direct_sw * sea_ice_concentration * (1.0 - is_albedo_dr_vis)

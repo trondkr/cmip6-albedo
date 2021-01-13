@@ -10,14 +10,16 @@ class Config_albedo():
     def __init__(self):
         logging.info("[CMIP6_config] Defining the config file for the calculations")
         self.fs = gcsfs.GCSFileSystem(token="anon", access="read_only")
-        self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
+        self.grid_labels = ["gr"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r1i1p1f1"]  #
         self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
         self.source_ids = ["ACCESS-ESM1-5"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
-        self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas","toz"]
+        self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
-                          "SImon","Amon","AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
+                          "SImon","Amon"] #,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
 
+        self.variable_ids = ["sithick", "siconc", "sisnthick", "sisnconc"]  # ,"toz"]
+        self.table_ids = ["SImon", "SImon", "SImon","SImon"]
         self.dset_dict = {}
         self.start_date = "1950-01-01"
         self.end_date = "2099-12-01"
@@ -121,14 +123,11 @@ class Config_albedo():
         # Get values from dataframe
         o3_wavelength = df["wavelength"].values
         o3_abs = df["o3_absorption"].values
-        print(o3_wavelength)
-        print(o3_abs)
+
         wavelengths = np.arange(280, 390, 10)
 
         # Do the linear interpolation
         o3_abs_interp = np.interp(wavelengths, o3_wavelength, o3_abs)
-        print(o3_abs_interp)
-        print(wavelengths)
 
         logging.info("[CMIP6_config] Calculated erythema action spectrum for wavelengths 280-400 at 10 nm increment")
         return o3_abs_interp, wavelengths

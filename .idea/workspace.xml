@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/CMIP6_light.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vagrant.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_ccsm3.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ccsm3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_ozone.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ozone.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_regrid.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_regrid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chl-absorption/Matsuoka2007-chla_wavelength_absorption.csv" beforeDir="false" afterPath="$PROJECT_DIR$/chl-absorption/Matsuoka2007-chla_wavelength_absorption.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/coef_OSAv1.0.R" beforeDir="false" afterPath="$PROJECT_DIR$/coef_OSAv1.0.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/from_Seferan/Fresnels_refraction.csv" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/Fresnels_refraction.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/from_Seferan/albedo_OSAv1.F90" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/albedo_OSAv1.F90" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/from_Seferan/function_OSAv1.0.R" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/function_OSAv1.0.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/from_Seferan/modd_albedo_OSAv1_par.F90" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/modd_albedo_OSAv1_par.F90" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ice-absorption/sea_ice_absorption_perovich_and_govoni.csv" beforeDir="false" afterPath="$PROJECT_DIR$/ice-absorption/sea_ice_absorption_perovich_and_govoni.csv" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1mhqiam4kaiU4KkVUXCQWtexz0Y" />
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RunManager">
+    <configuration name="CMIP6_light" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="cmip6-albedo" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/opt/anaconda3/envs/xesmf2/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/CMIP6_light.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="" />
+      <created>1609956316689</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1609956316689</updated>
+      <workItem from="1609956319334" duration="2103000" />
+      <workItem from="1610219181238" duration="451000" />
+      <workItem from="1610379656858" duration="11812000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1610581820100" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

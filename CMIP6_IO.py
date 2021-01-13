@@ -121,7 +121,6 @@ class CMIP6_IO:
                                 experiment_id,
                                 variable_id,
                             )
-
                             ds_proj = self.perform_cmip6_query(config, query_string)
 
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
@@ -268,5 +267,5 @@ class CMIP6_IO:
             # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
             # of the data and we therefore re-chunk to split the process into several using dask
             ds = out.to_dataset()
-            ds.chunk({'time': -1, 'y': 10, 'x': 50}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
+            ds.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
             logging.info("[CMIP6_light] wrote variable {} to file".format(key))

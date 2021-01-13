@@ -11,6 +11,13 @@ class CMIP6_regrid:
 
     def regrid_variable(self, varname, ds_in, ds_out, interpolation_method="bilinear", use_esmf_v801=True):
 
+        if "lat_bounds" and "lon_bounds" in list(ds_in.coords):
+            ds_in = ds_in.drop({"lat_bounds", "lon_bounds"})
+        if "yTe" and "xTe" in list(ds_in.coords):
+            ds_in = ds_in.drop({"yTe", "xTe"})
+        if "vertices_latitude" and "vertices_longitude" in list(ds_in.coords):
+            ds_in = ds_in.drop({"vertices_latitude", "vertices_longitude"})
+
         if use_esmf_v801:
             regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
                                      periodic=True,
@@ -22,8 +29,8 @@ class CMIP6_regrid:
             regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
                                      periodic=True,
                                      ignore_degenerate=True)
-        regridder._grid_in = None
-        regridder._grid_out = None
+     #   regridder._grid_in = None
+     #   regridder._grid_out = None
         print("[CMIP6_regrid] regridding {}".format(varname))
 
         return regridder(ds_in[varname])
