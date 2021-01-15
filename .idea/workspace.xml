@@ -2,26 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/CMIP6_light.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vagrant.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_ccsm3.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ccsm3.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.ipynb_checkpoints/CMIP6_ozone-checkpoint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_ozone.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ozone.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_regrid.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_regrid.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chl-absorption/Matsuoka2007-chla_wavelength_absorption.csv" beforeDir="false" afterPath="$PROJECT_DIR$/chl-absorption/Matsuoka2007-chla_wavelength_absorption.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/coef_OSAv1.0.R" beforeDir="false" afterPath="$PROJECT_DIR$/coef_OSAv1.0.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/from_Seferan/Fresnels_refraction.csv" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/Fresnels_refraction.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/from_Seferan/albedo_OSAv1.F90" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/albedo_OSAv1.F90" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/from_Seferan/function_OSAv1.0.R" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/function_OSAv1.0.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/from_Seferan/modd_albedo_OSAv1_par.F90" beforeDir="false" afterPath="$PROJECT_DIR$/from_Seferan/modd_albedo_OSAv1_par.F90" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ice-absorption/sea_ice_absorption_perovich_and_govoni.csv" beforeDir="false" afterPath="$PROJECT_DIR$/ice-absorption/sea_ice_absorption_perovich_and_govoni.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +67,7 @@
       <updated>1609956316689</updated>
       <workItem from="1609956319334" duration="2103000" />
       <workItem from="1610219181238" duration="451000" />
-      <workItem from="1610379656858" duration="11812000" />
+      <workItem from="1610379656858" duration="12420000" />
     </task>
     <servers />
   </component>
