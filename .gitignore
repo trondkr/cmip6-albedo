@@ -19,5 +19,7 @@ Data/*
 *.R
 *.nc
 PDFs/*
+*.png
+Figures/*
 dask-worker-space/*
 coverage.xml*
