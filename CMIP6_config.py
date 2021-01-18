@@ -12,7 +12,7 @@ class Config_albedo():
         self.fs = gcsfs.GCSFileSystem(token="anon", access="read_only")
         self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r1i1p1f1"]  #
-        self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(2)
+        self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(4)
                            for ii in range(2) for iii in range(1) for iv in range(1)]
 
         self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
