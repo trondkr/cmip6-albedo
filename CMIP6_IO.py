@@ -122,7 +122,7 @@ class CMIP6_IO:
                                 variable_id,
                             )
                             ds_proj = self.perform_cmip6_query(config, query_string)
-
+                            print(query_string)
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
