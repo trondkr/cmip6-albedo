@@ -12,11 +12,11 @@ class Config_albedo():
         self.fs = gcsfs.GCSFileSystem(token="anon", access="read_only")
         self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r1i1p1f1"]  #
-        self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(5)
-                           for ii in range(4) for iii in range(3) for iv in range(3)]
+        self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(1)
+                           for ii in range(1) for iii in range(1) for iv in range(1)]
 
         self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
-        self.source_ids = ["CanESM5","ACCESS-ESM1-5","CESM2-WACCM-FV2","GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
+        self.source_ids = ["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
         self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
                           "SImon","Amon"] #,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
