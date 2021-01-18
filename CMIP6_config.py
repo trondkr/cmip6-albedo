@@ -21,8 +21,8 @@ class Config_albedo():
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
                           "SImon","Amon"] #,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
 
-        self.variable_ids = ["sithick", "siconc", "sisnthick", "sisnconc"]  # ,"toz"]
-        self.table_ids = ["SImon", "SImon", "SImon","SImon"]
+       # self.variable_ids = ["sithick", "siconc", "sisnthick", "sisnconc"]  # ,"toz"]
+       # self.table_ids = ["SImon", "SImon", "SImon","SImon"]
         self.dset_dict = {}
         self.start_date = "1950-01-01"
         self.end_date = "2099-12-01"
