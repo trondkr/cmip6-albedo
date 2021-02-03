@@ -294,14 +294,16 @@ class CMIP6_light:
         simple relationship from here:
         https://www.sciencedirect.com/science/article/pii/S1309104215305419
         """
+        print("dr before ozone: {}".format(np.nanmean(dr_uv)))
         dr_uv = dr_uv * 57 * (toz) ** (-1.05)
+        print("dr after ozone: {}".format(np.nanmean(dr_uv)))
         return dr_uv
 
     def get_ozone_dataset(self) -> xr.Dataset:
         # Method that reads the total ozone column from input4MPI dataset (Micahela Heggelin)
         # and regrid to consistent 1x1 degree dataset.
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
-        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "/ozone-absorption/input4MPI_TOZ_December_2020_TK.nc")
+        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ.nc")
         toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date)).sel(
             lat=slice(self.config.min_lat, self.config.max_lat),
             lon=slice(self.config.min_lon, self.config.max_lon))
@@ -327,9 +329,10 @@ class CMIP6_light:
 
         toz_ds = self.get_ozone_dataset()
 
-        for selected_time in range(0, len(times)):
-            model_object.current_time = pd.to_datetime(times[selected_time].values)
-
+        for selected_time in range(0, len(times.values)):
+            sel_time=times.values[selected_time]
+                
+            model_object.current_time = sel_time #.to_datetimeindex()
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
             logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                                  model_object.name))
@@ -433,9 +436,9 @@ class CMIP6_light:
                         tas,
                         spectrum="uv")
 
-                    dr_uv = self.calculate_the_effect_of_ozone(direct_sw_albedo_ice_snow_corrected_uv)
+                    dr_uv = self.calculate_the_effect_of_ozone(direct_sw_albedo_ice_snow_corrected_uv, toz)
 
-                    uvi = self.cmip6_ccsm3.calculate_uvi(dr_uv)
+                    uvi = self.cmip6_ccsm3.calculate_uvi(dr_uv, toz)
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
 
                     plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()

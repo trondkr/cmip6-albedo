@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import matplotlib
-matplotlib.use('Qt5Agg')
+#matplotlib.use('Qt5Agg')
 import logging
 
 class CMIP6_albedo_plot():

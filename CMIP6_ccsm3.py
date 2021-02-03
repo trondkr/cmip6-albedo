@@ -210,7 +210,7 @@ class CMIP6_CCSM3():
 
         dr_ozone = dr * np.exp(-self.o3_abs[wavelength_i]*ozone)
         print("Change in dr due to ozone: {} vs {}".format(np.nansum(dr_ozone), np.nansum(dr)))
-        print("Change in dr due to ozone: {}".format((np.nansum(dr_ozone)/np.nansum(dr))*100))
+        print("Change in dr due to ozone: {}".format((100-np.nansum(dr_ozone)/np.nansum(dr))*100))
         return dr_ozone
 
     def calculate_uvi(self, direct_sw_albedo_ice_snow_corrected_uv, ozone):
