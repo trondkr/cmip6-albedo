@@ -14,6 +14,20 @@ import logging
 
 class CMIP6_albedo_plot():
 
+    def plot_spectral_irradiance(self, spectra,latitude):
+        fig, ax = plt.subplots()
+        ax.plot(spectra['wavelength'], spectra['poa_global'][:,0])
+
+        plt.xlim(200, 2700)
+        plt.ylim(0, 1.8)
+        plt.title(r"Day 80 1984, $\tau=0.1$, Wv=0.5 cm lat {}".format(latitude))
+        plt.ylabel(r"Irradiance ($W m^{-2} nm^{-1}$)")
+        plt.xlabel(r"Wavelength ($nm$)")
+       # time_labels = times.strftime("%H:%M %p")
+
+       # plt.legend(labels)
+        plt.savefig("spectral_test_{}.png".format(latitude))
+
     def create_plots(self, lon, lat, model_object, sisnconc=None, sisnthick=None, sithick=None, siconc=None, \
                      clt=None, chl=None, rads=None, irradiance_water=None, wind=None, OSA=None, OSA_UV=None, \
                      OSA_VIS=None, OSA_NIR=None, albedo=None, direct_sw=None, uvi=None, plotname_postfix=None):

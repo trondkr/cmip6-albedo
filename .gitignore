@@ -23,3 +23,4 @@ PDFs/*
 Figures/*
 dask-worker-space/*
 coverage.xml*
+**/*-checkpoint.py

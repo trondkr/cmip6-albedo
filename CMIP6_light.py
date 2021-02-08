@@ -4,6 +4,7 @@ import os
 from typing import List, Any
 
 # Computational modules
+import cftime
 import dask
 import numpy as np
 import pandas as pd
@@ -56,7 +57,7 @@ class CMIP6_light:
         solpos = pvlib.solarposition.get_solarposition(ctime, latitude, longitude)
         return np.squeeze(solpos['zenith'])
 
-    def radiation(self, cloud_covers, latitude, ctime, system, albedo):
+    def radiation(self, cloud_covers, latitude, ctime, system, albedo, ozone):
         results = np.zeros((np.shape(cloud_covers)[0], 3))
         altitude = 0.0
 
@@ -78,7 +79,7 @@ class CMIP6_light:
         airmass_abs = pvlib.atmosphere.get_absolute_airmass(airmass_relative, pressure)
 
         airmass_abs_array = np.ones((np.shape(cloud_covers)))
-        airmass__abs_array = airmass_abs_array * airmass_abs
+        airmass_abs_array = airmass_abs_array * airmass_abs
 
         am_rel_array = np.ones((np.shape(cloud_covers)))
         am_rel_array = am_rel_array * airmass_relative
@@ -90,21 +91,53 @@ class CMIP6_light:
         azimuth = azimuth * solpos['azimuth'].to_numpy()
 
         surface_tilt = np.ones((np.shape(cloud_covers)))
-        surface_tilt = surface_tilt * latitude
+        surface_tilt = surface_tilt * latitude  # solpos['surface_tilt']
 
         surface_azimuth = np.ones((np.shape(cloud_covers)))
         surface_azimuth = surface_azimuth * system['surface_azimuth']
 
         # cloud cover in fraction units here
-        transmittance = (1.0 - cloud_covers) * 0.75
+        transmittance = 1.0 #(1.0 - cloud_covers) * 0.75
+        aoi = pvlib.irradiance.aoi(surface_tilt, surface_azimuth, apparent_zenith, azimuth)
+
+        water_vapor_content = np.ones((np.shape(cloud_covers))) * 0.5
+        tau500 = np.ones((np.shape(cloud_covers))) * 0.1
+
+        # day of year is an int64index array so access first item
+        day_of_year = ctime.dayofyear
+        day_of_year = np.ones((np.shape(cloud_covers))) * day_of_year[0]
+
+        print("Date {} day of year {}".format(ctime, day_of_year[0]))
+
+        spectra = pvlib.spectrum.spectrl2(
+            apparent_zenith=apparent_zenith,
+            aoi=aoi,
+            surface_tilt=surface_tilt,
+            ground_albedo=albedo,
+            surface_pressure=pressure,
+            relative_airmass=am_rel_array,
+            precipitable_water=water_vapor_content,
+            ozone=ozone,
+            aerosol_turbidity_500nm=tau500,
+            dayofyear=day_of_year)
+
+        #   plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
+        #   plotter.plot_spectral_irradiance(spectra=spectra,latitude=latitude)
+
         # irrads is a DataFrame containing ghi, dni, dhi
-
-        irrads = pvlib.irradiance.liujordan(solpos['apparent_zenith'].to_numpy(), transmittance,
-                                            airmass_abs_array)
-
+        print("")
+        print("--------")
+        irrads = pvlib.irradiance.campbell_norman(solpos['apparent_zenith'].to_numpy(), transmittance)
+        print("latitude", latitude)
         print("LIUJ: dni: {} ghi: {} dhi: {}".format(np.nanmean(irrads['dni']),
                                                      np.nanmean(irrads['ghi']),
                                                      np.nanmean(irrads['dhi'])))
+
+        print("SPECTRA: dni: {} dhi: {}".format(np.nanmean(np.nansum(spectra['dni'], axis=0)),
+                                                np.nanmean(np.nansum(spectra['dhi'], axis=0))))
+
+        print("Ratio: dni: {} dhi: {}".format(np.nansum(spectra['dni']) / np.nansum(irrads['dni']),
+                                              np.nansum(spectra['dhi']) / np.nansum(irrads['dhi'])))
 
         total_irrad = pvlib.irradiance.get_total_irradiance(surface_tilt,
                                                             surface_azimuth,
@@ -262,7 +295,6 @@ class CMIP6_light:
         assert np.nanmax(clt) <= 1.1, "Clouds needs to be scaled to between 0 and 1"
         assert np.nanmax(sisnconc) <= 1.1, "Sea-ice snow concentration needs to be scaled to between 0 and 1"
         assert np.nanmax(siconc) <= 1.1, "Sea-ice needs to be scaled to between 0 and 1"
-        print("np.nanmax(tas)", np.nanmax(tas), np.nanmin(tas))
         assert np.nanmax(tas) <= 45, "Temperature needs to be in Celsius"
         assert np.nanmin(tas) > -60, "Temperature wrongly converted"
         assert np.nanmax(tas) < 60, "Temperature wrongly converted"
@@ -273,14 +305,20 @@ class CMIP6_light:
                             hour_of_day: int,
                             model_object: CMIP6_MODEL,
                             clt: np.ndarray,
+                            ozone: np.ndarray,
                             direct_OSA: np.ndarray,
                             lat: np.ndarray,
                             m: int, n: int) -> np.ndarray:
         logging.info("[CMIP6_light] Running for hour {}".format(hour_of_day))
 
         ctime, pv_system = self.setup_pv_system(model_object.current_time.month, hour_of_day)
-        calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :]) for j
-                          in range(m)]
+
+       # calc_radiation = [
+       #     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
+       #     in range(m)]
+
+        calc_radiation = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
+            in range(m)]
 
         # https://github.com/dask/dask/issues/5464
         rad = dask.compute(calc_radiation)
@@ -288,14 +326,14 @@ class CMIP6_light:
 
         return rads
 
-    def calculate_the_effect_of_ozone(self, dr_uv, toz):
+    def calculate_the_effect_of_ozone(self, dr_uv, ozone):
         """
         Method that estimates the effect of ozone on total UV assuming
         simple relationship from here:
         https://www.sciencedirect.com/science/article/pii/S1309104215305419
         """
         print("dr before ozone: {}".format(np.nanmean(dr_uv)))
-        dr_uv = dr_uv * 57 * (toz) ** (-1.05)
+        dr_uv = dr_uv * 57 * (ozone) ** (-1.05)
         print("dr after ozone: {}".format(np.nanmean(dr_uv)))
         return dr_uv
 
@@ -303,7 +341,7 @@ class CMIP6_light:
         # Method that reads the total ozone column from input4MPI dataset (Micahela Heggelin)
         # and regrid to consistent 1x1 degree dataset.
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
-        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ.nc")
+        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "../ozone-absorption/TOZ.nc")
         toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date)).sel(
             lat=slice(self.config.min_lat, self.config.max_lat),
             lon=slice(self.config.min_lon, self.config.max_lon))
@@ -322,6 +360,23 @@ class CMIP6_light:
         toz_ds.to_netcdf("test_toz.nc")
         return toz_ds
 
+    def convert_donbson_units_to_atm_cm(self, ozone):
+        # One Dobson Unit is the number of molecules of ozone that would be required to create a layer
+        # of pure ozone 0.01 millimeters thick at a temperature of 0 degrees Celsius and a pressure of 1 atmosphere
+        # (the air pressure at the surface of the Earth). Expressed another way, a column of air with an ozone
+        # concentration of 1 Dobson Unit would contain about 2.69x1016ozone molecules for every
+        # square centimeter of area at the base of the column. Over the Earth’s surface, the ozone layer’s
+        # average thickness is about 300 Dobson Units or a layer that is 3 millimeters thick.
+        #
+        # https://ozonewatch.gsfc.nasa.gov/facts/dobson_SH.html
+
+        assert np.nanmax(ozone) <= 600
+        assert np.nanmin(ozone) > 100
+        ozone = ozone / 1000.
+        assert np.nanmin(ozone) <= 0.7
+        assert np.nanmin(ozone) > 0
+        return ozone
+
     def perform_light_calculations(self, model_object):
 
         times = model_object.ds_sets[model_object.current_member_id]["uas"].time
@@ -330,9 +385,11 @@ class CMIP6_light:
         toz_ds = self.get_ozone_dataset()
 
         for selected_time in range(0, len(times.values)):
-            sel_time=times.values[selected_time]
-                
-            model_object.current_time = sel_time #.to_datetimeindex()
+            sel_time = times.values[selected_time]
+            if isinstance(sel_time, cftime._cftime.DatetimeNoLeap):
+                sel_time = datetime.datetime(year=sel_time.year, month=sel_time.month, day=sel_time.day)
+
+            model_object.current_time = sel_time
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
             logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                                  model_object.name))
@@ -340,8 +397,9 @@ class CMIP6_light:
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
 
-            toz = toz_ds["TOZ"][selected_time, :, :].values
-            assert np.nanmax(toz) <= 600
+            ozone = self.convert_donbson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
+
+            print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
 
             for hour_of_day in range(12, 13, 1):
                 # Calculate zenith for each grid point
@@ -392,7 +450,7 @@ class CMIP6_light:
                     if scenario == "normal":
                         direct_OSA = np.where(direct_OSA < 0.08, 0.06, direct_OSA)
                     # Calculate radiation calculation uses the direct_OSA to calculate the diffuse radiation
-                    rads = self.calculate_radiation(hour_of_day, model_object, clt, direct_OSA, lat, m, n)
+                    rads = self.calculate_radiation(hour_of_day, model_object, clt, ozone, direct_OSA, lat, m, n)
 
                     # Initialize the ccsm3 object for calculating effect of snow and ice. We want to calculate the
                     # albedo for visible and for UV light in two steps.
@@ -436,9 +494,9 @@ class CMIP6_light:
                         tas,
                         spectrum="uv")
 
-                    dr_uv = self.calculate_the_effect_of_ozone(direct_sw_albedo_ice_snow_corrected_uv, toz)
+                    dr_uv = self.calculate_the_effect_of_ozone(direct_sw_albedo_ice_snow_corrected_uv, ozone)
 
-                    uvi = self.cmip6_ccsm3.calculate_uvi(dr_uv, toz)
+                    uvi = self.cmip6_ccsm3.calculate_uvi(dr_uv, ozone)
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
 
                     plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
