@@ -80,9 +80,7 @@ class CMIP6_ozone():
         TOZ = 10 * ((R * T0)/(g0 * P0)) * np.nansum(0.5 * ((VMR[:,0:-2:1,:,:] + VMR[:,1:-1:1,:,:])*(plev[None,0:-2:1,None,None] - plev[None,1:-1:1,None,None])), axis=1)
         
         # Create a dataset
-        toz_ds = xr.DataArray(
-            name="TOZ",
-            data=TOZ,
+        toz_ds = xr.DataArray(name="TOZ",data=TOZ,
             coords={'time': (['time'], times_plus),
                     'lat': (['lat'], ds["lat"].values),
                     'lon': (['lon'], ds["lon"].values)},

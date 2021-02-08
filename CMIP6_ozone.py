@@ -4,10 +4,6 @@ import logging
 import xarray as xr
 import datetime
 import cftime
-<<<<<<< HEAD
-
-=======
->>>>>>> 7a4c3e9d407e9f61b0e6c79b674bb66e9f784c24
 
 # http://www.temis.nl/data/conversions.pdf
 # Data availability: https://esgf-node.llnl.gov/search/input4mips/
@@ -63,14 +59,7 @@ class CMIP6_ozone():
         # Integrating the total column of a trace gas from input4MPI forcing data. Here
         # P is the pressure in hPa, VMR is the colume mixing ration in ppm and TOZ is the trace gas
         # column amount in Dobson Units (DU):'bnds', 'lat', 'lon', 'plev', 'time'
-<<<<<<< HEAD
-        VMR = ds["vmro3"].values
-        plev = ds["plev"].values
 
-        times = ds["time"].values
-        times_plus = []
-
-=======
         mole2ppmv = 1e6
         VMR = ds["vmro3"].values * mole2ppmv
         plev = ds["plev"].values
@@ -78,34 +67,21 @@ class CMIP6_ozone():
         times=ds["time"].values
         times_plus=[]
         
->>>>>>> 7a4c3e9d407e9f61b0e6c79b674bb66e9f784c24
+
         # Mix of Timestamp and DateTimeNoLeap - convert all to DateTimeNoLeap
         for t in times:
             if isinstance(t, datetime.datetime):
                 times_plus.append(
-<<<<<<< HEAD
                     cftime.DatetimeNoLeap(t.year, t.month, t.day, t.hour))
             else:
                 times_plus.append(t)
 
-        print(np.min(plev), np.max(plev), np.mean(plev))
         VMR = np.where(VMR > 1000, np.nan, VMR)
         plev = np.where(plev > 1000, np.nan, plev)
 
         TOZ = 10 * ((R * T0) / (g0 * P0)) * np.nansum(0.5 * ((VMR[:, 0:-2:1, :, :] + VMR[:, 1:-1:1, :, :]) * (
                     plev[None, 0:-2:1, None, None] - plev[None, 1:-1:1, None, None])), axis=1)
 
-=======
-                        cftime.DatetimeNoLeap(t.year, t.month, t.day, t.hour))
-            else:
-                times_plus.append(t)
-               
-        VMR = np.where(VMR>1000,np.nan, VMR)
-        plev = np.where(plev>1000,np.nan, plev)
-            
-        TOZ = 10 * ((R * T0)/(g0 * P0)) * np.nansum(0.5 * ((VMR[:,0:-2:1,:,:] + VMR[:,1:-1:1,:,:])*(plev[None,0:-2:1,None,None] - plev[None,1:-1:1,None,None])), axis=1)
-        
->>>>>>> 7a4c3e9d407e9f61b0e6c79b674bb66e9f784c24
         # Create a dataset
         toz_ds = xr.DataArray(
             name="TOZ",
@@ -116,17 +92,9 @@ class CMIP6_ozone():
             dims=["time", "lat", "lon"],
         ).to_dataset()
         toz_ds.to_netcdf("../oceanography/cmip6/ozone/TOZ.nc")
-<<<<<<< HEAD
-
-        logging.info(
-            "[CMIP6_ozone] Results written to file covering period {} to {}".format(times_plus[0], times_plus[-1]))
-        logging.info(
-            "[CMIP6_ozone] TOZ min {} to max {} and mean {}".format(np.nanmin(TOZ), np.nanmax(TOZ), np.nanmean(TOZ)))
-=======
            
         logging.info("[CMIP6_ozone] Results written to file covering period {} to {}".format(times_plus[0],times_plus[-1]))
         logging.info("[CMIP6_ozone] TOZ min {} to max {} and mean {}".format(np.nanmin(TOZ),np.nanmax(TOZ),np.nanmean(TOZ)))
->>>>>>> 7a4c3e9d407e9f61b0e6c79b674bb66e9f784c24
 
     def setup_logging(self):
         logger = logging.getLogger()
