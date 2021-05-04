@@ -246,8 +246,8 @@ class CMIP6_IO:
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
             current_ds = model_obj.ds_sets[model_obj.current_member_id][key].sel(
-                y=slice(config.min_lat, config.max_lat),
-                x=slice(config.min_lon, config.max_lon))
+                y=slice(int(config.min_lat), int(config.max_lat)),
+                x=slice(int(config.min_lon), int(config.max_lon)))
 
             if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
