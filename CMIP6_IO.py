@@ -249,10 +249,13 @@ class CMIP6_IO:
                 y=slice(int(config.min_lat), int(config.max_lat)),
                 x=slice(int(config.min_lon), int(config.max_lon)))
 
-            if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
-                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
+            if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
+                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertex', 'bnds')
+            elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertices', 'bnds']):
+                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertices', 'bnds')
             else:
-                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
+                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
+
 
             if key in ["uas", "vas", "clt", "chl"]:
                 out_amon = re.regrid_variable(key,
