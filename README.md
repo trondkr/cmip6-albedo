@@ -4,6 +4,15 @@
 ![CodeBeat][image-2]
 ![CodeCov][image-3]
 
+# Calculate ocean surface albedo (OSA).
+Here we use the approach by Seferian et al. 2018 to spectrally calculate the albedo at each 
+grid point accounting for solar angle, wind/waves and chlorophyll. The output provides OSA for 
+direct and diffuse light for wavelengths 200-4000 nm. The OSA is then split into UV and VIS components 
+based on wavelengths to be used in function `calculate_radiation`.
+
+# Calculate irradiance
+Using the output from OSA we can estimate the 
+
 # Total irradiance calculations
 It is possible to add more accurate models for extra terrestrial light using various models when 
 calculating the following:

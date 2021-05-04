@@ -162,7 +162,17 @@ class CMIP6_IO:
                                     current_vars.append(variable_id)
                                     model_object.ocean_vars[member_id] = current_vars
 
-                                self.dataset_into_model_dictionary(member_id, variable_id, dset_processed, model_object)
+                                ds_cartesian = xe.util.grid_global(1, 1)
+                                regridder = xe.Regridder(dset_processed, ds_cartesian,
+                                                         method="bilinear",
+                                                     #    periodic=True,
+                                                         ignore_degenerate=True)
+                                logging.info(
+                                    "[CMIP6_IO] Regridding dataset to shape {}".format(np.shape(ds_cartesian.lon)))
+                                self.dataset_into_model_dictionary(member_id, variable_id,
+                                                                   regridder(dset_processed),
+                                                                   model_object)
+
                             else:
                                 logging.error("[CMIP6_IO] Error - unable to find variable {}".format(variable_id))
 

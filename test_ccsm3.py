@@ -38,14 +38,12 @@ class MyCMIP6CCSM3(unittest.TestCase):
         self.snow_thickness = np.zeros(np.shape(self.snow_thickness))
         self.ice_thickness = np.zeros(np.shape(self.snow_thickness))
         self.air_temp = np.ones(np.shape(self.snow_thickness)) * (-20.0)
-        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.compute_direct_and_diffuse_albedo_from_snow_and_ice(
-            self.ocean_albedo,
-            self.ocean_albedo,
-            self.snow_concentration,
-            self.sea_ice_concentration,
-            self.snow_thickness,
-            self.ice_thickness,
-            self.air_temp)
+        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.direct_and_diffuse_albedo_from_snow_and_ice(self.ocean_albedo,
+                                                                                                      self.ocean_albedo,
+                                                                                                      self.snow_concentration,
+                                                                                                      self.sea_ice_concentration,
+                                                                                                      self.snow_thickness,
+                                                                                                      self.ice_thickness)
 
         np.testing.assert_almost_equal(alvdrn, self.ocean_albedo, decimal=2)
         np.testing.assert_almost_equal(alvdfn, self.ocean_albedo, decimal=2)
@@ -58,14 +56,12 @@ class MyCMIP6CCSM3(unittest.TestCase):
         self.snow_concentration = self.sea_ice_concentration
         # Make sure the effect of pond melting is absolutely none
         self.cmip6_ccsm3.air_temp = np.ones(np.shape(self.snow_thickness)) - 20.0
-        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.compute_direct_and_diffuse_albedo_from_snow_and_ice(
-            self.ocean_albedo,
-            self.ocean_albedo,
-            self.snow_concentration,
-            self.sea_ice_concentration,
-            self.snow_thickness,
-            self.ice_thickness,
-            self.air_temp)
+        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.direct_and_diffuse_albedo_from_snow_and_ice(self.ocean_albedo,
+                                                                                                      self.ocean_albedo,
+                                                                                                      self.snow_concentration,
+                                                                                                      self.sea_ice_concentration,
+                                                                                                      self.snow_thickness,
+                                                                                                      self.ice_thickness)
 
         np.testing.assert_almost_equal(alvdfn, np.ones(np.shape(self.snow_thickness)) * 0.96, decimal=2)
         np.testing.assert_almost_equal(alvdfn, np.ones(np.shape(self.snow_thickness)) * 0.96, decimal=2)
@@ -80,14 +76,12 @@ class MyCMIP6CCSM3(unittest.TestCase):
 
         # Make sure the effect of pond melting is absolutely none
         self.cmip6_ccsm3.air_temp = np.ones(np.shape(self.snow_thickness)) - 20.0
-        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.compute_direct_and_diffuse_albedo_from_snow_and_ice(
-            self.ocean_albedo,
-            self.ocean_albedo,
-            self.snow_concentration,
-            self.sea_ice_concentration,
-            self.snow_thickness,
-            self.ice_thickness,
-            self.air_temp)
+        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.direct_and_diffuse_albedo_from_snow_and_ice(self.ocean_albedo,
+                                                                                                      self.ocean_albedo,
+                                                                                                      self.snow_concentration,
+                                                                                                      self.sea_ice_concentration,
+                                                                                                      self.snow_thickness,
+                                                                                                      self.ice_thickness)
 
         np.testing.assert_almost_equal(alvdfn, np.ones(np.shape(self.snow_thickness)) * 0.73, decimal=2)
         np.testing.assert_almost_equal(alvdfn, np.ones(np.shape(self.snow_thickness)) * 0.73, decimal=2)
@@ -103,14 +97,12 @@ class MyCMIP6CCSM3(unittest.TestCase):
 
         # Make sure the effect of pond melting is absolutely none
         self.cmip6_ccsm3.air_temp = np.ones(np.shape(self.snow_thickness)) + 20.0
-        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.compute_direct_and_diffuse_albedo_from_snow_and_ice(
-            self.ocean_albedo,
-            self.ocean_albedo,
-            self.snow_concentration,
-            self.sea_ice_concentration,
-            self.snow_thickness,
-            self.ice_thickness,
-            self.air_temp)
+        alvdfn, alidfn, alvdrn, alidrn = self.cmip6_ccsm3.direct_and_diffuse_albedo_from_snow_and_ice(self.ocean_albedo,
+                                                                                                      self.ocean_albedo,
+                                                                                                      self.snow_concentration,
+                                                                                                      self.sea_ice_concentration,
+                                                                                                      self.snow_thickness,
+                                                                                                      self.ice_thickness)
 
         # VIS
         np.testing.assert_almost_equal(alvdrn, np.ones(np.shape(self.snow_thickness)) * 0.73, decimal=2)

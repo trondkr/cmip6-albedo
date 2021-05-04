@@ -106,7 +106,6 @@ def calculate_spectral_and_broadband_OSA(wind, alpha_wc, alpha_direct, alpha_dif
     OSA = np.zeros((1, 2))
     OSA_UV = np.zeros((1, 2))
     OSA_VIS = np.zeros((1, 2))
-    OSA_NIR = np.zeros((1, 2))
 
     OSA_direct = (alpha_direct + alpha_direct_chl) * (1 - wc) + wc * alpha_wc
     OSA_diffuse = (alpha_diffuse + alpha_diffuse_chl) * (1 - wc) + wc * alpha_wc
@@ -118,25 +117,21 @@ def calculate_spectral_and_broadband_OSA(wind, alpha_wc, alpha_direct, alpha_dif
     OSA[0, 1] = np.sum(OSA_diffuse * solar_energy)
 
     # Calculate the visible direct OSA
-    start_index_uv = 0
-    end_index_uv = len(np.arange(200, 400, 10))
+    start_index_uv = len(np.arange(200, 280, 10))
+    end_index_uv = len(np.arange(200, 390, 10))
     start_index_visible = len(np.arange(200, 400, 10))
-    end_index_visible = len(np.arange(200, 700, 10))
-    start_index_nir = len(np.arange(200, 800, 10))
-    end_index_nir = len(np.arange(200, 2500, 10))
+    end_index_visible = len(np.arange(200, 710, 10))
+
     # PAR/VIS
-    OSA_UV[0, 0] = np.sum(OSA_direct[start_index_visible:end_index_visible] * \
+    OSA_VIS[0, 0] = np.sum(OSA_direct[start_index_visible:end_index_visible] * \
                        solar_energy[start_index_visible:end_index_visible])
-    OSA_UV[0, 1] = np.sum(OSA_diffuse[start_index_visible:end_index_visible] * \
+    OSA_VIS[0, 1] = np.sum(OSA_diffuse[start_index_visible:end_index_visible] * \
                        solar_energy[start_index_visible:end_index_visible])
     # UV
-    OSA_VIS[0, 0] = np.sum(OSA_direct[start_index_uv:end_index_uv] * solar_energy[start_index_uv:end_index_uv])
-    OSA_VIS[0, 1] = np.sum(OSA_diffuse[start_index_uv:end_index_uv] * solar_energy[start_index_uv:end_index_uv])
-    # NIR
-    OSA_NIR[0, 0] = np.sum(OSA_direct[start_index_nir:end_index_nir] * solar_energy[start_index_nir:end_index_nir])
-    OSA_NIR[0, 1] = np.sum(OSA_diffuse[start_index_nir:end_index_nir] * solar_energy[start_index_nir:end_index_nir])
+    OSA_UV[0, 0] = np.sum(OSA_direct[start_index_uv:end_index_uv] * solar_energy[start_index_uv:end_index_uv])
+    OSA_UV[0, 1] = np.sum(OSA_diffuse[start_index_uv:end_index_uv] * solar_energy[start_index_uv:end_index_uv])
 
-    return OSA, OSA_UV, OSA_VIS, OSA_NIR
+    return OSA, OSA_UV, OSA_VIS
 
 
 @jit(nopython=True)

@@ -25,18 +25,18 @@ class Config_albedo():
        # self.table_ids = ["SImon", "SImon", "SImon","SImon"]
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "2099-12-01"
+        self.end_date = "1952-12-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = True
+        self.use_local_CMIP6_files = False
         self.cmip6_netcdf_dir ="/Volumes/DATASETS/cmip6/CanESM5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
         self.perform_light_calculations = True
         self.cmip6_outdir = "../oceanography/cmip6/light/"
 
         # Cut the region of the global data to these longitude and latitudes
         self.min_lat = 0
-        self.max_lat = 90
+        self.max_lat = 89.5
         self.min_lon = 0
         self.max_lon = 361
 
@@ -108,6 +108,7 @@ class Config_albedo():
         wavelengths = np.arange(280, 390, 10)
         self.erythema_spectrum = np.zeros(len(wavelengths))
 
+        # https://www.nature.com/articles/s41598-018-36850-x
         for i, wavelength in enumerate(wavelengths):
             if 250 <= wavelength <= 298:
                 self.erythema_spectrum[i] = 1.0
@@ -122,7 +123,7 @@ class Config_albedo():
         # http://html.rhhz.net/qxxb_en/html/20190207.htm#rhhz
         infile = "ozone-absorption/O3_UV_absorption_edited.csv"
         df = pd.read_csv(infile, sep="\t")
-        print(df)
+
         # Get values from dataframe
         o3_wavelength = df["wavelength"].values
         o3_abs = df["o3_absorption"].values

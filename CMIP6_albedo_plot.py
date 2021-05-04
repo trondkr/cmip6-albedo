@@ -11,6 +11,8 @@ import os
 import matplotlib
 #matplotlib.use('Qt5Agg')
 import logging
+from matplotlib.colors import ListedColormap
+import seaborn as sns
 
 class CMIP6_albedo_plot():
 
@@ -32,11 +34,13 @@ class CMIP6_albedo_plot():
                      clt=None, chl=None, rads=None, irradiance_water=None, wind=None, OSA=None, OSA_UV=None, \
                      OSA_VIS=None, OSA_NIR=None, albedo=None, direct_sw=None, uvi=None, plotname_postfix=None):
         # create_streamplot(dr_out_uas,dr_out_vas,wind,lon[0,:],lat[:,0],"wind",nlevels=None)
-        # self.create_plot(wind,lon[0,:],lat[:,0],"wind",model_object,regional=True)
         #self.create_plot(sisnconc,lon[0,:],lat[:,0],"sisnconc",model_object,regional=True)
         #self.create_plot(sisnthick,lon[0,:],lat[:,0],"sisnthick",model_object,regional=True)
-        if siconc is not None: self.create_plot(siconc,lon[0,:],lat[:,0],"siconc",model_object,regional=True)
-        if sithick is not None: self.create_plot(sithick,lon[0,:],lat[:,0],"sithick",model_object,regional=True)
+        if siconc is not None: self.create_plot(siconc,lon[0,:],lat[:,0],"siconc",model_object,regional=False)
+        if chl is not None: self.create_plot(chl, lon[0, :], lat[:, 0], "chl", model_object, regional=False)
+        if wind is not None: self.create_plot(wind, lon[0, :], lat[:, 0], "wind", model_object, regional=False)
+        if clt is not None: self.create_plot(clt, lon[0, :], lat[:, 0], "clt", model_object, regional=False)
+        if sithick is not None: self.create_plot(sithick,lon[0,:],lat[:,0],"sithick",model_object,regional=False)
         if direct_sw is not None: self.create_plot(direct_sw, lon[0, :], lat[:, 0], "direct_sw", model_object,
                                                    regional=False, plotname_postfix=plotname_postfix)
         if uvi is not None: self.create_plot(uvi, lon[0, :], lat[:, 0], "UVI", model_object,
@@ -52,9 +56,15 @@ class CMIP6_albedo_plot():
         # self.create_plot(rads[:,:,1],lon[0,:],lat[:,0],"Diffuse radiation",model_object, regional=True)
         # self.create_plot(rads[:,:,2],lon[0,:],lat[:,0],"Apparent zenith",model_object, regional=True)
 
-        if OSA_VIS is not None:  self.create_plot(OSA_VIS[:,:,0], lon[0, :], lat[:, 0], "OSA_VIS_DIRECT", model_object, regional=True)
+        if OSA_VIS is not None:
+            if OSA_VIS.ndim==3:
+                self.create_plot(OSA_VIS[:,:,0], lon[0, :], lat[:, 0], "OSA_VIS_DIRECT", model_object, regional=True)
+            if OSA_VIS.ndim==2:
+                self.create_plot(OSA_VIS[:,:], lon[0, :], lat[:, 0], "OSA_VIS_ICE", model_object, regional=True)
       #  self.create_plot(OSA_UV[:,:,0], lon[0, :], lat[:, 0], "OSA_UV_DIRECT", model_object, regional=True)
-        if OSA_VIS is not None:  self.create_plot(OSA_VIS[:, :, 1], lon[0, :], lat[:, 0], "OSA_VIS_DIFFUSE", model_object, regional=True)
+        if OSA_VIS is not None:
+            if OSA_VIS.ndim == 3:
+                self.create_plot(OSA_VIS[:, :, 1], lon[0, :], lat[:, 0], "OSA_VIS_DIFFUSE", model_object, regional=True)
       #  self.create_plot(OSA_UV[:, :, 1], lon[0, :], lat[:, 0], "OSA_UV_DIFFUSE", model_object, regional=True)
 
         # self.create_plot(irradiance_water, lon[0, :], lat[:, 0], "irradiance_water", model_object, regional=True)
@@ -88,42 +98,61 @@ class CMIP6_albedo_plot():
         ax.add_feature(cfeature.COASTLINE, edgecolor="black")
         plt.show()
 
+    def uvi_colormap(self):
+        # http://uv.biospherical.com/Solar_Index_Guide.pdf
+        return sns.color_palette("Spectral_r", as_cmap=True)
+        return ListedColormap(['#4eb400','#a0ce00','#f7e400',
+                               '#f8b600','#f88700','#f85900',
+                               '#e82c0e','#d8001d','#ff0099',
+                               '#b54cff','#998cff'])
+
     def create_plot(self, indata, lon, lat, name, model_object, nlevels=None, regional=False, logscale=False, plotname_postfix=None):
         plt.interactive(False)
+        import matplotlib.path as mpath
+
         logging.info("[CMIP6_albedo_plot] Plotting variable {} ({})".format(name,np.shape(indata)))
         plt.clf()
-        proj = ccrs.NorthPolarStereo(true_scale_latitude=70)
+        proj = ccrs.NorthPolarStereo()
         ax = plt.axes(projection=proj)
-        land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m')
-        ax.add_feature(land_10m, color="lightgrey", edgecolor="black")
-        ax.coastlines(resolution='10m', linewidth=1.5, color='black', alpha=0.8, zorder=4)
+        land_50m = cfeature.NaturalEarthFeature('physical', 'land', '50m')
+        ax.add_feature(land_50m, color="lightgrey", edgecolor="black")
+      #  ax.coastlines(resolution='10m', linewidth=0.5, color='black', alpha=0.8, zorder=4)
+        ax.set_extent([-180, 180, 0, 90], ccrs.PlateCarree())
+        # Compute a circle in axes coordinates, which we can use as a boundary
+        # for the map. We can pan/zoom as much as we like - the boundary will be
+        # permanently circular.
+        theta = np.linspace(0, 2 * np.pi, 100)
+        center, radius = [0.5, 0.5], 0.5
+        verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+        circle = mpath.Path(verts * radius + center)
 
-        #  if regional:
-        #      land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m')
-        #      ax.add_feature(land_10m, color="lightgrey", edgecolor="black")
-        #      ax.set_extent([-180, 180, 45, 90])
+        ax.set_boundary(circle, transform=ax.transAxes)
 
-        # indata_cyclic=indata
-        # lon_cyclic = lon
+        if name=="UVI":
+            nlevels=np.arange(0,15,1)
+            cmap=self.uvi_colormap()
+        else:
+            cmap = 'RdYlBu_r'
         indata_cyclic, lon = add_cyclic_point(indata, coord=lon)
         if nlevels is None:
             if logscale:
                 from matplotlib import ticker, cm
                 cs = ax.contourf(lon, lat, indata_cyclic, 10,
                                  transform=ccrs.PlateCarree(),
-                                 cmap='RdYlBu_r', locator=ticker.LogLocator(subs=range(1, 5)), extend='both')
+                                 cmap=cmap, locator=ticker.LogLocator(subs=range(1, 5)), extend='both')
             else:
-                cs = ax.contourf(lon, lat, indata_cyclic, 20, transform=ccrs.PlateCarree(), cmap='RdYlBu_r',
+                cs = ax.contourf(lon, lat, indata_cyclic, 20, transform=ccrs.PlateCarree(), cmap=cmap,
                                  extend='both')
         else:
-            cs = ax.contourf(lon, lat, indata_cyclic, nlevels, transform=ccrs.PlateCarree(), cmap='RdYlBu_r',
+            cs = ax.contourf(lon, lat, indata_cyclic, nlevels, transform=ccrs.PlateCarree(), cmap=cmap,
                              extend='both')
+
         plt.title("{}".format(name))
 
-        #   if regional:
-        #       land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m')
-        #       ax.add_feature(land_10m, color="lightgrey", edgecolor="black")
-        #       ax.set_extent([-180, 180, 45, 90])
+        #if regional:
+        land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m')
+        ax.add_feature(land_10m, color="lightgrey", edgecolor="black")
+      #  ax.set_extent([-180, 180, 45, 90])
         #   else:
         #       land_110m = cfeature.NaturalEarthFeature('physical', 'land', '110m')
         #       ax.add_feature(land_110m, color="lightgrey", edgecolor="black")

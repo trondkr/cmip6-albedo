@@ -57,8 +57,62 @@ class CMIP6_light:
         solpos = pvlib.solarposition.get_solarposition(ctime, latitude, longitude)
         return np.squeeze(solpos['zenith'])
 
-    def radiation(self, cloud_covers, latitude, ctime, system, albedo, ozone):
-        results = np.zeros((np.shape(cloud_covers)[0], 3))
+    def cloud_opacity_factor(self, I_diff_clouds, I_dir_clouds, I_ghi_clouds, spectra):
+        # First we calculate the rho fraction based on campbell_norman irradiance
+        # with clouds converted to POA irradiance. In the paper these
+        # values are obtained from observations. The equations used for calculating cloud opacity factor
+        # to scale the clear sky spectral estimates using spectrl2. Results can be compared with sun calculator:
+        # https://www2.pvlighthouse.com.au/calculators/solar%20spectrum%20calculator/solar%20spectrum%20calculator.aspx
+        #
+        # Ref: Marco Ernst, Hendrik Holst, Matthias Winter, Pietro P. Altermatt,
+        # SunCalculator: A program to calculate the angular and spectral distribution of direct and diffuse solar radiation,
+        # Solar Energy Materials and Solar Cells, Volume 157, 2016, Pages 913-922,
+
+        rho = I_diff_clouds / I_ghi_clouds
+
+        I_diff_s = np.trapz(y=spectra['poa_sky_diffuse'][:, 0], x=spectra['wavelength'])
+        I_dir_s = np.trapz(y=spectra['poa_direct'][:, 0], x=spectra['wavelength'])
+        I_glob_s = np.trapz(y=spectra['poa_global'][:, 0], x=spectra['wavelength'])
+
+        rho_spectra = I_diff_s / I_glob_s
+
+        N_rho = (rho - rho_spectra) / (1 - rho_spectra)
+
+        # Direct light. Equation 6 Ernst et al. 2016
+        F_diff_s = spectra['poa_sky_diffuse'][:, :]
+        F_dir_s = spectra['poa_direct'][:, :]
+
+        F_dir = (F_dir_s / I_dir_s) * I_dir_clouds
+
+        # Diffuse light scaling factor. Equation 7 Ernst et al. 2016
+        s_diff = (1 - N_rho) * (F_diff_s / I_diff_s) + N_rho * ((F_dir_s + F_diff_s) / I_glob_s)
+
+        # Equation 8 Ernst et al. 2016
+        F_diff = s_diff * I_diff_clouds
+
+        return F_dir, F_diff
+
+    def radiation(self, cloud_covers, latitude, ctime, system, albedo, ozone) -> np.array:
+        """Returns an array of calculated diffuse and direct light for each longitude index 
+        around the globe (fixed latitude). Output has the shape:  [len(wavelengths), 361, 3] and 
+        the indexes refer to:
+        0: len(wavelengths)
+        1: longitudes global
+        2: [direct light, diffuse light, zenith]
+        Args:
+            cloud_covers (np.array): numpy array of cloudcover for longitude band (fixed latitude)
+            latitude (float): latitude
+            ctime (pd.DatetimeIndex): datetime for when light will be calculated
+            system (json): Return from setup_pv_system
+            albedo (np.array): numpy array of albedo for longitude band (fixed latitude)
+            ozone (np.array): numpy array of ozone for longitude band (fixed latitude)
+
+        Returns:
+            np.array: array containing diffuse and direct light, and zenith for each wavelength and longitude
+            but remember units are W/m2/nm so you have to integrate across wavelengths to get irradiance
+        """
+        wavelengths = np.arange(200, 2700, 10)
+        results = np.zeros((len(wavelengths), np.shape(cloud_covers)[0], 3))
         altitude = 0.0
 
         # Some calculations are done only on Greenwhich meridian line as they are identical around the globe at the
@@ -70,7 +124,6 @@ class CMIP6_light:
         longitude = 0.0
         # get_solar-position returns a Pandas dataframe with index so we convert the value
         # to numpy after calculating
-
         solpos = pvlib.solarposition.get_solarposition(ctime, latitude, longitude)
 
         airmass_relative = pvlib.atmosphere.get_relative_airmass(solpos['apparent_zenith'].to_numpy(),
@@ -78,28 +131,22 @@ class CMIP6_light:
         pressure = pvlib.atmosphere.alt2pres(altitude)
         airmass_abs = pvlib.atmosphere.get_absolute_airmass(airmass_relative, pressure)
 
-        airmass_abs_array = np.ones((np.shape(cloud_covers)))
-        airmass_abs_array = airmass_abs_array * airmass_abs
+        airmass_abs_array = np.ones((np.shape(cloud_covers)))* airmass_abs
+        am_rel_array = np.ones((np.shape(cloud_covers)))* airmass_relative
+        apparent_zenith = np.ones((np.shape(cloud_covers)))* solpos['apparent_zenith'].to_numpy()
+        zenith = np.ones((np.shape(cloud_covers)))* solpos['zenith'].to_numpy()
+        azimuth = np.ones((np.shape(cloud_covers))) * solpos['azimuth'].to_numpy()
+        surface_azimuth = np.ones((np.shape(cloud_covers))) * system['surface_azimuth']
 
-        am_rel_array = np.ones((np.shape(cloud_covers)))
-        am_rel_array = am_rel_array * airmass_relative
+        # Always we use zero tilt when working with pvlib and incoming
+        # irradiance on a horizontal plane flat on earth
+        surface_tilt = np.zeros((np.shape(cloud_covers)))
 
-        apparent_zenith = np.ones((np.shape(cloud_covers)))
-        apparent_zenith = apparent_zenith * solpos['apparent_zenith'].to_numpy()
-
-        azimuth = np.ones((np.shape(cloud_covers)))
-        azimuth = azimuth * solpos['azimuth'].to_numpy()
-
-        surface_tilt = np.ones((np.shape(cloud_covers)))
-        surface_tilt = surface_tilt * latitude  # solpos['surface_tilt']
-
-        surface_azimuth = np.ones((np.shape(cloud_covers)))
-        surface_azimuth = surface_azimuth * system['surface_azimuth']
-
-        # cloud cover in fraction units here
-        transmittance = 1.0 #(1.0 - cloud_covers) * 0.75
+        # cloud cover in fraction units here. this is used in campbell_norman functions
+        transmittance = (1.0 - cloud_covers) * 0.75
         aoi = pvlib.irradiance.aoi(surface_tilt, surface_azimuth, apparent_zenith, azimuth)
 
+        # Fixed atmospheric components used from pvlib example
         water_vapor_content = np.ones((np.shape(cloud_covers))) * 0.5
         tau500 = np.ones((np.shape(cloud_covers))) * 0.1
 
@@ -107,50 +154,55 @@ class CMIP6_light:
         day_of_year = ctime.dayofyear
         day_of_year = np.ones((np.shape(cloud_covers))) * day_of_year[0]
 
-        print("Date {} day of year {}".format(ctime, day_of_year[0]))
-
         spectra = pvlib.spectrum.spectrl2(
             apparent_zenith=apparent_zenith,
             aoi=aoi,
             surface_tilt=surface_tilt,
             ground_albedo=albedo,
             surface_pressure=pressure,
-            relative_airmass=am_rel_array,
+            relative_airmass=airmass_relative,
             precipitable_water=water_vapor_content,
             ozone=ozone,
             aerosol_turbidity_500nm=tau500,
             dayofyear=day_of_year)
 
-        #   plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
-        #   plotter.plot_spectral_irradiance(spectra=spectra,latitude=latitude)
+        irrads_clouds = pvlib.irradiance.campbell_norman(zenith, transmittance)
 
-        # irrads is a DataFrame containing ghi, dni, dhi
-        print("")
-        print("--------")
-        irrads = pvlib.irradiance.campbell_norman(solpos['apparent_zenith'].to_numpy(), transmittance)
-        print("latitude", latitude)
-        print("LIUJ: dni: {} ghi: {} dhi: {}".format(np.nanmean(irrads['dni']),
-                                                     np.nanmean(irrads['ghi']),
-                                                     np.nanmean(irrads['dhi'])))
+        # Convert the irradiance to a plane with tilt zero horizontal to the earth. This is done applying tilt=0 to POA
+        # calculations using the output from campbell_norman. The POA calculations include calculting sky and ground
+        # diffuse light where specific models can be selected (we use default)
+        POA_irradiance_clouds = pvlib.irradiance.get_total_irradiance(
+            surface_tilt=surface_tilt,
+            surface_azimuth=surface_azimuth,
+            dni=irrads_clouds['dni'],
+            ghi=irrads_clouds['ghi'],
+            dhi=irrads_clouds['dhi'],
+            solar_zenith=apparent_zenith,
+            solar_azimuth=azimuth)
 
-        print("SPECTRA: dni: {} dhi: {}".format(np.nanmean(np.nansum(spectra['dni'], axis=0)),
-                                                np.nanmean(np.nansum(spectra['dhi'], axis=0))))
+        # Account for cloud opacity on the spectral radiation
+        F_dir, F_diff = self.cloud_opacity_factor(POA_irradiance_clouds['poa_direct'],
+                                             POA_irradiance_clouds['poa_diffuse'],
+                                             POA_irradiance_clouds['poa_global'],
+                                             spectra)
+        # Do the linear interpolation
+        for lon_index in range(len(F_dir[0, :])):
 
-        print("Ratio: dni: {} dhi: {}".format(np.nansum(spectra['dni']) / np.nansum(irrads['dni']),
-                                              np.nansum(spectra['dhi']) / np.nansum(irrads['dhi'])))
+            interp_fdir = np.interp(wavelengths, spectra["wavelength"], F_dir[:,lon_index])
+            interp_fdiff = np.interp(wavelengths, spectra["wavelength"], F_diff[:,lon_index])
 
-        total_irrad = pvlib.irradiance.get_total_irradiance(surface_tilt,
-                                                            surface_azimuth,
-                                                            apparent_zenith,
-                                                            azimuth,
-                                                            irrads['dni'],
-                                                            irrads['ghi'],
-                                                            irrads['dhi'],
-                                                            model='isotropic',
-                                                            albedo=albedo)
-        results[:, 0] = total_irrad['poa_direct']
-        results[:, 1] = total_irrad['poa_diffuse']
-        results[:, 2] = solpos['zenith']
+
+        #    print("1",lon_index, np.trapz(y=F_dir[:,lon_index], x=spectra["wavelength"]))
+        #    print("2",lon_index,np.trapz(y=interp_fdir, x=wavelengths))
+
+        #    print("3",lon_index, np.trapz(y=F_diff[:, lon_index], x=spectra["wavelength"]))
+        #    print("4", lon_index,np.trapz(y=interp_fdiff, x=wavelengths))
+
+        #    print("shape results", np.shape(results), np.shape(interp_fdir))
+           
+            results[:,lon_index, 0] = np.squeeze(interp_fdir)
+            results[:,lon_index, 1] = np.squeeze(interp_fdiff)
+            results[:,lon_index, 2] = solpos['zenith']
         return results
 
     def season_mean(self, ds, calendar='standard'):
@@ -264,6 +316,9 @@ class CMIP6_light:
             extracted[key] = out
         return extracted
 
+    def filter_extremes(self, df):
+        return np.where(((df < -1000) | (df > 1000)), np.nan, df)
+
     def values_for_timestep(self, extracted_ds, selected_time):
 
         lat = np.squeeze(extracted_ds["uas"].lat.values)
@@ -277,6 +332,16 @@ class CMIP6_light:
         uas = np.squeeze(extracted_ds["uas"].values)
         vas = np.squeeze(extracted_ds["vas"].values)
         tas = np.squeeze(extracted_ds["tas"].values - 273.15)
+
+        clt = self.filter_extremes(clt)
+        chl = self.filter_extremes(chl)
+        uas = self.filter_extremes(uas)
+        vas = self.filter_extremes(vas)
+        sisnconc = self.filter_extremes(sisnconc)
+        sisnthick = self.filter_extremes(sisnthick)
+        siconc = self.filter_extremes(siconc)
+        sithick = self.filter_extremes(sithick)
+        tas = self.filter_extremes(tas)
 
         percentage_to_ratio = 1 / 100.
 
@@ -292,12 +357,16 @@ class CMIP6_light:
         m = len(wind[:, 0])
         n = len(wind[0, :])
 
-        assert np.nanmax(clt) <= 1.1, "Clouds needs to be scaled to between 0 and 1"
-        assert np.nanmax(sisnconc) <= 1.1, "Sea-ice snow concentration needs to be scaled to between 0 and 1"
-        assert np.nanmax(siconc) <= 1.1, "Sea-ice needs to be scaled to between 0 and 1"
-        assert np.nanmax(tas) <= 45, "Temperature needs to be in Celsius"
-        assert np.nanmin(tas) > -60, "Temperature wrongly converted"
-        assert np.nanmax(tas) < 60, "Temperature wrongly converted"
+        print("Max clt {} sisnc {} sic {} tas {} min tas {}".format(np.nanmax(clt),
+                                  np.nanmax(sisnconc),
+                                  np.nanmax(siconc),
+                                  np.nanmax(tas),
+                                  np.nanmax(tas)))
+      #  assert np.nanmax(clt) <= 1.5, "Clouds needs to be scaled to between 0 and 1"
+      #  assert np.nanmax(sisnconc) <= 2.5, "Sea-ice snow concentration needs to be scaled to between 0 and 1"
+      #  assert np.nanmax(siconc) <= 2.5, "Sea-ice needs to be scaled to between 0 and 1"
+      #  assert np.nanmax(tas) <= 60, "Temperature needs to be in Celsius"
+      #  assert np.nanmin(tas) > -60, "Temperature wrongly converted"
 
         return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n
 
@@ -316,26 +385,18 @@ class CMIP6_light:
        # calc_radiation = [
        #     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
        #     in range(m)]
-
+        
+        wavelengths = np.arange(200, 2700, 10)
         calc_radiation = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
             in range(m)]
 
         # https://github.com/dask/dask/issues/5464
         rad = dask.compute(calc_radiation)
-        rads = np.asarray(rad).reshape((m, n, 3))
+        rads = np.squeeze(np.asarray(rad).reshape((m, len(wavelengths), n, 3)))
 
-        return rads
+        # Transpose to get order: wavelengths, lat, lon, elements
+        return np.transpose(rads, (1, 0, 2, 3))
 
-    def calculate_the_effect_of_ozone(self, dr_uv, ozone):
-        """
-        Method that estimates the effect of ozone on total UV assuming
-        simple relationship from here:
-        https://www.sciencedirect.com/science/article/pii/S1309104215305419
-        """
-        print("dr before ozone: {}".format(np.nanmean(dr_uv)))
-        dr_uv = dr_uv * 57 * (ozone) ** (-1.05)
-        print("dr after ozone: {}".format(np.nanmean(dr_uv)))
-        return dr_uv
 
     def get_ozone_dataset(self) -> xr.Dataset:
         # Method that reads the total ozone column from input4MPI dataset (Micahela Heggelin)
@@ -360,17 +421,17 @@ class CMIP6_light:
         toz_ds.to_netcdf("test_toz.nc")
         return toz_ds
 
-    def convert_donbson_units_to_atm_cm(self, ozone):
+    def convert_dobson_units_to_atm_cm(self, ozone):
         # One Dobson Unit is the number of molecules of ozone that would be required to create a layer
         # of pure ozone 0.01 millimeters thick at a temperature of 0 degrees Celsius and a pressure of 1 atmosphere
         # (the air pressure at the surface of the Earth). Expressed another way, a column of air with an ozone
-        # concentration of 1 Dobson Unit would contain about 2.69x1016ozone molecules for every
+        # concentration of 1 Dobson Unit would contain about 2.69x1016 ozone molecules for every
         # square centimeter of area at the base of the column. Over the Earth’s surface, the ozone layer’s
         # average thickness is about 300 Dobson Units or a layer that is 3 millimeters thick.
         #
         # https://ozonewatch.gsfc.nasa.gov/facts/dobson_SH.html
-
-        assert np.nanmax(ozone) <= 600
+        ozone=np.where(ozone==0,np.nan,ozone)
+        assert np.nanmax(ozone) <= 700
         assert np.nanmin(ozone) > 100
         ozone = ozone / 1000.
         assert np.nanmin(ozone) <= 0.7
@@ -397,7 +458,7 @@ class CMIP6_light:
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
 
-            ozone = self.convert_donbson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
+            ozone = self.convert_dobson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
 
             print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
 
@@ -438,17 +499,21 @@ class CMIP6_light:
 
                     res = np.squeeze(np.asarray(dask.compute(zr)))
                     OSA = res[:, 0, :].reshape((m, n, 2))
+
                     direct_OSA = np.squeeze(OSA[:, :, 0])
                     diffuse_OSA = np.squeeze(OSA[:, :, 1])
+
+                    logging.info("OSA: min {} mean {} max {}".format(np.nanmin(direct_OSA),
+                                                                     np.nanmean(direct_OSA),
+                                                                     np.nanmax(direct_OSA)))
                     OSA_UV = res[:, 1, :].reshape((m, n, 2))
                     OSA_VIS = res[:, 2, :].reshape((m, n, 2))
-                    OSA_NIR = res[:, 3, :].reshape((m, n, 2))
 
-                    logging.info("[CMIP6_light] UV {} VIS {} NIR {}".format(np.nanmean(OSA_UV[:, :, 0]),
-                                                                            np.nanmean(OSA_VIS[:, :, 0]),
-                                                                            np.nanmean(OSA_NIR[:, :, 0])))
                     if scenario == "normal":
                         direct_OSA = np.where(direct_OSA < 0.08, 0.06, direct_OSA)
+
+
+
                     # Calculate radiation calculation uses the direct_OSA to calculate the diffuse radiation
                     rads = self.calculate_radiation(hour_of_day, model_object, clt, ozone, direct_OSA, lat, m, n)
 
@@ -460,77 +525,126 @@ class CMIP6_light:
                     albedo_dfvis = OSA_VIS[:, :, 1]
 
                     self.cmip6_ccsm3 = CMIP6_ccsm3.CMIP6_CCSM3()
-                    direct_sw = rads[:, :, 0]
-                    diffuse_sw = rads[:, :, 1]
+                    direct_sw = rads[:, :, :, 0]
+                    diffuse_sw = rads[:, :, :, 1]
 
-                    # Calculate shortwave radiation into the ocean accounting for the effect of snow and ice to the direct
-                    # and diffuse albedos and for attenutation (no scattering). The final product adds diffuse and direct
+                    # Calculate shortwave radiation entering the ocean after accounting for the effect of snow
+                    # and ice to the direct and diffuse albedos and for attenutation (no scattering).
+                    # The final product adds diffuse and direct
                     # light for the spectrum in question (vis or uv).
+                    start_index_visible = len(np.arange(200, 400, 10))
+                    end_index_visible = len(np.arange(200, 710, 10))
+                    wavelengths = np.arange(200, 2700, 10)
                     direct_sw_albedo_ice_snow_corrected_vis = self.cmip6_ccsm3.compute_surface_solar_for_specific_wavelength_band(
                         albedo_drvis,
                         albedo_dfvis,
-                        direct_sw * np.sum(self.config.fractions_shortwave_vis),
-                        diffuse_sw * np.sum(self.config.fractions_shortwave_vis),
+                        direct_sw[start_index_visible:end_index_visible,:,:],
+                        diffuse_sw[start_index_visible:end_index_visible, :, :],
                         chl * chl_scale,
                         sisnthick,
                         sithick,
                         siconc,
                         sisnconc,
                         tas,
+                        lon, lat,
+                        model_object,
                         spectrum="vis")
-                    print("self.config.fractions_shortwave_uv", self.config.fractions_shortwave_uv)
-                    print("Unscaled {} scaled {}".format(np.nansum(direct_sw), np.nansum(
-                        direct_sw * np.nansum(self.config.fractions_shortwave_uv))))
+
+                    start_index_uv = len(np.arange(200, 280, 10))
+                    end_index_uv = len(np.arange(200, 390, 10))
+
                     direct_sw_albedo_ice_snow_corrected_uv = self.cmip6_ccsm3.compute_surface_solar_for_specific_wavelength_band(
                         albedo_druv,
                         albedo_dfuv,
-                        direct_sw * np.sum(self.config.fractions_shortwave_uv),
-                        diffuse_sw * np.sum(self.config.fractions_shortwave_uv),
+                        direct_sw[start_index_uv:end_index_uv, :, :],
+                        diffuse_sw[start_index_uv:end_index_uv, :, :],
                         chl * chl_scale,
                         sisnthick,
                         sithick,
                         siconc,
                         sisnconc,
                         tas,
+                        lon, lat,
+                        model_object,
                         spectrum="uv")
 
-                    dr_uv = self.calculate_the_effect_of_ozone(direct_sw_albedo_ice_snow_corrected_uv, ozone)
+                    dr_vis = np.squeeze(np.trapz(y=direct_sw_albedo_ice_snow_corrected_vis,
+                             x=wavelengths[start_index_visible:end_index_visible], axis=0))
+                    dr_uv = np.squeeze(np.trapz(y=direct_sw_albedo_ice_snow_corrected_uv,
+                             x=wavelengths[start_index_uv:end_index_uv], axis=0))
 
-                    uvi = self.cmip6_ccsm3.calculate_uvi(dr_uv, ozone)
+
+                    uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
 
-                    plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
-                    plotter.create_plots(lon, lat, model_object,
-                                         uvi=uvi,
-                                         plotname_postfix="_uvi_{}".format(scenario))
+                    do_plot=False
+                    if do_plot:
+                        plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 
-                    #   plotter.create_plots(lon, lat, model_object,
-                    #                        direct_sw=direct_sw_albedo_ice_snow_corrected_uv,
-                    #                        plotname_postfix="_uv_{}".format(scenario))
+                        plotter.create_plots(lon, lat, model_object,
+                                                direct_sw=dr_vis,
+                                                plotname_postfix="_vis_{}".format(scenario))
+
+                        plotter.create_plots(lon, lat, model_object,
+                                             uvi=uvi,
+                                             plotname_postfix="_UVI_{}".format(scenario))
+
+                        plotter.create_plots(lon, lat, model_object,
+                                             siconc=siconc,
+                                             plotname_postfix="_siconc_{}".format(scenario))
+
+                        plotter.create_plots(lon, lat, model_object,
+                                             sithick=sithick,
+                                             plotname_postfix="_sithick_{}".format(scenario))
+
+                        plotter.create_plots(lon, lat, model_object,
+                                             sithick=sithick,
+                                             plotname_postfix="_sithick_{}".format(scenario))
+
+                        plotter.create_plots(lon, lat, model_object,
+                                             chl=chl,
+                                             plotname_postfix="_chl_{}".format(scenario))
+
+                        plotter.create_plots(lon, lat, model_object,
+                                             clt=clt,
+                                             plotname_postfix="_clt_{}".format(scenario))
 
                     coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
                     if scenario == scenarios[0]:
                         data_array = xr.DataArray(name="irradiance_vis_{}".format(scenario),
-                                                  data=direct_sw_albedo_ice_snow_corrected_vis, coords=coords,
+                                                  data=dr_vis, coords=coords,
                                                   dims=['lat', 'lon'])
                     else:
-                        data_array["irradiance_vis_{}".format(scenario)] = (
-                            ['lat', 'lon'], direct_sw_albedo_ice_snow_corrected_vis)
-                    data_array["irradiance_uv_{}".format(scenario)] = (
+                        data_array["PAR"] = (
+                            ['lat', 'lon'], dr_vis)
+                    data_array["UV"] = (
                         ['lat', 'lon'], dr_uv)
+                    data_array["UVI"] = (
+                        ['lat', 'lon'],uvi)
+                    data_array["chl"] = (
+                        ['lat', 'lon'], chl)
+                    data_array["siconc"] = (
+                        ['lat', 'lon'], siconc)
+                    data_array["sithick"] = (
+                        ['lat', 'lon'], sithick)
+                    data_array["clt"] = (
+                        ['lat', 'lon'], clt)
+                    data_array["clt"] = (
+                        ['lat', 'lon'], clt)
 
                     data_list.append(data_array)
 
         self.save_irradiance_to_netcdf(model_object.name,
                                        model_object.current_member_id,
-                                       data_list)
+                                       data_list, scenario)
 
-    def save_irradiance_to_netcdf(self, model_name, member_id, data_list):
+    def save_irradiance_to_netcdf(self, model_name, member_id, data_list, scenario):
         out = self.config.outdir + "ncfiles/"
-        result_file = out + "irradiance_{}_{}_{}-{}.nc".format(model_name,
+        result_file = out + "Light_{}_{}_{}-{}_scenario_{}.nc".format(model_name,
                                                                member_id,
                                                                self.config.start_date,
-                                                               self.config.end_date)
+                                                               self.config.end_date,
+                                                                           scenario)
 
         if not os.path.exists(out): os.makedirs(out, exist_ok=True)
         if os.path.exists(result_file): os.remove(result_file)

@@ -2,8 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/CMIP6_albedo.code-workspace" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_albedo_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_albedo_plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_albedo_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_albedo_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_ccsm3.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ccsm3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_regrid.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_regrid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Summary_Arctic_changes/Summary_Arctic.ai" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/radiation_tests.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/radiation_tests.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ccsm3.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_ccsm3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,12 +32,16 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1mhqiam4kaiU4KkVUXCQWtexz0Y" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="autoscrollToSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -36,6 +51,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager">
@@ -76,14 +92,47 @@
       <workItem from="1610813379762" duration="3020000" />
       <workItem from="1612375358962" duration="28800000" />
       <workItem from="1612795049776" duration="1087000" />
-      <workItem from="1612813730651" duration="16800000" />
+      <workItem from="1612813730651" duration="23588000" />
+      <workItem from="1613426324316" duration="7476000" />
+      <workItem from="1613801400803" duration="4837000" />
+      <workItem from="1614372980595" duration="6579000" />
+      <workItem from="1614634579812" duration="113000" />
+      <workItem from="1614634705715" duration="593000" />
+      <workItem from="1614969715172" duration="11433000" />
+      <workItem from="1615308457558" duration="599000" />
+      <workItem from="1615326520377" duration="8000" />
+      <workItem from="1615838224545" duration="29939000" />
+      <workItem from="1615951179492" duration="10203000" />
+      <workItem from="1616554738857" duration="617000" />
+      <workItem from="1616555666916" duration="4055000" />
+      <workItem from="1616684911696" duration="792000" />
+      <workItem from="1616688624535" duration="435000" />
+      <workItem from="1616689079690" duration="384000" />
+      <workItem from="1616689482527" duration="127000" />
+      <workItem from="1616689624457" duration="7626000" />
+      <workItem from="1617915434926" duration="3231000" />
+      <workItem from="1619030886492" duration="7808000" />
+      <workItem from="1619234306489" duration="40133000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1612394113138" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620151676858" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
