@@ -421,7 +421,7 @@ class CMIP6_light:
                                     interpolation_method=self.config.interp,
                                     use_esmf_v801=self.config.use_esmf_v801).to_dataset()
 
-        toz_ds.to_netcdf("test_toz.nc")
+       # toz_ds.to_netcdf("test_toz.nc")
         return toz_ds
 
     def convert_dobson_units_to_atm_cm(self, ozone):
