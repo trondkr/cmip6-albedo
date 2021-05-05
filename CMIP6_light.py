@@ -274,7 +274,6 @@ class CMIP6_light:
         extracted: dict = {}
         if self.config.use_local_CMIP6_files:
             for key in model_obj.ds_sets[model_obj.current_member_id].keys():
-                print("t_index",t_index,type(t_index))
                 extracted[key] = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index)).to_array()
             return extracted
 
@@ -286,6 +285,8 @@ class CMIP6_light:
                                  self.config.max_lon, 1,
                                  self.config.min_lat,
                                  self.config.max_lat, 1)
+        print("ds_out_amon",ds_out_amon)
+        print("ds_out", ds_out)
 
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
@@ -293,6 +294,7 @@ class CMIP6_light:
             current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index)).sel(
                 y=slice(int(self.config.min_lat), int(self.config.max_lat)),
                 x=slice(int(self.config.min_lon), int(self.config.max_lon)))
+            print("current_ds",current_ds)
 
             if all(item in current_ds.dims for item in ['y', 'x', 'vertex', 'bnds']):
                 ds_trans = current_ds.transpose('y', 'x', 'vertex', 'bnds')
@@ -300,17 +302,18 @@ class CMIP6_light:
                 ds_trans = current_ds.transpose('y', 'x', 'vertices', 'bnds')
             else:
                 ds_trans = current_ds.transpose('y', 'x', 'bnds')
-
+            print("ds_trans",ds_trans)
             if key in ["uas", "vas", "clt"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
                                               ds_out_amon,
                                               interpolation_method=self.config.interp,
                                               use_esmf_v801=self.config.use_esmf_v801).to_dataset()
-
+                print("out_amon 1",out_amon)
                 out = re.regrid_variable(key, out_amon, ds_out,
                                          interpolation_method=self.config.interp,
                                          use_esmf_v801=self.config.use_esmf_v801)
+                print("out 1", out)
             else:
                 out = re.regrid_variable(key, ds_trans,
                                          ds_out,
