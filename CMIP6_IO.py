@@ -257,7 +257,7 @@ class CMIP6_IO:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
 
 
-            if key in ["uas", "vas", "clt", "chl"]:
+            if key in ["uas", "vas", "clt", "chl", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
                                               ds_out_amon,
