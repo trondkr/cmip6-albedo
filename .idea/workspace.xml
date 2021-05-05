@@ -101,7 +101,7 @@
       <workItem from="1616689624457" duration="7626000" />
       <workItem from="1617915434926" duration="3231000" />
       <workItem from="1619030886492" duration="7808000" />
-      <workItem from="1619234306489" duration="51525000" />
+      <workItem from="1619234306489" duration="52141000" />
     </task>
     <task id="LOCAL-00001" summary="Testing on Google Cloud">
       <created>1620151783806</created>
@@ -187,7 +187,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620246592319</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Fixed path to ozone">
+      <created>1620247700758</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1620247700758</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
