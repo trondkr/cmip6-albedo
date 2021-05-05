@@ -309,7 +309,7 @@ class CMIP6_light:
 
             print("transp 1", current_ds.dims)
 
-            if key in ["uas", "vas", "clt","tas"]:
+            if key in ["uas", "vas", "clt", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
                                               ds_out_amon,
