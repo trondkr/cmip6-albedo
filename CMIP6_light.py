@@ -285,8 +285,6 @@ class CMIP6_light:
                                  self.config.max_lon, 1,
                                  self.config.min_lat,
                                  self.config.max_lat, 1)
-        print("ds_out_amon",ds_out_amon)
-        print("ds_out", ds_out)
 
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
@@ -679,8 +677,8 @@ class CMIP6_light:
         for model in self.cmip6_models:
             for member_id in model.member_ids:
                 model.current_member_id = member_id
-                if not self.config.use_local_CMIP6_files:
-                    io.extract_dataset_and_save_to_netcdf(model, self.config)
+               # if not self.config.use_local_CMIP6_files:
+               #     io.extract_dataset_and_save_to_netcdf(model, self.config)
                 if self.config.perform_light_calculations:
                     self.perform_light_calculations(model)
 
