@@ -332,6 +332,8 @@ class CMIP6_light:
         return np.where(((df < -1000) | (df > 1000)), np.nan, df)
 
     def values_for_timestep(self, extracted_ds, selected_time):
+        print("INSIDE VALUES",np.shape(extracted_ds["clt"]))
+        print("INSIDE VALUES", np.shape(extracted_ds["chl"]))
 
         lat = np.squeeze(extracted_ds["uas"].lat.values)
         lon = np.squeeze(extracted_ds["uas"].lon.values)
@@ -368,7 +370,7 @@ class CMIP6_light:
         wind = np.sqrt(uas ** 2 + vas ** 2)
         m = len(wind[:, 0])
         n = len(wind[0, :])
-
+        print("m and n", m,n)
         print("Max clt {} sisnc {} sic {} tas {} min tas {}".format(np.nanmax(clt),
                                   np.nanmax(sisnconc),
                                   np.nanmax(siconc),
@@ -466,7 +468,7 @@ class CMIP6_light:
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
             logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                                  model_object.name))
-
+            print("extracted_ds",extracted_ds)
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
 
