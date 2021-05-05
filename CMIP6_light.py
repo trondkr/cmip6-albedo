@@ -405,7 +405,7 @@ class CMIP6_light:
         # Method that reads the total ozone column from input4MPI dataset (Micahela Heggelin)
         # and regrid to consistent 1x1 degree dataset.
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
-        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "../ozone-absorption/TOZ.nc")
+        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "ozone-absorption/TOZ.nc")
         toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date)).sel(
             lat=slice(self.config.min_lat, self.config.max_lat),
             lon=slice(self.config.min_lon, self.config.max_lon))
