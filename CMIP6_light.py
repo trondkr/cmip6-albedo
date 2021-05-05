@@ -293,17 +293,17 @@ class CMIP6_light:
                 y=slice(int(self.config.min_lat), int(self.config.max_lat)),
                 x=slice(int(self.config.min_lon), int(self.config.max_lon)))
 
-            if all(item in current_ds.dims for item in ['y', 'x', 'vertex', 'bnds']):
-                ds_trans = current_ds.transpose('y', 'x', 'vertex', 'bnds')
+            if all(item in current_ds.dims for item in ['x', 'y', 'vertex', 'bnds']):
+                ds_trans = current_ds.transpose('x', 'y', 'vertex', 'bnds')
                 print("transp 1",current_ds.dims)
-            elif all(item in current_ds.dims for item in ['y', 'x', 'vertices', 'bnds']):
-                ds_trans = current_ds.transpose('y', 'x', 'vertices', 'bnds')
+            elif all(item in current_ds.dims for item in ['x', 'y', 'vertices', 'bnds']):
+                ds_trans = current_ds.transpose('x', 'y', 'vertices', 'bnds')
                 print("transp 2", current_ds.dims)
-            elif all(item in current_ds.dims for item in ['y', 'x', 'height', 'bnds']):
-                ds_trans = current_ds.transpose('y', 'x', 'vertices', 'height','bnds')
+            elif all(item in current_ds.dims for item in ['x', 'y', 'height', 'bnds']):
+                ds_trans = current_ds.transpose('x', 'y', 'vertices', 'height','bnds')
                 print("transp 3", current_ds.dims)
             else:
-                ds_trans = current_ds.transpose('y', 'x', 'bnds')
+                ds_trans = current_ds.transpose('x', 'y', 'bnds')
                 print("transp 5", ds_trans.dims)
 
             print("transp final", current_ds.dims)
