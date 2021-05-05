@@ -150,7 +150,7 @@ class CMIP6_IO:
                                         dset_processed = dset_processed.isel(lev_partial=config.selected_depth)
                                     else:
                                         dset_processed = dset_processed.isel(lev=config.selected_depth)
-
+                                print("dset_processed",dset_processed)
                                 # Save the info to model object
                                 if not member_id in model_object.member_ids:
                                     model_object.member_ids.append(member_id)
