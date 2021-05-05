@@ -305,7 +305,7 @@ class CMIP6_light:
                                          use_esmf_v801=self.config.use_esmf_v801)
                 print("out 1", out)
             else:
-                out = re.regrid_variable(key, ds_trans,
+                out = re.regrid_variable(key, current_ds,
                                          ds_out,
                                          interpolation_method=self.config.interp,
                                          use_esmf_v801=self.config.use_esmf_v801)
