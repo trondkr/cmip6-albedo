@@ -292,7 +292,6 @@ class CMIP6_light:
             current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index)).sel(
                 y=slice(int(self.config.min_lat), int(self.config.max_lat)),
                 x=slice(int(self.config.min_lon), int(self.config.max_lon)))
-            print("current_ds",current_ds)
 
             if all(item in current_ds.dims for item in ['y', 'x', 'vertex', 'bnds']):
                 ds_trans = current_ds.transpose('y', 'x', 'vertex', 'bnds')
@@ -307,9 +306,9 @@ class CMIP6_light:
                 ds_trans = current_ds.transpose('y', 'x', 'bnds')
                 print("transp 5", ds_trans.dims)
 
-            print("transp 1", current_ds.dims)
+            print("transp final", current_ds.dims)
 
-            if key in ["uas", "vas", "clt", "tas"]:
+            if key in ["uas", "vas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
                                               ds_out_amon,
@@ -344,7 +343,7 @@ class CMIP6_light:
 
         lat = np.squeeze(extracted_ds["uas"].lat.values)
         lon = np.squeeze(extracted_ds["uas"].lon.values)
-        clt = np.squeeze(extracted_ds["clt"].values)
+
         chl = np.squeeze(extracted_ds["chl"].values)
         sisnconc = np.squeeze(extracted_ds["sisnconc"].values)
         sisnthick = np.squeeze(extracted_ds["sisnthick"].values)
@@ -352,6 +351,8 @@ class CMIP6_light:
         sithick = np.squeeze(extracted_ds["sithick"].values)
         uas = np.squeeze(extracted_ds["uas"].values)
         vas = np.squeeze(extracted_ds["vas"].values)
+        clt = np.squeeze(extracted_ds["clt"].values)
+        print("INSIDE VALUES tas 2", np.shape(extracted_ds["tas"]))
         tas = np.squeeze(extracted_ds["tas"].values - 273.15)
 
         clt = self.filter_extremes(clt)
