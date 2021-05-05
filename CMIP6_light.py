@@ -289,9 +289,11 @@ class CMIP6_light:
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index)).sel(
-                y=slice(int(self.config.min_lat), int(self.config.max_lat)),
-                x=slice(int(self.config.min_lon), int(self.config.max_lon)))
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index))\
+
+                #.sel(
+                #y=slice(int(self.config.min_lat), int(self.config.max_lat)),
+                #x=slice(int(self.config.min_lon), int(self.config.max_lon)))
 
             if key in ["uas", "vas"]:
                 out_amon = re.regrid_variable(key,
@@ -299,11 +301,11 @@ class CMIP6_light:
                                               ds_out_amon,
                                               interpolation_method=self.config.interp,
                                               use_esmf_v801=self.config.use_esmf_v801).to_dataset()
-                print("out_amon 1",out_amon)
+
                 out = re.regrid_variable(key, out_amon, ds_out,
                                          interpolation_method=self.config.interp,
                                          use_esmf_v801=self.config.use_esmf_v801)
-                print("out 1", out)
+
             else:
                 out = re.regrid_variable(key, current_ds,
                                          ds_out,
@@ -337,7 +339,7 @@ class CMIP6_light:
         uas = np.squeeze(extracted_ds["uas"].values)
         vas = np.squeeze(extracted_ds["vas"].values)
         clt = np.squeeze(extracted_ds["clt"].values)
-        print("INSIDE VALUES tas 2", np.shape(extracted_ds["tas"]))
+
         tas = np.squeeze(extracted_ds["tas"].values - 273.15)
 
         clt = self.filter_extremes(clt)

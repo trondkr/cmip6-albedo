@@ -150,7 +150,7 @@ class CMIP6_IO:
                                         dset_processed = dset_processed.isel(lev_partial=config.selected_depth)
                                     else:
                                         dset_processed = dset_processed.isel(lev=config.selected_depth)
-                                print("dset_processed",dset_processed)
+
                                 # Save the info to model object
                                 if not member_id in model_object.member_ids:
                                     model_object.member_ids.append(member_id)
@@ -163,10 +163,6 @@ class CMIP6_IO:
                                     model_object.ocean_vars[member_id] = current_vars
 
                                 ds_cartesian = xe.util.grid_global(1, 1)
-                              #  ds_cartesian =xe.util.grid_2d(config.min_lon,
-                              #                  config.max_lon, 1,
-                              #                  config.min_lat,
-                              #                  config.max_lat, 1)
 
                                 regridder = xe.Regridder(dset_processed, ds_cartesian,
                                                          method="bilinear",
@@ -195,6 +191,7 @@ class CMIP6_IO:
             existing_ds = model_object.ds_sets[member_id]
         except KeyError:
             existing_ds = {}
+        print("VARIABLE {} ds {}".format(variable_id, dset))
         existing_ds[variable_id] = dset
 
         model_object.ds_sets[member_id] = existing_ds
@@ -254,17 +251,17 @@ class CMIP6_IO:
                 y=slice(int(config.min_lat), int(config.max_lat)),
                 x=slice(int(config.min_lon), int(config.max_lon)))
 
-       #     if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
-       #         ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertex', 'bnds')
-       #     elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertices', 'bnds']):
-       #         ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertices', 'bnds')
-       #     else:
-       #         ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
+            if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
+                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertex', 'bnds')
+            elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertices', 'bnds']):
+                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertices', 'bnds')
+            else:
+                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
 
 
             if key in ["uas", "vas", "clt", "chl", "tas"]:
                 out_amon = re.regrid_variable(key,
-                                              current_ds,
+                                              ds_trans,
                                               ds_out_amon,
                                               interpolation_method=config.interp,
                                               use_esmf_v801=config.use_esmf_v801).to_dataset()
@@ -273,7 +270,7 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
             else:
-                out = re.regrid_variable(key, current_ds,
+                out = re.regrid_variable(key, ds_trans,
                                          ds_out,
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
