@@ -272,15 +272,15 @@ class CMIP6_IO:
                                          ds_out,
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
+            if config.write_CMIP6_to_file:
+                outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir,
+                                                       model_obj.name,
+                                                       model_obj.current_member_id,
+                                                       key)
+                if os.path.exists(outfile): os.remove(outfile)
 
-            outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir,
-                                                   model_obj.name,
-                                                   model_obj.current_member_id,
-                                                   key)
-            if os.path.exists(outfile): os.remove(outfile)
-
-            # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
-            # of the data and we therefore re-chunk to split the process into several using dask
-            ds = out.to_dataset()
-            ds.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
-            logging.info("[CMIP6_light] wrote variable {} to file".format(key))
+                # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
+                # of the data and we therefore re-chunk to split the process into several using dask
+                ds = out.to_dataset()
+                ds.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
+                logging.info("[CMIP6_light] wrote variable {} to file".format(key))

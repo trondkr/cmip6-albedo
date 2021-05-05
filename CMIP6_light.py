@@ -274,7 +274,8 @@ class CMIP6_light:
         extracted: dict = {}
         if self.config.use_local_CMIP6_files:
             for key in model_obj.ds_sets[model_obj.current_member_id].keys():
-                extracted[key] = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).to_array()
+                print("t_index",t_index,type(t_index))
+                extracted[key] = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index)).to_array()
             return extracted
 
         ds_out_amon = xe.util.grid_2d(self.config.min_lon,
@@ -289,14 +290,16 @@ class CMIP6_light:
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=t_index).sel(
-                y=slice(self.config.min_lat, self.config.max_lat),
-                x=slice(self.config.min_lon, self.config.max_lon))
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index)).sel(
+                y=slice(int(self.config.min_lat), int(self.config.max_lat)),
+                x=slice(int(self.config.min_lon), int(self.config.max_lon)))
 
-            if key in ["chl", "sithick", "siconc", "sisnthick", "sisnconc"]:
-                ds_trans = current_ds.transpose('bnds', 'vertex', 'y', 'x')
+            if all(item in current_ds.dims for item in ['y', 'x', 'vertex', 'bnds']):
+                ds_trans = current_ds.transpose('y', 'x', 'vertex', 'bnds')
+            elif all(item in current_ds.dims for item in ['y', 'x', 'vertices', 'bnds']):
+                ds_trans = current_ds.transpose('y', 'x', 'vertices', 'bnds')
             else:
-                ds_trans = current_ds.transpose('bnds', 'y', 'x')
+                ds_trans = current_ds.transpose('y', 'x', 'bnds')
 
             if key in ["uas", "vas", "clt"]:
                 out_amon = re.regrid_variable(key,
@@ -360,7 +363,7 @@ class CMIP6_light:
         print("Max clt {} sisnc {} sic {} tas {} min tas {}".format(np.nanmax(clt),
                                   np.nanmax(sisnconc),
                                   np.nanmax(siconc),
-                                  np.nanmax(tas),
+                                  np.nanmin(tas),
                                   np.nanmax(tas)))
       #  assert np.nanmax(clt) <= 1.5, "Clouds needs to be scaled to between 0 and 1"
       #  assert np.nanmax(sisnconc) <= 2.5, "Sea-ice snow concentration needs to be scaled to between 0 and 1"
