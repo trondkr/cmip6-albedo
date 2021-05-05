@@ -296,11 +296,19 @@ class CMIP6_light:
 
             if all(item in current_ds.dims for item in ['y', 'x', 'vertex', 'bnds']):
                 ds_trans = current_ds.transpose('y', 'x', 'vertex', 'bnds')
+                print("transp 1",current_ds.dims)
             elif all(item in current_ds.dims for item in ['y', 'x', 'vertices', 'bnds']):
                 ds_trans = current_ds.transpose('y', 'x', 'vertices', 'bnds')
+                print("transp 2", current_ds.dims)
+            elif all(item in current_ds.dims for item in ['y', 'x', 'height', 'bnds']):
+                ds_trans = current_ds.transpose('y', 'x', 'vertices', 'height','bnds')
+                print("transp 3", current_ds.dims)
             else:
                 ds_trans = current_ds.transpose('y', 'x', 'bnds')
-            print("ds_trans",ds_trans)
+                print("transp 5", ds_trans.dims)
+
+            print("transp 1", current_ds.dims)
+
             if key in ["uas", "vas", "clt","tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
