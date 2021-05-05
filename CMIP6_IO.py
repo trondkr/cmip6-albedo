@@ -254,17 +254,17 @@ class CMIP6_IO:
                 y=slice(int(config.min_lat), int(config.max_lat)),
                 x=slice(int(config.min_lon), int(config.max_lon)))
 
-            if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
-                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertex', 'bnds')
-            elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertices', 'bnds']):
-                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertices', 'bnds')
-            else:
-                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
+       #     if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
+       #         ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertex', 'bnds')
+       #     elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertices', 'bnds']):
+       #         ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertices', 'bnds')
+       #     else:
+       #         ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
 
 
             if key in ["uas", "vas", "clt", "chl", "tas"]:
                 out_amon = re.regrid_variable(key,
-                                              ds_trans,
+                                              current_ds,
                                               ds_out_amon,
                                               interpolation_method=config.interp,
                                               use_esmf_v801=config.use_esmf_v801).to_dataset()
@@ -273,7 +273,7 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
             else:
-                out = re.regrid_variable(key, ds_trans,
+                out = re.regrid_variable(key, current_ds,
                                          ds_out,
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
