@@ -293,24 +293,9 @@ class CMIP6_light:
                 y=slice(int(self.config.min_lat), int(self.config.max_lat)),
                 x=slice(int(self.config.min_lon), int(self.config.max_lon)))
 
-            if all(item in current_ds.dims for item in ['y', 'x', 'vertex', 'bnds']):
-                ds_trans = current_ds.transpose('y', 'x', 'vertex', 'bnds')
-                print("transp 1",current_ds.dims)
-            elif all(item in current_ds.dims for item in ['y', 'x', 'vertices', 'bnds']):
-                ds_trans = current_ds.transpose('y', 'x', 'vertices', 'bnds')
-                print("transp 2", current_ds.dims)
-            elif all(item in current_ds.dims for item in ['y', 'x', 'height', 'bnds']):
-                ds_trans = current_ds.transpose('y', 'x', 'vertices', 'height','bnds')
-                print("transp 3", current_ds.dims)
-            else:
-                ds_trans = current_ds.transpose('y', 'x', 'bnds')
-                print("transp 5", ds_trans.dims)
-
-            print("transp final", current_ds.dims)
-
             if key in ["uas", "vas"]:
                 out_amon = re.regrid_variable(key,
-                                              ds_trans,
+                                              current_ds,
                                               ds_out_amon,
                                               interpolation_method=self.config.interp,
                                               use_esmf_v801=self.config.use_esmf_v801).to_dataset()
