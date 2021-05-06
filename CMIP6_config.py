@@ -16,7 +16,7 @@ class Config_albedo():
      #                      for ii in range(1) for iii in range(1) for iv in range(1)]
 
         self.experiment_ids = ["ssp585"] #,"ssp245"]  # 'abrupt-4xCO2',
-        self.source_ids = ["UKESM1-0-LL","MPI-ESM1-2-HR","CanESM5"] [#"ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5-CanOE"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"]
+        self.source_ids = ["UKESM1-0-LL","MPI-ESM1-2-HR","CanESM5"] #"ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5-CanOE"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"]
             # #"GFDL-ESM4"] #,"MPI-ESM1-2-HR","CanESM5"] #"CanESM5"] #["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
         self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
