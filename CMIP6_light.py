@@ -459,7 +459,11 @@ class CMIP6_light:
                 sel_time = datetime.datetime(year=sel_time.year, month=sel_time.month, day=sel_time.day)
             print("TIME: {} TYPE: {}".format(sel_time,sel_time.dtype))
             if sel_time.dtype in ["datetime64[ns]"]:
-                sel_time=sel_time.astype(object)
+                sel_time = pd.DatetimeIndex([sel_time],
+                              dtype='datetime64[ns]', name='datetime', freq=None)
+                print("TIME 2: {} TYPE: {}".format(sel_time, sel_time.dtype))
+                print("TIME 3: {} TYPE: {}".format(sel_time.mo, sel_time.dtype))
+
             model_object.current_time = sel_time
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
             logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
