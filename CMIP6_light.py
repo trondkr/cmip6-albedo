@@ -316,19 +316,9 @@ class CMIP6_light:
         return np.where(((df < -1000) | (df > 1000)), np.nan, df)
 
     def values_for_timestep(self, extracted_ds, selected_time):
-        print("INSIDE VALUES clt",np.shape(extracted_ds["clt"]))
-        print("INSIDE VALUES chl", np.shape(extracted_ds["chl"]))
-        print("INSIDE VALUES uas", np.shape(extracted_ds["uas"]))
-        print("INSIDE VALUES vas", np.shape(extracted_ds["vas"]))
-        print("INSIDE VALUES sisnconc", np.shape(extracted_ds["sisnconc"]))
-        print("INSIDE VALUES sisnthick", np.shape(extracted_ds["sisnthick"]))
-        print("INSIDE VALUES siconc", np.shape(extracted_ds["siconc"]))
-        print("INSIDE VALUES sithick", np.shape(extracted_ds["sithick"]))
-        print("INSIDE VALUES tas", np.shape(extracted_ds["tas"]))
 
         lat = np.squeeze(extracted_ds["uas"].lat.values)
         lon = np.squeeze(extracted_ds["uas"].lon.values)
-
         chl = np.squeeze(extracted_ds["chl"].values)
         sisnconc = np.squeeze(extracted_ds["sisnconc"].values)
         sisnthick = np.squeeze(extracted_ds["sisnthick"].values)
@@ -337,8 +327,8 @@ class CMIP6_light:
         uas = np.squeeze(extracted_ds["uas"].values)
         vas = np.squeeze(extracted_ds["vas"].values)
         clt = np.squeeze(extracted_ds["clt"].values)
-
         tas = np.squeeze(extracted_ds["tas"].values - 273.15)
+        tas = np.where(tas == -273.15, np.nan, tas)
 
         clt = self.filter_extremes(clt)
         chl = self.filter_extremes(chl)
@@ -363,7 +353,7 @@ class CMIP6_light:
         wind = np.sqrt(uas ** 2 + vas ** 2)
         m = len(wind[:, 0])
         n = len(wind[0, :])
-        print("m and n", m,n)
+
         print("Max clt {} sisnc {} sic {} tas {} min tas {}".format(np.nanmax(clt),
                                   np.nanmax(sisnconc),
                                   np.nanmax(siconc),
@@ -457,21 +447,17 @@ class CMIP6_light:
             sel_time = times.values[selected_time]
             if isinstance(sel_time, cftime._cftime.DatetimeNoLeap):
                 sel_time = datetime.datetime(year=sel_time.year, month=sel_time.month, day=sel_time.day)
-            print("TIME: {} TYPE: {}".format(sel_time,sel_time.dtype))
             if sel_time.dtype in ["datetime64[ns]"]:
                 sel_time = pd.DatetimeIndex([sel_time],
                               dtype='datetime64[ns]', name='datetime', freq=None).to_pydatetime()[0]
-                print("TIME 2: {}".format(sel_time))
               #  print("TIME 3: {} TYPE: {}".format(sel_time.month, sel_time.dtype))
 
             model_object.current_time = sel_time
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
             logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                                  model_object.name))
-            print("extracted_ds",extracted_ds)
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
-            print(np.shape(toz_ds["TOZ"]))
             ozone = self.convert_dobson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
 
             print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
@@ -591,7 +577,7 @@ class CMIP6_light:
                     uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
 
-                    do_plot=False
+                    do_plot=True
                     if do_plot:
                         plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 

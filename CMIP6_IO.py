@@ -167,7 +167,7 @@ class CMIP6_IO:
                                                                config.max_lon, 1,
                                                                config.min_lat,
                                                                config.max_lat, 1)
-                                print(dset_processed, ds_cartesian)
+
                                 regridder = xe.Regridder(dset_processed, ds_cartesian,
                                                          method="bilinear",
                                                          periodic=True,
@@ -195,7 +195,7 @@ class CMIP6_IO:
             existing_ds = model_object.ds_sets[member_id]
         except KeyError:
             existing_ds = {}
-        print("VARIABLE {} ds {}".format(variable_id, dset))
+
         existing_ds[variable_id] = dset
 
         model_object.ds_sets[member_id] = existing_ds
