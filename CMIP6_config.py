@@ -36,7 +36,7 @@ class Config_albedo():
         self.cmip6_outdir = "../oceanography/cmip6/light/"
 
         # Cut the region of the global data to these longitude and latitudes
-        self.min_lat = 0
+        self.min_lat = 50
         self.max_lat = 90
         self.min_lon = 0
         self.max_lon = 361

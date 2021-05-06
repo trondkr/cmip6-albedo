@@ -171,7 +171,7 @@ class CMIP6_IO:
                                 logging.info(
                                     "[CMIP6_IO] Regridding dataset to shape {}".format(np.shape(ds_cartesian.lon)))
                                 self.dataset_into_model_dictionary(member_id, variable_id,
-                                                                   regridder(dset_processed),
+                                                                   regridder(dset_processed).compute(),
                                                                    model_object)
 
                             else:
