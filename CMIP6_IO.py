@@ -224,9 +224,6 @@ class CMIP6_IO:
                     )
                 ds["time"].values = times_plus_2000
                 ds = xr.decode_cf(ds)
-        if ds.indexes["time"].dtype in ["datetime64[ns]"]:
-            print("DATEIME64",ds.indexes["time"])
-            ds = xr.decode_cf(ds)
 
         return ds
 
