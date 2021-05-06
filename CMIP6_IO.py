@@ -163,14 +163,14 @@ class CMIP6_IO:
                                     model_object.ocean_vars[member_id] = current_vars
 
                              #   ds_cartesian = xe.util.grid_global(1, 1)
-                                ds_cartesian = xe.util.grid_2d(config.min_lon,
-                                                              config.max_lon, 1,
-                                                              config.min_lat,
-                                                              config.max_lat, 1)
-
+                                ds_cartesian = xe.util.grid_2d(config.min_lon-1,
+                                                               config.max_lon+1, 1,
+                                                               config.min_lat-1,
+                                                               config.max_lat+1, 1)
+                                print(dset_processed, ds_cartesian)
                                 regridder = xe.Regridder(dset_processed, ds_cartesian,
                                                          method="bilinear",
-                                                     #    periodic=True,
+                                                         periodic=True,
                                                          ignore_degenerate=True)
                                 logging.info(
                                     "[CMIP6_IO] Regridding dataset to shape {}".format(np.shape(ds_cartesian.lon)))
