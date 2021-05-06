@@ -4,6 +4,15 @@
 ![CodeBeat][image-2]
 ![CodeCov][image-3]
 
+# CMIP6 models available
+- MPI-ESM1-2-LR
+    - r1i1p1f1
+    - r2i1p1f1
+    - r8i1p1f1 
+- ACCESS-ESM1-5
+    - r1i1p1f1
+    - r2i1p1f1
+    
 # Calculate ocean surface albedo (OSA).
 Here we use the approach by Seferian et al. 2018 to spectrally calculate the albedo at each 
 grid point accounting for solar angle, wind/waves and chlorophyll. The output provides OSA for 
