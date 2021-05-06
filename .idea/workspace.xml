@@ -4,7 +4,6 @@
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Potential solution by removing select of lat and lon prior to regridding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +101,7 @@
       <workItem from="1616689624457" duration="7626000" />
       <workItem from="1617915434926" duration="3231000" />
       <workItem from="1619030886492" duration="7808000" />
-      <workItem from="1619234306489" duration="59179000" />
+      <workItem from="1619234306489" duration="59501000" />
     </task>
     <task id="LOCAL-00001" summary="Testing on Google Cloud">
       <created>1620151783806</created>
@@ -272,7 +271,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620260256697</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Potential solution by removing select of lat and lon prior to regridding">
+      <created>1620260695408</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1620260695408</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -309,6 +315,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Potential solution by removing select of lat and lon prior to regridding" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620260186571" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620260769190" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
