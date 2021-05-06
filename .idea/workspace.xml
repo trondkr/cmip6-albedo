@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing to run with 2 models">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -101,7 +100,7 @@
       <workItem from="1616689624457" duration="7626000" />
       <workItem from="1617915434926" duration="3231000" />
       <workItem from="1619030886492" duration="7808000" />
-      <workItem from="1619234306489" duration="67032000" />
+      <workItem from="1619234306489" duration="67334000" />
     </task>
     <task id="LOCAL-00001" summary="Testing on Google Cloud">
       <created>1620151783806</created>
@@ -404,7 +403,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620279770154</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Testing to run with 2 models">
+      <created>1620279830099</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1620279830099</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
