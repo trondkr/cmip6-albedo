@@ -289,11 +289,9 @@ class CMIP6_light:
         re = CMIP6_regrid.CMIP6_regrid()
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index))\
-
-                #.sel(
-                #y=slice(int(self.config.min_lat), int(self.config.max_lat)),
-                #x=slice(int(self.config.min_lon), int(self.config.max_lon)))
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].isel(time=int(t_index)).sel(
+                y=slice(int(self.config.min_lat), int(self.config.max_lat)),
+                x=slice(int(self.config.min_lon), int(self.config.max_lon)))
 
             if key in ["uas", "vas"]:
                 out_amon = re.regrid_variable(key,
@@ -412,9 +410,10 @@ class CMIP6_light:
         # and regrid to consistent 1x1 degree dataset.
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
         toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "ozone-absorption/TOZ.nc")
-        toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date)).sel(
-            lat=slice(self.config.min_lat, self.config.max_lat),
-            lon=slice(self.config.min_lon, self.config.max_lon))
+        toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date))\
+            #.sel(
+            #lat=slice(self.config.min_lat, self.config.max_lat),
+            #lon=slice(self.config.min_lon, self.config.max_lon))
 
         re = CMIP6_regrid.CMIP6_regrid()
         ds_out = xe.util.grid_2d(self.config.min_lon,
@@ -466,7 +465,7 @@ class CMIP6_light:
             print("extracted_ds",extracted_ds)
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
-
+            print(np.shape(toz_ds["TOZ"]))
             ozone = self.convert_dobson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
 
             print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
