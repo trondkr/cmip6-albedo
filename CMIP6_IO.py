@@ -45,7 +45,7 @@ class CMIP6_IO:
                 else:
                     model_object = CMIP6_model.CMIP6_MODEL(name=source_id)
 
-                logging.info("[CMIP6_IO] Organizing netCDF CMIP6 model object {}".format(model_object.name))
+                logging.info("[CMIP6_IO] Organizing NetCDF CMIP6 model object {}".format(model_object.name))
 
                 for member_id in config.member_ids:
                     for variable_id, table_id in zip(config.variable_ids, config.table_ids):

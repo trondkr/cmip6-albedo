@@ -577,7 +577,7 @@ class CMIP6_light:
                     uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
 
-                    do_plot=True
+                    do_plot=False
                     if do_plot:
                         plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 
