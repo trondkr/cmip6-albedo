@@ -17,7 +17,7 @@ class CMIP6_regrid:
             ds_in = ds_in.drop({"yTe", "xTe"})
         if "vertices_latitude" and "vertices_longitude" in list(ds_in.coords):
             ds_in = ds_in.drop({"vertices_latitude", "vertices_longitude"})
-        print("REGRIDDER: ds_in, ds_out",ds_in, ds_out)
+
         if use_esmf_v801:
             regridder = xe.Regridder(ds_in, ds_out, interpolation_method,
                                      periodic=True,

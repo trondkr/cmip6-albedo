@@ -687,16 +687,23 @@ def main():
     light.calculate_light()
 
 
+
 if __name__ == '__main__':
     np.warnings.filterwarnings('ignore')
     # https://docs.dask.org/en/latest/diagnostics-distributed.html
+    # https://docs.dask.org/en/latest/setup/single-distributed.html
     from dask.distributed import Client
 
+  #  os.environ['NUMEXPR_MAX_THREADS'] = '16'
     dask.config.set(scheduler='processes')
+    #dask.config.set({'array.slicing.split_large_chunks': True})
 
-    client = Client()
-    status = client.scheduler_info()['services']
-    print("Dask started with status at: http://localhost:{}/status".format(status["dashboard"]))
-    print(client)
+    with Client() as client: #n_workers=2, threads_per_worker=1, processes=True, memory_limit='24GB') as client:
+        status = client.scheduler_info()['services']
+        assert client.status == "running"
+        main()
+    client.close()
+    assert client.status == "closed"
 
-    main()
+    logging.info("[CMIP6_light] Execution of downscaling completed")
+
