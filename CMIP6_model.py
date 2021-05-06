@@ -12,6 +12,7 @@ class CMIP6_MODEL():
         self.member_ids = []
         self.current_time = None
         self.current_member_id = None
+        self.experiment_id = None
 
     def description(self):
         logging.info("[CMIP6_model] --------------")
