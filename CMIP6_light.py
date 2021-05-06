@@ -293,7 +293,7 @@ class CMIP6_light:
                 y=slice(int(self.config.min_lat), int(self.config.max_lat)),
                 x=slice(int(self.config.min_lon), int(self.config.max_lon)))
 
-            if key in ["uas", "vas"]:
+            if key in ["uas", "vas", "clt", "tas", "chl"]:
                 out_amon = re.regrid_variable(key,
                                               current_ds,
                                               ds_out_amon,

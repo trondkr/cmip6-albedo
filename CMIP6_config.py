@@ -16,7 +16,7 @@ class Config_albedo():
      #                      for ii in range(1) for iii in range(1) for iv in range(1)]
 
         self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
-        self.source_ids = ["ACCESS-ESM1-5","CanESM5"] #"CanESM5"] #["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
+        self.source_ids = ["ACCESS-ESM1-5","GFDL-ESM4","MPI-ESM1-2-HR","CanESM5"] #"CanESM5"] #["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
         self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
                           "SImon","Amon"] #,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
@@ -25,7 +25,7 @@ class Config_albedo():
        # self.table_ids = ["SImon", "SImon", "SImon","SImon"]
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "1950-12-01"
+        self.end_date = "2099-12-01"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
