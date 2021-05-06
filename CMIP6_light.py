@@ -460,7 +460,7 @@ class CMIP6_light:
             print("TIME: {} TYPE: {}".format(sel_time,sel_time.dtype))
             if sel_time.dtype in ["datetime64[ns]"]:
                 sel_time = pd.DatetimeIndex([sel_time],
-                              dtype='datetime64[ns]', name='datetime', freq=None)
+                              dtype='datetime64[ns]', name='datetime', freq=None).to_pydatetime()[0]
                 print("TIME 2: {} TYPE: {}".format(sel_time, sel_time.dtype))
                 print("TIME 3: {} TYPE: {}".format(sel_time.month, sel_time.dtype))
 
