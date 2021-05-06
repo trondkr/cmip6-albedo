@@ -673,8 +673,10 @@ class CMIP6_light:
         for model in self.cmip6_models:
             for member_id in model.member_ids:
                 model.current_member_id = member_id
-               # if not self.config.use_local_CMIP6_files:
-               #     io.extract_dataset_and_save_to_netcdf(model, self.config)
+
+                # Save datafiles to do calculations locally
+                if self.config.write_CMIP6_to_file:
+                    io.extract_dataset_and_save_to_netcdf(model, self.config)
                 if self.config.perform_light_calculations:
                     self.perform_light_calculations(model)
 

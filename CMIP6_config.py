@@ -15,7 +15,7 @@ class Config_albedo():
      #   self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(1)
      #                      for ii in range(1) for iii in range(1) for iv in range(1)]
 
-        self.experiment_ids = ["ssp585"]  # 'abrupt-4xCO2',
+        self.experiment_ids = ["ssp585","ssp245"]  # 'abrupt-4xCO2',
         self.source_ids = ["ACCESS-ESM1-5","MPI-ESM1-2-LR"] #"GFDL-ESM4"] #,"MPI-ESM1-2-HR","CanESM5"] #"CanESM5"] #["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
         self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
         self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
@@ -30,9 +30,9 @@ class Config_albedo():
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
         self.use_local_CMIP6_files = False
-        self.write_CMIP6_to_file = False
+        self.write_CMIP6_to_file = True
         self.cmip6_netcdf_dir ="../oceanography/cmip6/light/" #/Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
-        self.perform_light_calculations = True
+        self.perform_light_calculations = False
         self.cmip6_outdir = "../oceanography/cmip6/light/"
 
         # Cut the region of the global data to these longitude and latitudes
