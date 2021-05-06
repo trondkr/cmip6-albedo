@@ -462,7 +462,7 @@ class CMIP6_light:
                 sel_time = pd.DatetimeIndex([sel_time],
                               dtype='datetime64[ns]', name='datetime', freq=None)
                 print("TIME 2: {} TYPE: {}".format(sel_time, sel_time.dtype))
-                print("TIME 3: {} TYPE: {}".format(sel_time.mo, sel_time.dtype))
+                print("TIME 3: {} TYPE: {}".format(sel_time.month, sel_time.dtype))
 
             model_object.current_time = sel_time
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
