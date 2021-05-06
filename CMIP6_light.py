@@ -458,7 +458,7 @@ class CMIP6_light:
             if isinstance(sel_time, cftime._cftime.DatetimeNoLeap):
                 sel_time = datetime.datetime(year=sel_time.year, month=sel_time.month, day=sel_time.day)
 
-            if sel_time.dtype() in ["numpy.datetime64"]:
+            if sel_time.dtype in ["numpy.datetime64"]:
                 sel_time=sel_time.astype(object)
             model_object.current_time = sel_time
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
