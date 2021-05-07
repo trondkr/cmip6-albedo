@@ -686,7 +686,7 @@ def main():
     light.config.setup_logging()
     light.config.setup_parameters()
     logging.info("[CMIP6_config] logging started")
-    for light.config.current_experiment_id in light.config.current_experiment_ids:
+    for light.config.current_experiment_id in light.config.experiment_ids:
         light.calculate_light()
 
 
