@@ -77,7 +77,8 @@ class CMIP6_IO:
 
                         self.dataset_into_model_dictionary(member_id, variable_id, ds, model_object)
                     else:
-                        logging.info("[CMIP6_IO] {} did not have member id {} - continue...".format(model_object.name,member_id))
+                        logging.info("[CMIP6_IO] {} did not have member id {} - continue...".format(model_object.name,
+                                                                                                    member_id))
             self.models.append(model_object)
             logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
                                                                               model_object.name))

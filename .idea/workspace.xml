@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Fixed bug in path to ozone">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Fixed problem with writing too much to file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -102,14 +103,7 @@
       <workItem from="1617915434926" duration="3231000" />
       <workItem from="1619030886492" duration="7808000" />
       <workItem from="1619234306489" duration="77989000" />
-      <workItem from="1620411809491" duration="391000" />
-    </task>
-    <task id="LOCAL-00010" summary="Fixed path to ozone">
-      <created>1620240240259</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1620240240259</updated>
+      <workItem from="1620411809491" duration="1515000" />
     </task>
     <task id="LOCAL-00011" summary="Fixed path to ozone">
       <created>1620241764481</created>
@@ -447,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620358718592</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="Fixed problem with writing too much to file">
+      <created>1620412220577</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1620412220577</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -489,7 +490,8 @@
     <MESSAGE value="Fixed bug in format_netcdf_filename" />
     <MESSAGE value="Trying to loop over member ids to see which are available and continue if not" />
     <MESSAGE value="Fixed bug in path to ozone" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug in path to ozone" />
+    <MESSAGE value="Fixed problem with writing too much to file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed problem with writing too much to file" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620269802802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

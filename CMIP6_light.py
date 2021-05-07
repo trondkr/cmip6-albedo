@@ -379,13 +379,13 @@ class CMIP6_light:
 
         ctime, pv_system = self.setup_pv_system(model_object.current_time.month, hour_of_day)
 
-       # calc_radiation = [
-       #     dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
-       #     in range(m)]
+        calc_radiation = [
+            dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
+            in range(m)]
         
         wavelengths = np.arange(200, 2700, 10)
-        calc_radiation = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
-            in range(m)]
+       # calc_radiation = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
+       #     in range(m)]
 
         # https://github.com/dask/dask/issues/5464
         rad = dask.compute(calc_radiation)
@@ -512,8 +512,6 @@ class CMIP6_light:
                     if scenario == "normal":
                         direct_OSA = np.where(direct_OSA < 0.08, 0.06, direct_OSA)
 
-
-
                     # Calculate radiation calculation uses the direct_OSA to calculate the diffuse radiation
                     rads = self.calculate_radiation(hour_of_day, model_object, clt, ozone, direct_OSA, lat, m, n)
 
@@ -577,7 +575,7 @@ class CMIP6_light:
                     uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
 
-                    do_plot=False
+                    do_plot=True
                     if do_plot:
                         plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 
