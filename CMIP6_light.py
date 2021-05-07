@@ -379,13 +379,13 @@ class CMIP6_light:
 
         ctime, pv_system = self.setup_pv_system(model_object.current_time.month, hour_of_day)
 
-        calc_radiation = [
-            dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
-            in range(m)]
+      #  calc_radiation = [
+      #      dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
+      #      in range(m)]
         
         wavelengths = np.arange(200, 2700, 10)
-       # calc_radiation = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
-       #     in range(m)]
+        calc_radiation = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
+            in range(m)]
 
         # https://github.com/dask/dask/issues/5464
         rad = dask.compute(calc_radiation)
