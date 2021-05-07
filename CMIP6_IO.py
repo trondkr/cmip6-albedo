@@ -17,7 +17,8 @@ class CMIP6_IO:
         self.models = []
 
     def format_netcdf_filename(self, dir, model_name, member_id, current_experiment_id, key):
-        return "{}/{}/CMIP6_{}_{}_{}.nc".format(dir, current_experiment_id,
+        return "{}/{}/{}/CMIP6_{}_{}_{}.nc".format(dir, current_experiment_id,
+                                                   model_name,
                                                 model_name, member_id, key)
 
     def print_table_of_models_and_members(self):
