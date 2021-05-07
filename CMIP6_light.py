@@ -114,7 +114,7 @@ class CMIP6_light:
         wavelengths = np.arange(200, 2700, 10)
         results = np.zeros((len(wavelengths), np.shape(cloud_covers)[0], 3))
         altitude = 0.0
-        print(np.shape(results))
+        print(np.shape(results), np.shape(cloud_covers))
         # Some calculations are done only on Greenwhich meridian line as they are identical around the globe at the
         # same latitude. For that reason longitude is set to Greenwhich meridian and do not change. The only reason
         # to use longitude would be to have the local sun position for given time but since we calculate position at
@@ -328,7 +328,7 @@ class CMIP6_light:
         vas = np.squeeze(extracted_ds["vas"].values)
         clt = np.squeeze(extracted_ds["clt"].values)
         tas = np.squeeze(extracted_ds["tas"].values - 273.15)
-        tas = np.where(tas == -273.15, np.nan, tas)
+        tas = np.where(tas < -100, np.nan, tas)
 
         clt = self.filter_extremes(clt)
         chl = self.filter_extremes(chl)
@@ -384,7 +384,7 @@ class CMIP6_light:
       #      in range(m)]
         
         wavelengths = np.arange(200, 2700, 10)
-        calc_radiation = [self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
+        calc_radiation = [dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
             in range(m)]
 
         # https://github.com/dask/dask/issues/5464
@@ -415,7 +415,7 @@ class CMIP6_light:
                                     ds_out,
                                     interpolation_method=self.config.interp,
                                     use_esmf_v801=self.config.use_esmf_v801).to_dataset()
-        print(toz_ds)
+
        # toz_ds.to_netcdf("test_toz.nc")
         return toz_ds
 
@@ -450,7 +450,6 @@ class CMIP6_light:
             if sel_time.dtype in ["datetime64[ns]"]:
                 sel_time = pd.DatetimeIndex([sel_time],
                               dtype='datetime64[ns]', name='datetime', freq=None).to_pydatetime()[0]
-              #  print("TIME 3: {} TYPE: {}".format(sel_time.month, sel_time.dtype))
 
             model_object.current_time = sel_time
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
@@ -458,6 +457,7 @@ class CMIP6_light:
                                                                                  model_object.name))
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
+            print(np.shape(wind), np.shape(clt),"here")
             ozone = self.convert_dobson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
 
             print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
