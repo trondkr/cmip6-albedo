@@ -610,27 +610,27 @@ class CMIP6_light:
                                              plotname_postfix="_clt_{}".format(scenario))
 
                     coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
-                    if scenario == scenarios[0]:
-                        data_array = xr.DataArray(name="irradiance_vis_{}".format(scenario),
+                    if selected_time == 0:
+                        data_array = xr.DataArray(name="irradiance_scenario_{}".format(scenario),
                                                   data=dr_vis, coords=coords,
                                                   dims=['lat', 'lon'])
-                    else:
-                        data_array["PAR"] = (
-                            ['lat', 'lon'], dr_vis)
+
+                    data_array["PAR"] = (
+                        ['lat', 'lon'], dr_vis)
                     data_array["UV"] = (
                         ['lat', 'lon'], dr_uv)
                     data_array["UVI"] = (
                         ['lat', 'lon'],uvi)
-                    data_array["chl"] = (
-                        ['lat', 'lon'], chl)
-                    data_array["siconc"] = (
-                        ['lat', 'lon'], siconc)
-                    data_array["sithick"] = (
-                        ['lat', 'lon'], sithick)
-                    data_array["clt"] = (
-                        ['lat', 'lon'], clt)
-                    data_array["clt"] = (
-                        ['lat', 'lon'], clt)
+               #     data_array["chl"] = (
+               #         ['lat', 'lon'], chl)
+               #     data_array["siconc"] = (
+               #         ['lat', 'lon'], siconc)
+               #     data_array["sithick"] = (
+               #         ['lat', 'lon'], sithick)
+               #     data_array["clt"] = (
+               #         ['lat', 'lon'], clt)
+                #    data_array["clt"] = (
+                #        ['lat', 'lon'], clt)
 
                     data_list.append(data_array)
 
@@ -640,11 +640,12 @@ class CMIP6_light:
 
     def save_irradiance_to_netcdf(self, model_name, member_id, data_list, scenario):
         out = self.config.outdir + "ncfiles/"
-        result_file = out + "Light_{}_{}_{}-{}_scenario_{}.nc".format(model_name,
+        result_file = out + "Light_{}_{}_{}-{}_scenario_{}_{}.nc".format(model_name,
                                                                member_id,
                                                                self.config.start_date,
                                                                self.config.end_date,
-                                                                           scenario)
+                                                                           scenario,
+                                                                      self.config.current_experiment_id)
 
         if not os.path.exists(out): os.makedirs(out, exist_ok=True)
         if os.path.exists(result_file): os.remove(result_file)
