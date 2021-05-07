@@ -49,37 +49,35 @@ class CMIP6_IO:
 
             for member_id in config.member_ids:
                 for variable_id, table_id in zip(config.variable_ids, config.table_ids):
-                    print(config.cmip6_netcdf_dir,model_object.name,
-                                                                  member_id,
-                                                                  config.current_experiment_id,
-                                                                  variable_id)
+
                     netcdf_filename = self.format_netcdf_filename(config.cmip6_netcdf_dir,
                                                                   model_object.name,
                                                                   member_id,
                                                                   config.current_experiment_id,
                                                                   variable_id)
+                    if os.path.exists(netcdf_filename):
+                        ds = xr.open_dataset(netcdf_filename)
 
-                    ds = xr.open_dataset(netcdf_filename)
+                        # Extract the time period of interest
+                        ds = ds.sel(time=slice(config.start_date, config.end_date))
+                        logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
+                                                                                                variable_id,
+                                                                                                ds["time"].values[0],
+                                                                                                ds["time"].values[-1]))
+                        # Save the info to model object
+                        if not member_id in model_object.member_ids:
+                            model_object.member_ids.append(member_id)
 
-                    # Extract the time period of interest
-                    ds = ds.sel(time=slice(config.start_date, config.end_date))
-                    logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
-                                                                                            variable_id,
-                                                                                            ds["time"].values[0],
-                                                                                            ds["time"].values[-1]))
-                    # Save the info to model object
-                    if not member_id in model_object.member_ids:
-                        model_object.member_ids.append(member_id)
+                        if not member_id in model_object.ocean_vars.keys():
+                            model_object.ocean_vars[member_id] = []
+                        if not variable_id in model_object.ocean_vars[member_id]:
+                            current_vars = model_object.ocean_vars[member_id]
+                            current_vars.append(variable_id)
+                            model_object.ocean_vars[member_id] = current_vars
 
-                    if not member_id in model_object.ocean_vars.keys():
-                        model_object.ocean_vars[member_id] = []
-                    if not variable_id in model_object.ocean_vars[member_id]:
-                        current_vars = model_object.ocean_vars[member_id]
-                        current_vars.append(variable_id)
-                        model_object.ocean_vars[member_id] = current_vars
-
-                    self.dataset_into_model_dictionary(member_id, variable_id, ds, model_object)
-
+                        self.dataset_into_model_dictionary(member_id, variable_id, ds, model_object)
+                    else:
+                        logging.info("[CMIP6_IO] {} did not have member id {} - continue...".format(model_object.name,member_id))
             self.models.append(model_object)
             logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
                                                                               model_object.name))
