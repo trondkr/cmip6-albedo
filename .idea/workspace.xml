@@ -4,7 +4,7 @@
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Fixed problem with writing too much to file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,14 +103,7 @@
       <workItem from="1617915434926" duration="3231000" />
       <workItem from="1619030886492" duration="7808000" />
       <workItem from="1619234306489" duration="77989000" />
-      <workItem from="1620411809491" duration="1515000" />
-    </task>
-    <task id="LOCAL-00011" summary="Fixed path to ozone">
-      <created>1620241764481</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1620241764481</updated>
+      <workItem from="1620411809491" duration="1997000" />
     </task>
     <task id="LOCAL-00012" summary="Fixed path to ozone">
       <created>1620246592319</created>
@@ -448,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620412220577</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="Fixed problem with writing too much to file">
+      <created>1620417682606</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1620417682606</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

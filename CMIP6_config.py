@@ -38,9 +38,9 @@ class Config_albedo():
 
         # Cut the region of the global data to these longitude and latitudes
         self.min_lat = 0
-        self.max_lat = 89.5
+        self.max_lat = 90
         self.min_lon = 0
-        self.max_lon = 361
+        self.max_lon = 360
 
         # ESMF and Dask related
         self.dask_chunk = 30
