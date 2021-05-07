@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Fixed problem with writing too much to file">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Changing radiation calculation to dask delayed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,14 +103,7 @@
       <workItem from="1617915434926" duration="3231000" />
       <workItem from="1619030886492" duration="7808000" />
       <workItem from="1619234306489" duration="77989000" />
-      <workItem from="1620411809491" duration="3435000" />
-    </task>
-    <task id="LOCAL-00016" summary="Testing to find bug with array">
-      <created>1620252259720</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1620252259720</updated>
+      <workItem from="1620411809491" duration="4734000" />
     </task>
     <task id="LOCAL-00017" summary="Testing to find bug with array">
       <created>1620252440307</created>
@@ -447,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620419114927</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="Changing radiation calculation to dask delayed">
+      <created>1620419722304</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1620419722304</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -490,7 +491,8 @@
     <MESSAGE value="Trying to loop over member ids to see which are available and continue if not" />
     <MESSAGE value="Fixed bug in path to ozone" />
     <MESSAGE value="Fixed problem with writing too much to file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed problem with writing too much to file" />
+    <MESSAGE value="Changing radiation calculation to dask delayed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changing radiation calculation to dask delayed" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620269802802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

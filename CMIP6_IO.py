@@ -239,15 +239,16 @@ class CMIP6_IO:
 
         if os.path.exists(config.cmip6_outdir) is False:
             os.mkdir(config.cmip6_outdir)
-
-        ds_out_amon = xe.util.grid_2d(config.min_lon,
-                                      config.max_lon, 2,
-                                      config.min_lat,
-                                      config.max_lat, 2)
-        ds_out = xe.util.grid_2d(config.min_lon,
-                                 config.max_lon, 1,
-                                 config.min_lat,
-                                 config.max_lat, 1)
+        ds_out_amon = xe.util.grid_global(2, 2)
+      #  ds_out_amon = xe.util.grid_2d(config.min_lon,
+      #                                config.max_lon, 2,
+      #                                config.min_lat,
+      #                                config.max_lat, 2)
+        ds_out = xe.util.grid_global(1, 1)
+       # ds_out = xe.util.grid_2d(config.min_lon,
+       #                          config.max_lon, 1,
+       #                          config.min_lat,
+       #                          config.max_lat, 1)
 
         re = CMIP6_regrid.CMIP6_regrid()
 
@@ -281,9 +282,13 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
             if config.write_CMIP6_to_file:
-                outfile = "{}CMIP6_{}_{}_{}.nc".format(config.cmip6_outdir,
+                if not os.path.exists(config.cmip6_outdir+"/"+model_obj.name):
+                    os.makedirs(config.cmip6_outdir+"/"+model_obj.name)
+                outfile = "{}/{}/CMIP6_{}_{}_{}_{}.nc".format(config.cmip6_outdir,
+                                                              model_obj.name,
                                                        model_obj.name,
                                                        model_obj.current_member_id,
+                                                       config.current_experiment_id,
                                                        key)
                 if os.path.exists(outfile): os.remove(outfile)
 
