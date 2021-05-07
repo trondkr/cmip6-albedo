@@ -4,7 +4,8 @@
 ![CodeBeat][image-2]
 ![CodeCov][image-3]
 
-# CMIP6 models available
+### CMIP6 models available for calculating light that has all of the required variables 
+Found under ~/oceanography/cmip6/light on Jupyterhub:
 - MPI-ESM1-2-LR
     - r1i1p1f1
     - r2i1p1f1
@@ -12,7 +13,12 @@
 - ACCESS-ESM1-5
     - r1i1p1f1
     - r2i1p1f1
-    
+- CanESM5
+    - r1i1p1f1
+    - r1i1p2f1
+- UKESM1-0-LL
+    - r1i1p1f2
+  
 # Calculate ocean surface albedo (OSA).
 Here we use the approach by Seferian et al. 2018 to spectrally calculate the albedo at each 
 grid point accounting for solar angle, wind/waves and chlorophyll. The output provides OSA for 

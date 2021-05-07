@@ -16,8 +16,9 @@ class CMIP6_IO:
     def __init__(self):
         self.models = []
 
-    def format_netcdf_filename(self, dir, model_name, member_id, key):
-        return "{}CMIP6_{}_{}_{}.nc".format(dir, model_name, member_id, key)
+    def format_netcdf_filename(self, dir, model_name, member_id, current_experiment_id, key):
+        return "{}/{}/CMIP6_{}_{}_{}.nc".format(dir, current_experiment_id,
+                                                model_name, member_id, key)
 
     def print_table_of_models_and_members(self):
         table = texttable.Texttable()
@@ -37,50 +38,50 @@ class CMIP6_IO:
 
     def organize_cmip6_netcdf_files_into_datasets(self, config: CMIP6_config.Config_albedo):
 
-        for experiment_id in config.experiment_ids:
+        for source_id in config.source_ids:
+            if source_id in config.models.keys():
+                model_object = config.models[source_id]
+            else:
+                model_object = CMIP6_model.CMIP6_MODEL(name=source_id)
 
-            for source_id in config.source_ids:
-                if source_id in config.models.keys():
-                    model_object = config.models[source_id]
-                else:
-                    model_object = CMIP6_model.CMIP6_MODEL(name=source_id)
+            logging.info("[CMIP6_IO] Organizing NetCDF CMIP6 model object {}".format(model_object.name))
 
-                logging.info("[CMIP6_IO] Organizing NetCDF CMIP6 model object {}".format(model_object.name))
+            for member_id in config.member_ids:
+                for variable_id, table_id in zip(config.variable_ids, config.table_ids):
+                    print(config.cmip6_netcdf_dir,model_object.name,
+                                                                  member_id,
+                                                                  config.current_experiment_id,
+                                                                  variable_id)
+                    netcdf_filename = self.format_netcdf_filename(config.cmip6_netcdf_dir,
+                                                                  model_object.name,
+                                                                  member_id,
+                                                                  config.current_experiment_id,
+                                                                  variable_id)
 
-                for member_id in config.member_ids:
-                    for variable_id, table_id in zip(config.variable_ids, config.table_ids):
+                    ds = xr.open_dataset(netcdf_filename)
 
-                        netcdf_filename = self.format_netcdf_filename(config.cmip6_netcdf_dir,
-                                                                      model_object.name,
-                                                                      member_id,
-                                                                      variable_id)
+                    # Extract the time period of interest
+                    ds = ds.sel(time=slice(config.start_date, config.end_date))
+                    logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
+                                                                                            variable_id,
+                                                                                            ds["time"].values[0],
+                                                                                            ds["time"].values[-1]))
+                    # Save the info to model object
+                    if not member_id in model_object.member_ids:
+                        model_object.member_ids.append(member_id)
 
-                        ds = xr.open_dataset(netcdf_filename)
+                    if not member_id in model_object.ocean_vars.keys():
+                        model_object.ocean_vars[member_id] = []
+                    if not variable_id in model_object.ocean_vars[member_id]:
+                        current_vars = model_object.ocean_vars[member_id]
+                        current_vars.append(variable_id)
+                        model_object.ocean_vars[member_id] = current_vars
 
-                        # Extract the time period of interest
-                        ds = ds.sel(time=slice(config.start_date, config.end_date))
-                        logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
-                                                                                                variable_id,
-                                                                                                ds["time"].values[0],
-                                                                                                ds["time"].values[-1]))
+                    self.dataset_into_model_dictionary(member_id, variable_id, ds, model_object)
 
-                        # Save the info to model object
-                        if not member_id in model_object.member_ids:
-                            model_object.member_ids.append(member_id)
-
-                        if not member_id in model_object.ocean_vars.keys():
-                            model_object.ocean_vars[member_id] = []
-                        if not variable_id in model_object.ocean_vars[member_id]:
-                            current_vars = model_object.ocean_vars[member_id]
-                            current_vars.append(variable_id)
-                            model_object.ocean_vars[member_id] = current_vars
-
-                        self.dataset_into_model_dictionary(member_id, variable_id, ds, model_object)
-
-
-                self.models.append(model_object)
-                logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
-                                                                                  model_object.name))
+            self.models.append(model_object)
+            logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
+                                                                              model_object.name))
 
 
     # Loop over all models and scenarios listed in CMIP6_light.config
