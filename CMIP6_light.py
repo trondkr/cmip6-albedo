@@ -114,7 +114,7 @@ class CMIP6_light:
         wavelengths = np.arange(200, 2700, 10)
         results = np.zeros((len(wavelengths), np.shape(cloud_covers)[0], 3))
         altitude = 0.0
-
+        print(np.shape(results))
         # Some calculations are done only on Greenwhich meridian line as they are identical around the globe at the
         # same latitude. For that reason longitude is set to Greenwhich meridian and do not change. The only reason
         # to use longitude would be to have the local sun position for given time but since we calculate position at
@@ -700,7 +700,7 @@ if __name__ == '__main__':
     dask.config.set(scheduler='processes')
     #dask.config.set({'array.slicing.split_large_chunks': True})
 
-    with Client() as client: #n_workers=2, threads_per_worker=1, processes=True, memory_limit='24GB') as client:
+    with Client(n_workers=20, threads_per_worker=10, processes=True, memory_limit='60GB') as client:
         status = client.scheduler_info()['services']
         assert client.status == "running"
         main()
