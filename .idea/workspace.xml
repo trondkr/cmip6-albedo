@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Changing radiation calculation to dask delayed">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Changing output of files to be global and to write to specific folder under each scenario">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
@@ -103,14 +103,7 @@
       <workItem from="1617915434926" duration="3231000" />
       <workItem from="1619030886492" duration="7808000" />
       <workItem from="1619234306489" duration="77989000" />
-      <workItem from="1620411809491" duration="4734000" />
-    </task>
-    <task id="LOCAL-00017" summary="Testing to find bug with array">
-      <created>1620252440307</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1620252440307</updated>
+      <workItem from="1620411809491" duration="5913000" />
     </task>
     <task id="LOCAL-00018" summary="Testing to find bug with array">
       <created>1620252948327</created>
@@ -448,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620419722304</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="Changing output of files to be global and to write to specific folder under each scenario">
+      <created>1620421408674</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1620421408674</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -492,7 +492,8 @@
     <MESSAGE value="Fixed bug in path to ozone" />
     <MESSAGE value="Fixed problem with writing too much to file" />
     <MESSAGE value="Changing radiation calculation to dask delayed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changing radiation calculation to dask delayed" />
+    <MESSAGE value="Changing output of files to be global and to write to specific folder under each scenario" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changing output of files to be global and to write to specific folder under each scenario" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620269802802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

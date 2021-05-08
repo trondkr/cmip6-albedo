@@ -282,9 +282,11 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
             if config.write_CMIP6_to_file:
-                if not os.path.exists(config.cmip6_outdir+"/"+model_obj.name):
-                    os.makedirs(config.cmip6_outdir+"/"+model_obj.name)
-                outfile = "{}/{}/CMIP6_{}_{}_{}_{}.nc".format(config.cmip6_outdir,
+                out_dir="{}/{}/{}".format(config.cmip6_outdir, config.current_experiment_id,model_obj.name)
+                if not os.path.exists(out_dir):
+                    os.makedirs(out_dir)
+                outfile = "{}/{}/{}/CMIP6_{}_{}_{}_{}.nc".format(config.cmip6_outdir,
+                                                                 config.current_experiment_id,
                                                               model_obj.name,
                                                        model_obj.name,
                                                        model_obj.current_member_id,
