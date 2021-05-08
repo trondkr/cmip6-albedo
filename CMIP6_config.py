@@ -40,7 +40,7 @@ class Config_albedo():
         self.min_lat = 0
         self.max_lat = 90
         self.min_lon = 0
-        self.max_lon = 360
+        self.max_lon = 361
 
         # ESMF and Dask related
         self.dask_chunk = 10
