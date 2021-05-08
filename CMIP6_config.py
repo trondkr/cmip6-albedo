@@ -29,10 +29,10 @@ class Config_albedo():
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = True
-        self.write_CMIP6_to_file = False
+        self.use_local_CMIP6_files = False
+        self.write_CMIP6_to_file = True
         self.cmip6_netcdf_dir ="../oceanography/cmip6/light" #/Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
-        self.perform_light_calculations = True
+        self.perform_light_calculations = False
         self.cmip6_outdir = "../oceanography/cmip6/light"
         self.current_experiment_id=None
 
@@ -40,10 +40,10 @@ class Config_albedo():
         self.min_lat = 0
         self.max_lat = 90
         self.min_lon = 0
-        self.max_lon = 360
+        self.max_lon = 361
 
         # ESMF and Dask related
-        self.dask_chunk = 30
+        self.dask_chunk = 10
         self.interp = 'bilinear'
         self.outdir = "../oceanography/light/"
         self.selected_depth = 0
