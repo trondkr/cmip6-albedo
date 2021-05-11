@@ -19,9 +19,9 @@ class Config_albedo():
         self.experiment_ids = ["ssp585","ssp245"] #,"ssp245"]  # 'abrupt-4xCO2',
         self.source_ids = ["MPI-ESM1-2-LR"] #,"ACCESS-ESM1-5","CanESM5","UKESM1-0-LL"] #"MPI-ESM1-2-HR"] #"ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5-CanOE"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"]
             # #"GFDL-ESM4"] #,"MPI-ESM1-2-HR","CanESM5"] #"CanESM5"] #["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
-        self.variable_ids = ["uas", "vas", "chl", "clt", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
-        self.table_ids = ["Amon", "Amon", "Omon", "Amon", "SImon", "SImon", "SImon",
-                          "SImon","Amon"] #,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
+        self.variable_ids = ["clt"] #, "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
+        self.table_ids = ["Amon"]#, "Amon", "Amon", "Omon", "SImon", "SImon", "SImon",
+                         # "SImon","Amon"] #,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
 
         self.dset_dict = {}
         self.start_date = "1950-01-01"
@@ -40,7 +40,7 @@ class Config_albedo():
         self.min_lat = 0
         self.max_lat = 90
         self.min_lon = 0
-        self.max_lon = 361
+        self.max_lon = 360
 
         # ESMF and Dask related
         self.dask_chunk = 10

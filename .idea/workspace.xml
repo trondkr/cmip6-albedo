@@ -4,6 +4,7 @@
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Trying to fix 0 degree problem of periodic longitude">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +20,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file:///opt/anaconda3/envs/xesmf2/lib/python3.8/site-packages/xesmf/util.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectId" id="1mhqiam4kaiU4KkVUXCQWtexz0Y" />
   <component name="ProjectLevelVcsManager">
@@ -105,14 +109,7 @@
       <workItem from="1620411809491" duration="7361000" />
       <workItem from="1620451800933" duration="1449000" />
       <workItem from="1620653348507" duration="1100000" />
-      <workItem from="1620748415531" duration="1638000" />
-    </task>
-    <task id="LOCAL-00024" summary="Potential solution by removing select of lat and lon prior to regridding">
-      <created>1620260256697</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1620260256697</updated>
+      <workItem from="1620748415531" duration="3579000" />
     </task>
     <task id="LOCAL-00025" summary="Potential solution by removing select of lat and lon prior to regridding">
       <created>1620260695408</created>
@@ -450,7 +447,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620749951202</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="Trying to fix 0 degree problem of periodic longitude">
+      <created>1620750961624</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1620750961624</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
