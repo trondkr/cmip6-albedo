@@ -297,6 +297,6 @@ class CMIP6_IO:
 
                 # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
                 # of the data and we therefore re-chunk to split the process into several using dask
-                ds = ds_trans.to_dataset()
-                ds.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
+            #    ds = ds_trans.to_dataset()
+                ds_trans.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
                 logging.info("[CMIP6_light] wrote variable {} to file".format(key))
