@@ -265,7 +265,7 @@ class CMIP6_IO:
             else:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
 
-
+            """
             if key in ["uas", "vas", "clt", "chl", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
@@ -281,6 +281,7 @@ class CMIP6_IO:
                                          ds_out,
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
+                                         """
             if config.write_CMIP6_to_file:
                 out_dir="{}/{}/{}".format(config.cmip6_outdir, config.current_experiment_id,model_obj.name)
                 if not os.path.exists(out_dir):
@@ -296,6 +297,6 @@ class CMIP6_IO:
 
                 # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
                 # of the data and we therefore re-chunk to split the process into several using dask
-                ds = out.to_dataset()
+                ds = ds_trans.to_dataset()
                 ds.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
                 logging.info("[CMIP6_light] wrote variable {} to file".format(key))
