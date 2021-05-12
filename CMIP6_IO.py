@@ -163,11 +163,11 @@ class CMIP6_IO:
                                     current_vars.append(variable_id)
                                     model_object.ocean_vars[member_id] = current_vars
 
-                                ds_cartesian = xe.util.grid_global(1, 1)
-                             #   ds_cartesian = xe.util.grid_2d(config.min_lon,
-                             #                                  config.max_lon, 1,
-                             #                                  config.min_lat,
-                             #                                  config.max_lat, 1)
+                             #   ds_cartesian = xe.util.grid_global(1, 1)
+                                ds_cartesian = xe.util.grid_2d(config.min_lon,
+                                                               config.max_lon, 1,
+                                                               config.min_lat,
+                                                               config.max_lat, 1)
 
                                 regridder = xe.Regridder(dset_processed, ds_cartesian,
                                                          method="bilinear",
