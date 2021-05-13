@@ -114,7 +114,7 @@ class CMIP6_light:
         wavelengths = np.arange(200, 2700, 10)
         results = np.zeros((len(wavelengths), np.shape(cloud_covers)[0], 3))
         altitude = 0.0
-        print(np.shape(results), np.shape(cloud_covers))
+        
         # Some calculations are done only on Greenwhich meridian line as they are identical around the globe at the
         # same latitude. For that reason longitude is set to Greenwhich meridian and do not change. The only reason
         # to use longitude would be to have the local sun position for given time but since we calculate position at
@@ -457,7 +457,7 @@ class CMIP6_light:
                                                                                  model_object.name))
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
                 extracted_ds, selected_time)
-            print(np.shape(wind), np.shape(clt),"here")
+         
             ozone = self.convert_dobson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
 
             print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
@@ -575,7 +575,7 @@ class CMIP6_light:
                     uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
 
-                    do_plot=True
+                    do_plot=False
                     if do_plot:
                         plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 
@@ -608,8 +608,8 @@ class CMIP6_light:
                                              plotname_postfix="_clt_{}".format(scenario))
 
                     coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
-                    if selected_time == 0:
-                        data_array = xr.DataArray(name="irradiance_scenario_{}".format(scenario),
+                   
+                    data_array = xr.DataArray(name="irradiance_scenario_{}".format(scenario),
                                                   data=dr_vis, coords=coords,
                                                   dims=['lat', 'lon'])
 

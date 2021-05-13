@@ -17,9 +17,9 @@ class CMIP6_IO:
         self.models = []
 
     def format_netcdf_filename(self, dir, model_name, member_id, current_experiment_id, key):
-        return "{}/{}/{}/CMIP6_{}_{}_{}.nc".format(dir, current_experiment_id,
+        return "{}/{}/{}/CMIP6_{}_{}_{}_{}.nc".format(dir, current_experiment_id,
                                                    model_name,
-                                                model_name, member_id, key)
+                                                model_name, member_id, current_experiment_id, key)
 
     def print_table_of_models_and_members(self):
         table = texttable.Texttable()
@@ -55,6 +55,7 @@ class CMIP6_IO:
                                                                   member_id,
                                                                   config.current_experiment_id,
                                                                   variable_id)
+                    print(netcdf_filename)
                     if os.path.exists(netcdf_filename):
                         ds = xr.open_dataset(netcdf_filename)
 
@@ -163,20 +164,8 @@ class CMIP6_IO:
                                     current_vars.append(variable_id)
                                     model_object.ocean_vars[member_id] = current_vars
 
-                             #   ds_cartesian = xe.util.grid_global(1, 1)
-                                ds_cartesian = xe.util.grid_2d(config.min_lon,
-                                                               config.max_lon, 1,
-                                                               config.min_lat,
-                                                               config.max_lat, 1)
-
-                                regridder = xe.Regridder(dset_processed, ds_cartesian,
-                                                         method="bilinear",
-                                                         periodic=True,
-                                                         ignore_degenerate=True)
-                                logging.info(
-                                    "[CMIP6_IO] Regridding dataset to shape {}".format(np.shape(ds_cartesian.lon)))
                                 self.dataset_into_model_dictionary(member_id, variable_id,
-                                                                   regridder(dset_processed),
+                                                                   dset_processed,
                                                                    model_object)
 
                             else:
@@ -239,16 +228,16 @@ class CMIP6_IO:
 
         if os.path.exists(config.cmip6_outdir) is False:
             os.mkdir(config.cmip6_outdir)
-        ds_out_amon = xe.util.grid_global(2, 2)
-      #  ds_out_amon = xe.util.grid_2d(config.min_lon,
-      #                                config.max_lon, 2,
-      #                                config.min_lat,
-      #                                config.max_lat, 2)
-        ds_out = xe.util.grid_global(1, 1)
-       # ds_out = xe.util.grid_2d(config.min_lon,
-       #                          config.max_lon, 1,
-       #                          config.min_lat,
-       #                          config.max_lat, 1)
+      #  ds_out_amon = xe.util.grid_global(2, 2)
+        ds_out_amon = xe.util.grid_2d(config.min_lon,
+                                      config.max_lon, 2,
+                                      config.min_lat,
+                                      config.max_lat, 2)
+      #  ds_out = xe.util.grid_global(1, 1)
+        ds_out = xe.util.grid_2d(config.min_lon,
+                                 config.max_lon, 1,
+                                 config.min_lat,
+                                 config.max_lat, 1)
 
         re = CMIP6_regrid.CMIP6_regrid()
 
@@ -265,7 +254,7 @@ class CMIP6_IO:
             else:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
 
-            """
+       
             if key in ["uas", "vas", "clt", "chl", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
@@ -281,7 +270,7 @@ class CMIP6_IO:
                                          ds_out,
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
-                                         """
+                                      
             if config.write_CMIP6_to_file:
                 out_dir="{}/{}/{}".format(config.cmip6_outdir, config.current_experiment_id,model_obj.name)
                 if not os.path.exists(out_dir):
@@ -298,5 +287,5 @@ class CMIP6_IO:
                 # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
                 # of the data and we therefore re-chunk to split the process into several using dask
             #    ds = ds_trans.to_dataset()
-                ds_trans.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
+                out.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
                 logging.info("[CMIP6_light] wrote variable {} to file".format(key))
