@@ -14,7 +14,7 @@ class Config_albedo():
         self.member_ids = ["r1i1p1f1"] #,"r1i1p1f1","r1i1p1f1","r1i1p1f2"]
           
             
-        self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(1)
+        self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(2)
                            for ii in range(2) for iii in range(2) for iv in range(2)]
 
         self.experiment_ids = ["ssp585","ssp245"] #,"ssp245"]  # 'abrupt-4xCO2',
