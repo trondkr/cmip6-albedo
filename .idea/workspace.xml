@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Trying to fix 0 degree problem of periodic longitude">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Fxing problem with ACCESS and sea-ice">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,13 +112,6 @@
       <workItem from="1620748415531" duration="10161000" />
       <workItem from="1620832324279" duration="567000" />
       <workItem from="1620834417199" duration="111000" />
-    </task>
-    <task id="LOCAL-00027" summary="Potential solution by removing select of lat and lon prior to regridding">
-      <created>1620261186963</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1620261186963</updated>
     </task>
     <task id="LOCAL-00028" summary="Potential solution by removing select of lat and lon prior to regridding">
       <created>1620261479983</created>
@@ -458,7 +449,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620754631289</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="Fxing problem with ACCESS and sea-ice">
+      <created>1621258744816</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1621258744816</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -504,7 +502,8 @@
     <MESSAGE value="Changing radiation calculation to dask delayed" />
     <MESSAGE value="Changing output of files to be global and to write to specific folder under each scenario" />
     <MESSAGE value="Trying to fix 0 degree problem of periodic longitude" />
-    <option name="LAST_COMMIT_MESSAGE" value="Trying to fix 0 degree problem of periodic longitude" />
+    <MESSAGE value="Fxing problem with ACCESS and sea-ice" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fxing problem with ACCESS and sea-ice" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620269802802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
