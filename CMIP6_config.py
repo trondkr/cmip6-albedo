@@ -23,16 +23,17 @@ class Config_albedo():
         self.variable_ids = ["clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc","tas"] #,"toz"]
         self.table_ids = ["Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon",
                           "SImon","Amon"] #,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
-
+        self.variable_ids = ["sithick", "siconc", "sisnthick", "sisnconc"]  # ,"toz"]
+        self.table_ids = ["SImon", "SImon", "SImon","SImon"]  #
         self.dset_dict = {}
         self.start_date = "1950-01-01"
-        self.end_date = "1951-12-16"
+        self.end_date = "2099-12-16"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = True
-        self.write_CMIP6_to_file = False
-        self.perform_light_calculations = True
+        self.use_local_CMIP6_files = False
+        self.write_CMIP6_to_file = True
+        self.perform_light_calculations = False
         
         self.cmip6_netcdf_dir ="../oceanography/cmip6/light" #/Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
         self.cmip6_outdir = "../oceanography/cmip6/light"

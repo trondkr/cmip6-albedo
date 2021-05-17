@@ -609,28 +609,21 @@ class CMIP6_light:
 
                     coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
                    
-                    data_array = xr.DataArray(name="irradiance_scenario_{}".format(scenario),
+                    data_array_par = xr.DataArray(name="PAR",
                                                   data=dr_vis, coords=coords,
                                                   dims=['lat', 'lon'])
 
-                    data_array["PAR"] = (
-                        ['lat', 'lon'], dr_vis)
-                    data_array["UV"] = (
-                        ['lat', 'lon'], dr_uv)
-                    data_array["UVI"] = (
-                        ['lat', 'lon'],uvi)
-               #     data_array["chl"] = (
-               #         ['lat', 'lon'], chl)
-               #     data_array["siconc"] = (
-               #         ['lat', 'lon'], siconc)
-               #     data_array["sithick"] = (
-               #         ['lat', 'lon'], sithick)
-               #     data_array["clt"] = (
-               #         ['lat', 'lon'], clt)
-                #    data_array["clt"] = (
-                #        ['lat', 'lon'], clt)
+                    data_array_uv = xr.DataArray(name="UV",
+                                              data=dr_uv, coords=coords,
+                                              dims=['lat', 'lon'])
 
-                    data_list.append(data_array)
+                    data_array_uvi = xr.DataArray(name="UVI",
+                                              data=uvi, coords=coords,
+                                              dims=['lat', 'lon'])
+
+                    data_list.append(data_array_par)
+                    data_list.append(data_array_uv)
+                    data_list.append(data_array_uvi)
 
         self.save_irradiance_to_netcdf(model_object.name,
                                        model_object.current_member_id,
