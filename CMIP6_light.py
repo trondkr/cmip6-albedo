@@ -316,7 +316,7 @@ class CMIP6_light:
         return np.where(((df < -1000) | (df > 1000)), np.nan, df)
 
     def values_for_timestep(self, extracted_ds, selected_time):
-
+        print("extracted_ds",extracted_ds)
         lat = np.squeeze(extracted_ds["uas"].lat.values)
         lon = np.squeeze(extracted_ds["uas"].lon.values)
         chl = np.squeeze(extracted_ds["chl"].values)
@@ -330,6 +330,11 @@ class CMIP6_light:
         tas = np.squeeze(extracted_ds["tas"].values - 273.15)
         tas = np.where(tas < -100, np.nan, tas)
 
+        print("Before Max clt {} sisnc {} sic {} tas {} min tas {}".format(np.nanmax(clt),
+                                                                           np.nanmax(sisnconc),
+                                                                           np.nanmax(siconc),
+                                                                           np.nanmin(tas),
+                                                                           np.nanmax(tas)))
         clt = self.filter_extremes(clt)
         chl = self.filter_extremes(chl)
         uas = self.filter_extremes(uas)
