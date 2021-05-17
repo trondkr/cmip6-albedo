@@ -316,7 +316,7 @@ class CMIP6_light:
         return np.where(((df < -1000) | (df > 1000)), np.nan, df)
 
     def values_for_timestep(self, extracted_ds, selected_time):
-        print("extracted_ds",extracted_ds)
+
         lat = np.squeeze(extracted_ds["uas"].lat.values)
         lon = np.squeeze(extracted_ds["uas"].lon.values)
         chl = np.squeeze(extracted_ds["chl"].values)

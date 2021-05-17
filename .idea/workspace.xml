@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Fxing problem with ACCESS and sea-ice">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -112,13 +113,6 @@
       <workItem from="1620748415531" duration="10161000" />
       <workItem from="1620832324279" duration="567000" />
       <workItem from="1620834417199" duration="111000" />
-    </task>
-    <task id="LOCAL-00030" summary="Potential solution by removing select of lat and lon prior to regridding">
-      <created>1620263072343</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1620263072343</updated>
     </task>
     <task id="LOCAL-00031" summary="Potential solution by removing select of lat and lon prior to regridding">
       <created>1620263464152</created>
@@ -456,7 +450,14 @@
       <option name="project" value="LOCAL" />
       <updated>1621260394361</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <task id="LOCAL-00079" summary="Fxing problem with ACCESS and sea-ice">
+      <created>1621261125353</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1621261125353</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
