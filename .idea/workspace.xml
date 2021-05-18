@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Downloading data again">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,13 +114,6 @@
       <workItem from="1620748415531" duration="10161000" />
       <workItem from="1620832324279" duration="567000" />
       <workItem from="1620834417199" duration="111000" />
-    </task>
-    <task id="LOCAL-00035" summary="Have to convert datetim64[ns] to DatetimeIndex">
-      <created>1620270242645</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1620270242645</updated>
     </task>
     <task id="LOCAL-00036" summary="Have to convert datetim64[ns] to DatetimeIndex">
       <created>1620270320123</created>
@@ -456,7 +451,14 @@
       <option name="project" value="LOCAL" />
       <updated>1621306890470</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="Downloading data again">
+      <created>1621307226517</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1621307226517</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

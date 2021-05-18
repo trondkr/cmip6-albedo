@@ -248,14 +248,14 @@ class CMIP6_IO:
                 x=slice(int(config.min_lon), int(config.max_lon)))
 
             if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
-                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertex', 'bnds')
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
             elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertices', 'bnds']):
-                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'vertices', 'bnds')
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertices', 'y', 'x')
             else:
-                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x', 'bnds')
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
 
        
-            if key in ["uas", "vas", "clt", "chl", "tas"]:
+            if key in ["uas", "vas", "clt", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
                                               ds_out_amon,
@@ -270,7 +270,7 @@ class CMIP6_IO:
                                          ds_out,
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
-                                      
+
             if config.write_CMIP6_to_file:
                 out_dir="{}/{}/{}".format(config.cmip6_outdir, config.current_experiment_id,model_obj.name)
                 if not os.path.exists(out_dir):
