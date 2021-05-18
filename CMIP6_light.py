@@ -315,7 +315,7 @@ class CMIP6_light:
     def filter_extremes(self, df):
         return np.where(((df < -1000) | (df > 1000)), np.nan, df)
 
-    def values_for_timestep(self, extracted_ds, selected_time):
+    def values_for_timestep(self, extracted_ds):
 
         lat = np.squeeze(extracted_ds["uas"].lat.values)
         lon = np.squeeze(extracted_ds["uas"].lon.values)
@@ -330,7 +330,7 @@ class CMIP6_light:
         tas = np.squeeze(extracted_ds["tas"].values - 273.15)
         tas = np.where(tas < -100, np.nan, tas)
 
-        print("Before Max clt {} sisnc {} sic {} tas {} min tas {}".format(np.nanmax(clt),
+        print("Before Max clt {:3.3f} sisnc {:3.3f} sic {:3.3f} tas {:3.3f} min tas {:3.3f}".format(np.nanmax(clt),
                                                                            np.nanmax(sisnconc),
                                                                            np.nanmax(siconc),
                                                                            np.nanmin(tas),
@@ -345,7 +345,7 @@ class CMIP6_light:
         sithick = self.filter_extremes(sithick)
         tas = self.filter_extremes(tas)
 
-        percentage_to_ratio = 1 / 100.
+        percentage_to_ratio = 1.0 / 100.
 
         if np.nanmax(sisnconc) > 5:
             sisnconc = sisnconc * percentage_to_ratio
@@ -359,7 +359,7 @@ class CMIP6_light:
         m = len(wind[:, 0])
         n = len(wind[0, :])
 
-        print("Max clt {} sisnc {} sic {} tas {} min tas {}".format(np.nanmax(clt),
+        print("Max clt {:3.3f} sisnc {:3.3f} sic {:3.3f} tas {:3.3f} min tas {:3.3f}".format(np.nanmax(clt),
                                   np.nanmax(sisnconc),
                                   np.nanmax(siconc),
                                   np.nanmin(tas),
@@ -461,8 +461,8 @@ class CMIP6_light:
             logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                                  model_object.name))
             wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
-                extracted_ds, selected_time)
-         
+                extracted_ds)
+
             ozone = self.convert_dobson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
 
             print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
