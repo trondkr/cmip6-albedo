@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Downloading data again">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing with different transpose to get sea ice correct when saving to file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,13 +112,6 @@
       <workItem from="1620748415531" duration="10161000" />
       <workItem from="1620832324279" duration="567000" />
       <workItem from="1620834417199" duration="111000" />
-    </task>
-    <task id="LOCAL-00036" summary="Have to convert datetim64[ns] to DatetimeIndex">
-      <created>1620270320123</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1620270320123</updated>
     </task>
     <task id="LOCAL-00037" summary="Have to convert datetim64[ns] to DatetimeIndex">
       <created>1620270768765</created>
@@ -458,7 +449,14 @@
       <option name="project" value="LOCAL" />
       <updated>1621307226517</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="Testing with different transpose to get sea ice correct when saving to file">
+      <created>1621308287635</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1621308287635</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -506,7 +504,8 @@
     <MESSAGE value="Trying to fix 0 degree problem of periodic longitude" />
     <MESSAGE value="Fxing problem with ACCESS and sea-ice" />
     <MESSAGE value="Downloading data again" />
-    <option name="LAST_COMMIT_MESSAGE" value="Downloading data again" />
+    <MESSAGE value="Testing with different transpose to get sea ice correct when saving to file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing with different transpose to get sea ice correct when saving to file" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620269802802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
