@@ -576,6 +576,12 @@ class CMIP6_light:
                     dr_uv = np.squeeze(np.trapz(y=direct_sw_albedo_ice_snow_corrected_uv,
                              x=wavelengths[start_index_uv:end_index_uv], axis=0))
 
+                    dr_vis_air = np.squeeze(np.trapz(y=direct_sw,
+                                                 x=wavelengths[start_index_visible:end_index_visible], axis=0))
+
+                    df_vis_air = np.squeeze(np.trapz(y=diffuse_sw,
+                                                     x=wavelengths[start_index_visible:end_index_visible], axis=0))
+
 
                     uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
                     print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
@@ -626,9 +632,19 @@ class CMIP6_light:
                                               data=uvi, coords=coords,
                                               dims=['lat', 'lon'])
 
+                    data_array_drair = xr.DataArray(name="dr_vis_air",
+                                                  data=dr_vis_air, coords=coords,
+                                                  dims=['lat', 'lon'])
+
+                    data_array_dfair = xr.DataArray(name="df_vis_air",
+                                                    data=df_vis_air, coords=coords,
+                                                    dims=['lat', 'lon'])
+
                     data_list.append(data_array_par)
                     data_list.append(data_array_uv)
                     data_list.append(data_array_uvi)
+                    data_list.append(data_array_drair)
+                    data_list.append(data_array_dfair)
 
         self.save_irradiance_to_netcdf(model_object.name,
                                        model_object.current_member_id,
@@ -646,7 +662,7 @@ class CMIP6_light:
         if not os.path.exists(out): os.makedirs(out, exist_ok=True)
         if os.path.exists(result_file): os.remove(result_file)
         logging.info("[CMIP6_light] Wrote results to {}".format(result_file))
-        expanded_da = xr.concat(data_list, 'time')
+        expanded_da = xr.merge(data_list, 'time')
         expanded_da.to_netcdf(result_file, 'w')
 
     def calculate_light(self):
