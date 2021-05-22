@@ -406,10 +406,12 @@ class CMIP6_light:
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
         toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ.nc")
         toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date))\
-            #.sel(
-            #lat=slice(self.config.min_lat, self.config.max_lat),
-            #lon=slice(self.config.min_lon, self.config.max_lon))
-
+            .sel(
+            lat=slice(self.config.min_lat, self.config.max_lat),
+            lon=slice(self.config.min_lon, self.config.max_lon))
+        print(toz_full)
+        print("ds_out",ds_out)
+        
         re = CMIP6_regrid.CMIP6_regrid()
         ds_out = xe.util.grid_2d(self.config.min_lon,
                                  self.config.max_lon, 1,
@@ -444,7 +446,11 @@ class CMIP6_light:
     def perform_light_calculations(self, model_object):
 
         times = model_object.ds_sets[model_object.current_member_id]["uas"].time
-        data_list = []
+        data_list_par = []
+        data_list_uv = []
+        data_list_uvi = []
+        data_list_drair = []
+        data_list_dfair = []
 
         toz_ds = self.get_ozone_dataset()
 
@@ -576,16 +582,15 @@ class CMIP6_light:
                     dr_uv = np.squeeze(np.trapz(y=direct_sw_albedo_ice_snow_corrected_uv,
                              x=wavelengths[start_index_uv:end_index_uv], axis=0))
 
-                    dr_vis_air = np.squeeze(np.trapz(y=direct_sw,
+                    dr_vis_air = np.squeeze(np.trapz(y=direct_sw[start_index_visible:end_index_visible,:,:],
                                                  x=wavelengths[start_index_visible:end_index_visible], axis=0))
 
-                    df_vis_air = np.squeeze(np.trapz(y=diffuse_sw,
+                    df_vis_air = np.squeeze(np.trapz(y=diffuse_sw[start_index_visible:end_index_visible,:,:],
                                                      x=wavelengths[start_index_visible:end_index_visible], axis=0))
 
 
                     uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
-                    print("UVI mean: {} range: {} to {}".format(np.nanmean(uvi), np.nanmin(uvi), np.nanmax(uvi)))
-
+                   
                     do_plot=False
                     if do_plot:
                         plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
@@ -617,18 +622,20 @@ class CMIP6_light:
                         plotter.create_plots(lon, lat, model_object,
                                              clt=clt,
                                              plotname_postfix="_clt_{}".format(scenario))
-
+                    
+                 
                     coords = {'lat': lat[:, 0], 'lon': lon[0, :], 'time': model_object.current_time}
-                   
-                    data_array_par = xr.DataArray(name="PAR",
+                        
+                      
+                    data_array_par = xr.DataArray(name="par",
                                                   data=dr_vis, coords=coords,
                                                   dims=['lat', 'lon'])
 
-                    data_array_uv = xr.DataArray(name="UV",
+                    data_array_uv = xr.DataArray(name="uv",
                                               data=dr_uv, coords=coords,
                                               dims=['lat', 'lon'])
 
-                    data_array_uvi = xr.DataArray(name="UVI",
+                    data_array_uvi = xr.DataArray(name="uvi",
                                               data=uvi, coords=coords,
                                               dims=['lat', 'lon'])
 
@@ -639,20 +646,25 @@ class CMIP6_light:
                     data_array_dfair = xr.DataArray(name="df_vis_air",
                                                     data=df_vis_air, coords=coords,
                                                     dims=['lat', 'lon'])
+                    
+                    data_list_par.append(data_array_par)
+                    data_list_uv.append(data_array_uv)
+                    data_list_uvi.append(data_array_uvi)
+                    data_list_drair.append(data_array_drair)
+                    data_list_dfair.append(data_array_dfair)
 
-                    data_list.append(data_array_par)
-                    data_list.append(data_array_uv)
-                    data_list.append(data_array_uvi)
-                    data_list.append(data_array_drair)
-                    data_list.append(data_array_dfair)
-
-        self.save_irradiance_to_netcdf(model_object.name,
-                                       model_object.current_member_id,
-                                       data_list, scenario)
+                    
+        for data_list in [data_list_par,data_list_uv,data_list_uvi,data_list_drair,data_list_dfair]:
+            self.save_irradiance_to_netcdf(model_object.name,
+                                           model_object.current_member_id,
+                                           data_list, scenario)
 
     def save_irradiance_to_netcdf(self, model_name, member_id, data_list, scenario):
         out = self.config.outdir + "ncfiles/"
-        result_file = out + "Light_{}_{}_{}-{}_scenario_{}_{}.nc".format(model_name,
+        
+        da=data_list[0]
+        print("NAME OF VARIABLE {}".format(da.name))
+        result_file = out + "{}_{}_{}_{}-{}_scenario_{}_{}.nc".format(da.name, model_name,
                                                                member_id,
                                                                self.config.start_date,
                                                                self.config.end_date,
@@ -662,7 +674,8 @@ class CMIP6_light:
         if not os.path.exists(out): os.makedirs(out, exist_ok=True)
         if os.path.exists(result_file): os.remove(result_file)
         logging.info("[CMIP6_light] Wrote results to {}".format(result_file))
-        expanded_da = xr.merge(data_list, 'time')
+            
+        expanded_da = xr.concat(data_list, dim='time')
         expanded_da.to_netcdf(result_file, 'w')
 
     def calculate_light(self):

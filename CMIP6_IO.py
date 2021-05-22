@@ -243,9 +243,9 @@ class CMIP6_IO:
 
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key].sel(
-                y=slice(int(config.min_lat), int(config.max_lat)),
-                x=slice(int(config.min_lon), int(config.max_lon)))
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key] #.sel(
+             #   y=slice(int(config.min_lat), int(config.max_lat)),
+             #   x=slice(int(config.min_lon), int(config.max_lon)))
 
             if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
@@ -266,6 +266,8 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
             else:
+                if key=="chl":
+                    ds_trans.to_netcdf("chl.nc")
                 out = re.regrid_variable(key, ds_trans,
                                          ds_out,
                                          interpolation_method=config.interp,
