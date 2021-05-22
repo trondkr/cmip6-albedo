@@ -266,8 +266,6 @@ class CMIP6_IO:
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
             else:
-                if key=="chl":
-                    ds_trans.to_netcdf("chl.nc")
                 out = re.regrid_variable(key, ds_trans,
                                          ds_out,
                                          interpolation_method=config.interp,
