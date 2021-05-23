@@ -409,8 +409,6 @@ class CMIP6_light:
             .sel(
             lat=slice(self.config.min_lat, self.config.max_lat),
             lon=slice(self.config.min_lon, self.config.max_lon))
-        print(toz_full)
-        print("ds_out",ds_out)
         
         re = CMIP6_regrid.CMIP6_regrid()
         ds_out = xe.util.grid_2d(self.config.min_lon,
@@ -582,11 +580,11 @@ class CMIP6_light:
                     dr_uv = np.squeeze(np.trapz(y=direct_sw_albedo_ice_snow_corrected_uv,
                              x=wavelengths[start_index_uv:end_index_uv], axis=0))
 
-                    dr_vis_air = np.squeeze(np.trapz(y=direct_sw[start_index_visible:end_index_visible,:,:],
-                                                 x=wavelengths[start_index_visible:end_index_visible], axis=0))
+                    dr_vis_air = np.squeeze(np.trapz(y=direct_sw,
+                                                 x=wavelengths, axis=0))
 
-                    df_vis_air = np.squeeze(np.trapz(y=diffuse_sw[start_index_visible:end_index_visible,:,:],
-                                                     x=wavelengths[start_index_visible:end_index_visible], axis=0))
+                    df_vis_air = np.squeeze(np.trapz(y=diffuse_sw,
+                                                     x=wavelengths, axis=0))
 
 
                     uvi = self.cmip6_ccsm3.calculate_uvi(direct_sw_albedo_ice_snow_corrected_uv, ozone, wavelengths[start_index_uv:end_index_uv])
