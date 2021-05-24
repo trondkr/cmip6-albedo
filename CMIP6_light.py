@@ -471,7 +471,9 @@ class CMIP6_light:
 
             print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
 
-            for hour_of_day in range(12, 13, 1):
+            for hour_of_day in range(0, 23, 1):
+                
+                model_object.current_time = datetime.datetime(year=sel_time.year, month=sel_time.month, day=sel_time.day, hour=hour_of_day)
                 # Calculate zenith for each grid point
                 # Not currently used...
                 #  albedo_simple = self.cmip6_ccsm3.calculate_diffuse_albedo_per_grid_point(sisnconc=sisnconc,

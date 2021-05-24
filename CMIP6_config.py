@@ -27,7 +27,7 @@ class Config_albedo():
       #  self.table_ids = ["SImon", "SImon", "SImon","SImon"]  #
         self.dset_dict = {}
         self.start_date = "2000-01-01"
-        self.end_date = "2020-12-16"
+        self.end_date = "2002-12-16"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
