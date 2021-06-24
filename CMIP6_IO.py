@@ -18,8 +18,8 @@ class CMIP6_IO:
 
     def format_netcdf_filename(self, dir, model_name, member_id, current_experiment_id, key):
         return "{}/{}/{}/CMIP6_{}_{}_{}_{}.nc".format(dir, current_experiment_id,
-                                                   model_name,
-                                                model_name, member_id, current_experiment_id, key)
+                                                      model_name,
+                                                      model_name, member_id, current_experiment_id, key)
 
     def print_table_of_models_and_members(self):
         table = texttable.Texttable()
@@ -62,9 +62,13 @@ class CMIP6_IO:
                         # Extract the time period of interest
                         ds = ds.sel(time=slice(config.start_date, config.end_date))
                         logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
-                                                                                                variable_id,
-                                                                                                ds["time"].values[0],
-                                                                                                ds["time"].values[-1]))
+                                                                                                        variable_id,
+                                                                                                        ds[
+                                                                                                            "time"].values[
+                                                                                                            0],
+                                                                                                        ds[
+                                                                                                            "time"].values[
+                                                                                                            -1]))
                         # Save the info to model object
                         if not member_id in model_object.member_ids:
                             model_object.member_ids.append(member_id)
@@ -77,13 +81,12 @@ class CMIP6_IO:
                             model_object.ocean_vars[member_id] = current_vars
 
                         self.dataset_into_model_dictionary(member_id, variable_id, ds, model_object)
-                  #  else:
-                  #      logging.info("[CMIP6_IO] {} did not have member id {} - continue...".format(model_object.name,
-                  #                                                                                  member_id))
+                #  else:
+                #      logging.info("[CMIP6_IO] {} did not have member id {} - continue...".format(model_object.name,
+                #                                                                                  member_id))
             self.models.append(model_object)
             logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
                                                                               model_object.name))
-
 
     # Loop over all models and scenarios listed in CMIP6_light.config
     # and store each CMIP6 variable and scenario into a CMIP6 model object
@@ -228,12 +231,12 @@ class CMIP6_IO:
 
         if os.path.exists(config.cmip6_outdir) is False:
             os.mkdir(config.cmip6_outdir)
-      #  ds_out_amon = xe.util.grid_global(2, 2)
+        #  ds_out_amon = xe.util.grid_global(2, 2)
         ds_out_amon = xe.util.grid_2d(config.min_lon,
                                       config.max_lon, 2,
                                       config.min_lat,
                                       config.max_lat, 2)
-      #  ds_out = xe.util.grid_global(1, 1)
+        #  ds_out = xe.util.grid_global(1, 1)
         ds_out = xe.util.grid_2d(config.min_lon,
                                  config.max_lon, 1,
                                  config.min_lat,
@@ -243,9 +246,9 @@ class CMIP6_IO:
 
         for key in model_obj.ds_sets[model_obj.current_member_id].keys():
 
-            current_ds = model_obj.ds_sets[model_obj.current_member_id][key] #.sel(
-             #   y=slice(int(config.min_lat), int(config.max_lat)),
-             #   x=slice(int(config.min_lon), int(config.max_lon)))
+            current_ds = model_obj.ds_sets[model_obj.current_member_id][key]  # .sel(
+            #   y=slice(int(config.min_lat), int(config.max_lat)),
+            #   x=slice(int(config.min_lon), int(config.max_lon)))
 
             if all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertex', 'bnds']):
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
@@ -254,7 +257,6 @@ class CMIP6_IO:
             else:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
 
-       
             if key in ["uas", "vas", "clt", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
@@ -272,20 +274,20 @@ class CMIP6_IO:
                                          use_esmf_v801=config.use_esmf_v801)
 
             if config.write_CMIP6_to_file:
-                out_dir="{}/{}/{}".format(config.cmip6_outdir, config.current_experiment_id,model_obj.name)
+                out_dir = "{}/{}/{}".format(config.cmip6_outdir, config.current_experiment_id, model_obj.name)
                 if not os.path.exists(out_dir):
                     os.makedirs(out_dir)
                 outfile = "{}/{}/{}/CMIP6_{}_{}_{}_{}.nc".format(config.cmip6_outdir,
                                                                  config.current_experiment_id,
-                                                              model_obj.name,
-                                                       model_obj.name,
-                                                       model_obj.current_member_id,
-                                                       config.current_experiment_id,
-                                                       key)
+                                                                 model_obj.name,
+                                                                 model_obj.name,
+                                                                 model_obj.current_member_id,
+                                                                 config.current_experiment_id,
+                                                                 key)
                 if os.path.exists(outfile): os.remove(outfile)
 
                 # Convert to dataset before writing to netcdf file. Writing to file downloads and concatenates all
                 # of the data and we therefore re-chunk to split the process into several using dask
-            #    ds = ds_trans.to_dataset()
+                #    ds = ds_trans.to_dataset()
                 out.chunk({'time': -1}).to_netcdf(path=outfile, format='NETCDF4', engine='netcdf4')
                 logging.info("[CMIP6_light] wrote variable {} to file".format(key))

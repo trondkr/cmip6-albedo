@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Tesing with MPI-ESM1-2-LR">
-      <change afterPath="$PROJECT_DIR$/CMIP6_ERA5_comparison.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMIP6_analyse.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.dbf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.prj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.sbn" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.sbx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.shp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.shp.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.shx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cache/MEOW-TNC.zip" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/regionmask.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sst_wind_covariance_era5_data.ipynb" afterDir="false" />
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5">
+      <change afterPath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_ERA5_comparison.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_albedo_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_albedo_plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_ccsm3.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ccsm3.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.dbf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.prj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.sbn" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.sbx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.shp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.shp.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MEOW-TNC/meow_ecos.shx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_datasets/LME66/LMEs66.cpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_datasets/LME66/LMEs66.dbf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_datasets/LME66/LMEs66.prj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_datasets/LME66/LMEs66.sbn" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_datasets/LME66/LMEs66.sbx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_datasets/LME66/LMEs66.shp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_datasets/LME66/LMEs66.shx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,8 +41,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/CMIP6_light.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:///opt/anaconda3/envs/xesmf2/lib/python3.8/site-packages/xesmf/util.py" root0="SKIP_INSPECTION" />
+    <setting file="file:///opt/anaconda3/envs/xesmf2/lib/python3.8/site-packages/pvlib/spectrum/spectrl2.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/CMIP6_light.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file:///opt/anaconda3/envs/xesmf2/lib/python3.8/site-packages/pvlib/irradiance.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectId" id="1mhqiam4kaiU4KkVUXCQWtexz0Y" />
   <component name="ProjectLevelVcsManager">
@@ -51,6 +60,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/Figures/OSA_VIS_ICE_MPI-ESM1-2-LR_r1i1p1f1_2000-01-16 21:00:00_None.png" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -125,14 +135,16 @@
       <workItem from="1620748415531" duration="10161000" />
       <workItem from="1620832324279" duration="567000" />
       <workItem from="1620834417199" duration="111000" />
-      <workItem from="1621359496342" duration="29099000" />
-    </task>
-    <task id="LOCAL-00038" summary="Have to convert datetim64[ns] to DatetimeIndex">
-      <created>1620270896323</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1620270896323</updated>
+      <workItem from="1621359496342" duration="134536000" />
+      <workItem from="1622257108282" duration="8804000" />
+      <workItem from="1622331910984" duration="383000" />
+      <workItem from="1622332300481" duration="26936000" />
+      <workItem from="1622604359004" duration="13337000" />
+      <workItem from="1623684535055" duration="22932000" />
+      <workItem from="1623937481687" duration="1205000" />
+      <workItem from="1623946139616" duration="621000" />
+      <workItem from="1623961878407" duration="21636000" />
+      <workItem from="1624379103003" duration="12861000" />
     </task>
     <task id="LOCAL-00039" summary="Fixed problem with datetime64[ns] to DatetimeIndex and to datetime using .to_datetime">
       <created>1620272312243</created>
@@ -470,7 +482,14 @@
       <option name="project" value="LOCAL" />
       <updated>1621313226550</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5">
+      <created>1621457391760</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1621457391760</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -520,9 +539,10 @@
     <MESSAGE value="Downloading data again" />
     <MESSAGE value="Testing with different transpose to get sea ice correct when saving to file" />
     <MESSAGE value="Tesing with MPI-ESM1-2-LR" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tesing with MPI-ESM1-2-LR" />
+    <MESSAGE value="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5" />
+    <option name="LAST_COMMIT_MESSAGE" value="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1620269802802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1624461437227" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -40,6 +40,7 @@ class CMIP6_CCSM3():
                                                     osa_diffuse: np.ndarray,
                                                     snow_concentration: np.ndarray,
                                                     snow_thickness: np.ndarray,
+                                                    ice_concentration: np.ndarray,
                                                     ice_thickness: np.ndarray,
                                                     air_temp: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
 
@@ -55,8 +56,7 @@ class CMIP6_CCSM3():
         snow_concentration  # fraction
 
         Returns:
-        alvdfn = albedo visual diffuse
-        alvdrn = albedo visual direct
+        albo_dr = albedo visual direct
         :return: alvdfn, alvdrn
         """
         ahmax = 0.5
@@ -73,68 +73,55 @@ class CMIP6_CCSM3():
         Timelt = 0.0  # melting temp.ice top surface(C)
 
         # snow albedo - al(albedo)v/i(visual/near-infrared)dr/df(direct/diffuse)ni/ns(ice/snow)
-        alvdrns = osa_direct
-        alvdfns = osa_diffuse
-
         # hi = ice height
         fhtan = np.arctan(ahmax * 4.0)
 
         # bare ice, thickness dependence
-        fh = np.where(np.arctan(ice_thickness * 4.0) / fhtan >= 1.0, 1.0, np.arctan(ice_thickness * 4.0) / fhtan)
-        albo_df = osa_diffuse * (1.0 - fh)
-        albo_dr = osa_direct * (1.0 - fh)
-        alvdfni = albicev * fh + albo_df
-        alvdrni = albicev * fh + albo_dr
+        fh = np.where((np.arctan(ice_thickness * 4.0) / fhtan) >= 1.0, 1.0, np.arctan(ice_thickness * 4.0) / fhtan)
 
-        print("MIN AND MAX OF 1 alvdfni {} {} {}".format(np.nanmin(alvdfni),
-                                                       np.nanmax(alvdfni),
-                                                       np.nanmean(alvdfni)))
+        albo_dr = np.where(np.isnan(osa_direct), albicev, osa_direct)
+        albo = albo_dr * (1.0 - fh)
+        albo_i = albicev * fh + albo
+        albo_dr = np.where(ice_thickness > 0, albo_i, albo_dr)
+
         # bare ice, temperature dependence (where snow is zero)
         dTs = Timelt - air_temp
         fT = np.min(((dTs / dT_mlt) - 1), 0)
 
-        alvdfni = np.where((ice_thickness > 0) & (snow_thickness < puny), alvdfni-dalb_mlt*fT, alvdfni)
-        alvdrni = np.where((ice_thickness > 0) & (snow_thickness < puny), alvdrni - dalb_mlt * fT, alvdrni)
+        albo_dr = np.where((ice_thickness > 0) & (snow_thickness < puny), albo_dr - dalb_mlt * fT, albo_dr)
 
-        alvdfni = np.where(alvdfni<0,0.06,alvdfni)
-        alvdrni = np.where(alvdrni < 0, 0.06, alvdrni)
+        albo_dr = np.where(albo_dr < 0, 0.06, albo_dr)
 
-        print("MIN AND MAX OF 2 alvdfni {} {} {}".format(np.nanmin(alvdfni),
-                                                       np.nanmax(alvdfni),
-                                                       np.nanmean(alvdfni)))
         # avoid negative albedo for thin, bare, melting ice
-        alvdfni = np.where(alvdfni > 0, alvdfni, osa_diffuse)
-        alvdrni = np.where(alvdfni > 0, alvdrni, osa_direct)
+        albo_dr = np.where(albo_dr > 0, albo_dr, osa_direct)
+        return albo_dr
 
         # Effect of snow
-        alvdfns = np.where(snow_thickness > puny, albsnowv, alvdfni)
-        alvdrns = np.where(snow_thickness > puny, albsnowv, alvdrni)
+        albo_dr = np.where(snow_thickness > puny, albsnowv, albo_dr)
 
         # snow on ice, temperature dependence
-        alvdfns = np.where(snow_thickness > puny, alvdfns - dalb_mltv * fT, alvdfns)
-        alvdrns = np.where(snow_thickness > puny, alvdrns - dalb_mltv * fT, alvdrns)
+        albo_dr = np.where(snow_thickness > puny, albo_dr - dalb_mltv * fT, albo_dr)
 
         # fractional area of snow cover
-        asnow = np.where(snow_concentration > puny, snow_concentration, 0.0)
+        asnow = snow_concentration / (snow_concentration+0.02)
 
         # Combine snow and ice albedo. In areas with snow we only use snow albedo while in areas with
         # ice and no snow only ice. This is scaled using asnow.
-        alvdfn = alvdfni * (1.0 - asnow) + alvdfns * asnow
-        alvdrn = alvdrni * (1.0 - asnow) + alvdrns * asnow
+        albo_dr = albo_dr * (1.0 - asnow) + albo_dr * asnow
 
         # Remove problem at 90N singularity
-        alvdrn = np.where(alvdrn < 0, 1.0, alvdrn)
-        alvdfn = np.where(alvdfn < 0, 1.0, alvdfn)
+        albo_dr = np.where(albo_dr < 0, osa_direct, albo_dr)
 
-        return alvdfn, alvdrn
+
+    #    albo_dr = np.where(np.isnan(albo_dr),albicev, albo_dr)
+
+        return albo_dr
 
     def calc_snow_attenuation(self, dr, snow_thickness: np.ndarray):
         attenuation_snow = 20  # unit : m-1
 
         total_snow = np.count_nonzero(np.where(snow_thickness > 0))
         per = (total_snow / snow_thickness.size) * 100.
-        logging.info("[CMIP6_ccsm3] Number of grid points with snow {}".format(per))
-        logging.info("[CMIP6_ccsm3] Mean snow thickness {:3.2f}".format(np.nanmean(snow_thickness)))
 
         return dr * np.exp(attenuation_snow * (-snow_thickness))
 
@@ -173,11 +160,11 @@ class CMIP6_CCSM3():
         total_ice = np.count_nonzero(np.where(ice_thickness > 0))
         per = (total_ice / ice_thickness.size) * 100.
 
-        logging.info("[CMIP6_ccsm3] Sea-ice attenuation ranges from {} to {}".format(np.nanmin(attenuation),
-                                                                                     np.nanmax(attenuation)))
-        logging.info("[CMIP6_ccsm3] Mean {} SW {:3.2f} in ice covered cells".format(spectrum, np.nanmean(dr_final)))
-        logging.info("[CMIP6_ccsm3] Percentage of grid point ice cover {}".format(per))
-        logging.info("[CMIP6_ccsm3] Mean ice thickness {:3.2f}".format(np.nanmean(ice_thickness)))
+     #   logging.info("[CMIP6_ccsm3] Sea-ice attenuation ranges from {:3.3f} to {:3.3f}".format(np.nanmin(attenuation),
+      #                                                                               np.nanmax(attenuation)))
+      #  logging.info("[CMIP6_ccsm3] Mean {} SW {:3.2f} in ice covered cells".format(spectrum, np.nanmean(dr_final)))
+      #  logging.info("[CMIP6_ccsm3] Percentage of grid point ice cover {}".format(per))
+      #  logging.info("[CMIP6_ccsm3] Mean ice thickness {:3.2f}".format(np.nanmean(ice_thickness)))
 
         return dr_final
 
@@ -216,8 +203,8 @@ class CMIP6_CCSM3():
     # absorbed_solar - shortwave radiation absorbed by ice, ocean
     # Compute solar radiation absorbed in ice and penetrating to ocean
     def compute_surface_solar_for_specific_wavelength_band(self,
-                                                           osa_albedo_dr: np.ndarray,
-                                                           osa_albedo_df: np.ndarray,
+                                                           is_albedo_df_vis: np.ndarray,
+                                                           is_albedo_dr_vis: np.ndarray,
                                                            direct_sw: np.ndarray,
                                                            diffuse_sw: np.ndarray,
                                                            chl: np.ndarray,
@@ -238,13 +225,12 @@ class CMIP6_CCSM3():
         # For OSA_uv and OSA_vis we just use the output of alvdfn and alvdrn as identical  but with different fraction
         # of energy component in total energy.
         # is_ = ice-snow
-        print("CCSM3 AVERAGE VIS OSA {}".format(np.nanmean(osa_albedo_dr)))
-        is_albedo_df_vis, is_albedo_dr_vis = self.direct_and_diffuse_albedo_from_snow_and_ice(osa_albedo_dr,
-                                                                                              osa_albedo_df,
-                                                                                              snow_concentration,
-                                                                                              snow_thickness,
-                                                                                              ice_thickness,
-                                                                                              air_temp)
+     #   is_albedo_df_vis, is_albedo_dr_vis = self.direct_and_diffuse_albedo_from_snow_and_ice(osa_albedo_dr,
+     #                                                                                         osa_albedo_df,
+     #                                                                                         snow_concentration,
+     #                                                                                         snow_thickness,
+     #                                                                                         ice_thickness,
+     #                                                                                         air_temp)
         plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 
         # Effect of snow and ice
@@ -253,17 +239,17 @@ class CMIP6_CCSM3():
 
         # Areas where sea ice concentration is less than 1 we have a combination of sea ice, snow
         # and ocean albedo
-        direct_sw_ocean = (direct_sw * (1.0 - sea_ice_concentration)) * (1.0 - osa_albedo_dr)
+        direct_sw_ocean = (direct_sw * (1.0 - sea_ice_concentration)) * (1.0 - is_albedo_dr_vis)
 
         # Albedo from snow and ice - diffuse
         diffuse_sw_ice = (diffuse_sw * sea_ice_concentration) * (1.0 - is_albedo_df_vis)
-        diffuse_sw_ocean = (diffuse_sw * (1.0 - sea_ice_concentration)) * (1.0 - osa_albedo_df)
+        diffuse_sw_ocean = (diffuse_sw * (1.0 - sea_ice_concentration)) * (1.0 - is_albedo_df_vis)
 
         # The amount of shortwave irradiance reaching into the snow, water, ice after albedo corrected
-        sw_albedo_corrected = np.nan_to_num(direct_sw_ice, posinf=0, neginf=0) + \
-                              np.nan_to_num(direct_sw_ocean, posinf=0, neginf=0) + \
-                              np.nan_to_num(diffuse_sw_ice, posinf=0, neginf=0) + \
-                              np.nan_to_num(diffuse_sw_ocean, posinf=0, neginf=0)
+        sw_albedo_corrected = np.nan_to_num(direct_sw_ice) + \
+                              np.nan_to_num(direct_sw_ocean) + \
+                              np.nan_to_num(diffuse_sw_ice) + \
+                              np.nan_to_num(diffuse_sw_ocean)
 
         #  The effect of snow on attenuation
         sw_albedo_corrected_snow = np.where(snow_thickness > 0,
@@ -320,7 +306,7 @@ class CMIP6_CCSM3():
         # return the final light values
         assert self.chl_abs_wavelength[1]-self.chl_abs_wavelength[0]==10, "The wavelengths need to be split into 10 nm consistently"
         for i_wave, x in enumerate(self.chl_abs_wavelength):
-            dr_chl_integrated[i_wave,:,:] = np.nan_to_num(dr[i_wave, :, :], neginf=0.0, posinf=0.0) * np.exp(
+            dr_chl_integrated[i_wave,:,:] = np.nan_to_num(dr[i_wave, :, :]) * np.exp(
                 -depth * self.chl_abs_A[i_wave] * chl ** self.chl_abs_B[i_wave])
             dr_chl_integrated[i_wave,:,:] = np.where(np.isnan(dr_chl_integrated[i_wave,:,:]), dr[i_wave,:,:], dr_chl_integrated[i_wave,:,:])
 

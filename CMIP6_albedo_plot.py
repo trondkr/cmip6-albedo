@@ -142,7 +142,7 @@ class CMIP6_albedo_plot():
                                  cmap=cmap, locator=ticker.LogLocator(subs=range(1, 5)), extend='both')
             else:
                 cs = ax.contourf(lon, lat, indata_cyclic, 20, transform=ccrs.PlateCarree(), cmap=cmap,
-                                 extend='both')
+                                 extend=None)
         else:
             cs = ax.contourf(lon, lat, indata_cyclic, nlevels, transform=ccrs.PlateCarree(), cmap=cmap,
                              extend='both')
