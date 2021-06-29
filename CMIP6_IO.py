@@ -10,6 +10,7 @@ import xesmf as xe
 import os
 import texttable
 import pandas as pd
+xr.set_options(enable_cftimeindex=True)
 
 class CMIP6_IO:
 
