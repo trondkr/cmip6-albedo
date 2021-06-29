@@ -9,7 +9,7 @@ import CMIP6_regrid
 import xesmf as xe
 import os
 import texttable
-
+import pandas as pd
 
 class CMIP6_IO:
 
