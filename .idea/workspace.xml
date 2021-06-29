@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_albedo_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_albedo_plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_albedo_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_albedo_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_ccsm3.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ccsm3.py" afterDir="false" />
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Adding preciptable water as variable.">
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,14 +124,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="27232000" />
-    </task>
-    <task id="LOCAL-00042" summary="Fixed problem with datetime64[ns] to DatetimeIndex and to datetime using .to_datetime">
-      <created>1620279323074</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1620279323074</updated>
+      <workItem from="1624627568599" duration="27389000" />
     </task>
     <task id="LOCAL-00043" summary="Testing to run with 2 models">
       <created>1620279770154</created>
@@ -475,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1624497122837</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <task id="LOCAL-00091" summary="Adding preciptable water as variable.">
+      <created>1624925892438</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1624925892438</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -526,7 +520,8 @@
     <MESSAGE value="Testing with different transpose to get sea ice correct when saving to file" />
     <MESSAGE value="Tesing with MPI-ESM1-2-LR" />
     <MESSAGE value="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5" />
-    <option name="LAST_COMMIT_MESSAGE" value="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5" />
+    <MESSAGE value="Adding preciptable water as variable." />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding preciptable water as variable." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1624664461310" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
