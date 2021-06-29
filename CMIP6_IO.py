@@ -141,7 +141,7 @@ class CMIP6_IO:
 
                                 # Extract the time period of interest
 
-                                ds = ds.sel(time=slice(config.start_date, config.end_date))
+                              #  ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 logging.info(
                                     "[CMIP6_IO] {} => Extracted {} range from {} to {} for member {}".format(source_id,
                                                                                                              variable_id,
