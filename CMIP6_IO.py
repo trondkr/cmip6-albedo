@@ -134,10 +134,10 @@ class CMIP6_IO:
 
                                 #ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
-                                _, index = np.unique(ds["time"], return_index=True)
-                                ds = ds.isel(time=index)
-                                if not isinstance((ds.indexes["time"]), pd.DatetimeIndex):
-                                    ds["time"] = ds.indexes["time"].to_datetimeindex()
+                              #  _, index = np.unique(ds["time"], return_index=True)
+                              #  ds = ds.isel(time=index)
+                              #  if not isinstance((ds.indexes["time"]), pd.DatetimeIndex):
+                              #      ds["time"] = ds.indexes["time"].to_datetimeindex()
 
                                 # Extract the time period of interest
 
