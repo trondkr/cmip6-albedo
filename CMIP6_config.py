@@ -31,8 +31,8 @@ class Config_albedo():
         #  self.variable_ids = ["sithick", "siconc", "sisnthick", "sisnconc"]  # ,"toz"]
         #  self.table_ids = ["SImon", "SImon", "SImon","SImon"]  #
         self.dset_dict = {}
-        self.start_date = datetime.datetime.strptime('1950-01-01', "%Y-%m-%d").date()
-        self.end_date = datetime.datetime.strptime('2099-12-16', "%Y-%m-%d").date()
+        self.start_date = np.datetime64('1950-01-01')
+        self.end_date = np.datetime64('2099-12-16')
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
