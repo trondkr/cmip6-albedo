@@ -1,3 +1,4 @@
+import datetime
 import sys
 import pandas as pd
 import gcsfs
@@ -28,8 +29,8 @@ class Config_albedo():
         #  self.variable_ids = ["sithick", "siconc", "sisnthick", "sisnconc"]  # ,"toz"]
         #  self.table_ids = ["SImon", "SImon", "SImon","SImon"]  #
         self.dset_dict = {}
-        self.start_date = "1950-01-01"
-        self.end_date = "2099-12-16"
+        self.start_date = datetime.strptime("1950-01-01",'%Y-%m-%d')
+        self.end_date = datetime.strptime("2099-12-16",'%Y-%m-%d')
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
