@@ -125,14 +125,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="32334000" />
-    </task>
-    <task id="LOCAL-00062" summary="Fixed problem with writing too much to file">
-      <created>1620418823863</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1620418823863</updated>
+      <workItem from="1624627568599" duration="32706000" />
     </task>
     <task id="LOCAL-00063" summary="Fixed problem with writing too much to file">
       <created>1620418878486</created>
@@ -470,7 +463,14 @@
       <option name="project" value="LOCAL" />
       <updated>1624999094663</updated>
     </task>
-    <option name="localTasksCounter" value="111" />
+    <task id="LOCAL-00111" summary="Testing np.datetime64">
+      <created>1624999214397</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1624999214397</updated>
+    </task>
+    <option name="localTasksCounter" value="112" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
