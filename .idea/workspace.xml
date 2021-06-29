@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing to find index where year == 2100 for datasets with time longer than 2262">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -125,14 +125,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="33681000" />
-    </task>
-    <task id="LOCAL-00069" summary="Trying to fix 0 degree problem of periodic longitude">
-      <created>1620441834542</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1620441834542</updated>
+      <workItem from="1624627568599" duration="33753000" />
     </task>
     <task id="LOCAL-00070" summary="Trying to fix 0 degree problem of periodic longitude">
       <created>1620447026818</created>
@@ -470,7 +463,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625000292237</updated>
     </task>
-    <option name="localTasksCounter" value="118" />
+    <task id="LOCAL-00118" summary="Testing to find index where year == 2100 for datasets with time longer than 2262">
+      <created>1625000838324</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1625000838324</updated>
+    </task>
+    <option name="localTasksCounter" value="119" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
