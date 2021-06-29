@@ -131,7 +131,7 @@ class CMIP6_IO:
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
-                                print("ds.time.dt.year", ds.time.dt.year)
+                                print("ds.time.dt.year", ds.time, type(ds.time))
                                 if ds.time.dt.year > 2100:
                                     print("here")
                                     ds = ds.sel(time=slice(config.start_date, config.end_date))
