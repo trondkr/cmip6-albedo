@@ -131,6 +131,8 @@ class CMIP6_IO:
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
+                                print(ds)
+
                                 ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
@@ -197,12 +199,14 @@ class CMIP6_IO:
 
         model_object.ds_sets[member_id] = existing_ds
 
-    def perform_cmip6_query(self, config: CMIP6_config.Config_albedo, query_string: str) -> xr.Dataset:
+    def perform_cmip6_query(self, config: CMIP6_config.CMIP6_config, query_string: str) -> xr.Dataset:
         df_sub = config.df.query(query_string)
         if df_sub.zstore.values.size == 0:
             return df_sub
 
         mapper = config.fs.get_mapper(df_sub.zstore.values[-1])
+        logging.debug("[CMIP6_IO] df_sub: {}".format(df_sub))
+
         ds = xr.open_zarr(mapper, consolidated=True, mask_and_scale=True)
 
         # print("Time encoding: {} - {}".format(ds.indexes['time'], ds.indexes['time'].dtype))
