@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing slicing with datetime instead of string">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing xr.set_options(enable_cftimeindex=True)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
     </list>
@@ -125,14 +125,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="31430000" />
-    </task>
-    <task id="LOCAL-00057" summary="Trying to loop over member ids to see which are available and continue if not">
-      <created>1620358554257</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1620358554257</updated>
+      <workItem from="1624627568599" duration="31770000" />
     </task>
     <task id="LOCAL-00058" summary="Fixed bug in path to ozone">
       <created>1620358718592</created>
@@ -470,7 +463,14 @@
       <option name="project" value="LOCAL" />
       <updated>1624997978784</updated>
     </task>
-    <option name="localTasksCounter" value="106" />
+    <task id="LOCAL-00106" summary="Testing xr.set_options(enable_cftimeindex=True)">
+      <created>1624998309827</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1624998309827</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -523,7 +523,8 @@
     <MESSAGE value="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5" />
     <MESSAGE value="Adding preciptable water as variable." />
     <MESSAGE value="Testing slicing with datetime instead of string" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing slicing with datetime instead of string" />
+    <MESSAGE value="Testing xr.set_options(enable_cftimeindex=True)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing xr.set_options(enable_cftimeindex=True)" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1624664461310" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

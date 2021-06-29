@@ -10,7 +10,6 @@ import xesmf as xe
 import os
 import texttable
 import pandas as pd
-xr.set_options(enable_cftimeindex=True)
 
 class CMIP6_IO:
 
@@ -58,7 +57,7 @@ class CMIP6_IO:
                                                                   variable_id)
                     print(netcdf_filename)
                     if os.path.exists(netcdf_filename):
-                        ds = xr.open_dataset(netcdf_filename)
+                        ds = xr.open_dataset(netcdf_filename, decode_cf=False)
 
                         # Extract the time period of interest
                         ds = ds.sel(time=slice(config.start_date, config.end_date))
