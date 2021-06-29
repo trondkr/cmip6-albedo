@@ -134,7 +134,7 @@ class CMIP6_IO:
                                 print("ds.time.dt.year", ds.time[-1].values)
                                 tt = ds.time[-1].values
                                 print("tt.time.dt.year", tt)
-                                print("tt.time.dt.year", tt.year)
+                                print("tt.time.dt.year", tt[0:4])
 
                                 if int(tt[0:4]) > 2100:
                                     start = np.where(int(ds.time[:][0]) == 1950)
