@@ -1,6 +1,7 @@
 import cartopy.io.shapereader as shpreader
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+import cmocean
 import geopandas as gpd
 from shapely.geometry import box, mapping
 import dateutil
@@ -13,6 +14,7 @@ import matplotlib
 import logging
 from matplotlib.colors import ListedColormap
 import seaborn as sns
+from matplotlib import colors
 
 class CMIP6_albedo_plot():
 
@@ -58,13 +60,11 @@ class CMIP6_albedo_plot():
 
         if OSA_VIS is not None:
             if OSA_VIS.ndim==3:
-                self.create_plot(OSA_VIS[:,:,0], lon[0, :], lat[:, 0], "OSA_VIS_DIRECT", model_object, regional=True)
+                self.create_plot(OSA_VIS[:,:,0], lon[0, :], lat[:, 0], "OSA_VIS_DIRECT", model_object, regional=True, plotname_postfix=plotname_postfix)
             if OSA_VIS.ndim==2:
-                self.create_plot(OSA_VIS[:,:], lon[0, :], lat[:, 0], "OSA_VIS_ICE", model_object, regional=True)
+                self.create_plot(OSA_VIS[:,:], lon[0, :], lat[:, 0], "OSA_VIS_ICE", model_object, regional=True, plotname_postfix=plotname_postfix)
       #  self.create_plot(OSA_UV[:,:,0], lon[0, :], lat[:, 0], "OSA_UV_DIRECT", model_object, regional=True)
-        if OSA_VIS is not None:
-            if OSA_VIS.ndim == 3:
-                self.create_plot(OSA_VIS[:, :, 1], lon[0, :], lat[:, 0], "OSA_VIS_DIFFUSE", model_object, regional=True)
+
       #  self.create_plot(OSA_UV[:, :, 1], lon[0, :], lat[:, 0], "OSA_UV_DIFFUSE", model_object, regional=True)
 
         # self.create_plot(irradiance_water, lon[0, :], lat[:, 0], "irradiance_water", model_object, regional=True)
@@ -106,6 +106,32 @@ class CMIP6_albedo_plot():
                                '#e82c0e','#d8001d','#ff0099',
                                '#b54cff','#998cff'])
 
+    def level_colormap(self, levels, cmap=None):
+        """Make a colormap based on an increasing sequence of levels"""
+
+        # Start with an existing colormap
+        if cmap == None:
+            cmap = pl.get_cmap()
+
+        # Spread the colours maximally
+        nlev = len(levels)
+        S = np.arange(nlev, dtype='float') / (nlev - 1)
+        A = cmap(S)
+
+        # Normalize the levels to interval [0,1]
+        levels = np.array(levels, dtype='float')
+        L = (levels - levels[0]) / (levels[-1] - levels[0])
+
+        # Make the colour dictionary
+        R = [(L[i], A[i, 0], A[i, 0]) for i in range(nlev)]
+        G = [(L[i], A[i, 1], A[i, 1]) for i in range(nlev)]
+        B = [(L[i], A[i, 2], A[i, 2]) for i in range(nlev)]
+        cdict = dict(red=tuple(R), green=tuple(G), blue=tuple(B))
+
+        # Use
+        return colors.LinearSegmentedColormap(
+            '%s_levels' % cmap.name, cdict, 256)
+
     def create_plot(self, indata, lon, lat, name, model_object, nlevels=None, regional=False, logscale=False, plotname_postfix=None):
         plt.interactive(False)
         import matplotlib.path as mpath
@@ -117,7 +143,7 @@ class CMIP6_albedo_plot():
         land_50m = cfeature.NaturalEarthFeature('physical', 'land', '50m')
         ax.add_feature(land_50m, color="lightgrey", edgecolor="black")
       #  ax.coastlines(resolution='10m', linewidth=0.5, color='black', alpha=0.8, zorder=4)
-        ax.set_extent([-180, 180, 0, 90], ccrs.PlateCarree())
+        ax.set_extent([-180, 180, 50, 90], ccrs.PlateCarree())
         # Compute a circle in axes coordinates, which we can use as a boundary
         # for the map. We can pan/zoom as much as we like - the boundary will be
         # permanently circular.
@@ -125,7 +151,6 @@ class CMIP6_albedo_plot():
         center, radius = [0.5, 0.5], 0.5
         verts = np.vstack([np.sin(theta), np.cos(theta)]).T
         circle = mpath.Path(verts * radius + center)
-
         ax.set_boundary(circle, transform=ax.transAxes)
 
         if name=="UVI":
@@ -141,8 +166,19 @@ class CMIP6_albedo_plot():
                                  transform=ccrs.PlateCarree(),
                                  cmap=cmap, locator=ticker.LogLocator(subs=range(1, 5)), extend='both')
             else:
-                cs = ax.contourf(lon, lat, indata_cyclic, 20, transform=ccrs.PlateCarree(), cmap=cmap,
-                                 extend=None)
+                print(plotname_postfix)
+                if plotname_postfix is not None and "OSA_BROADBAND" in plotname_postfix:
+                        nlevels_low = np.arange(0.02, 0.08, 0.005)
+                        nlevels_high = np.asarray([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+                        nlevels = np.concatenate([nlevels_low, nlevels_high])
+                        cm = self.level_colormap(nlevels, cmap=plt.cm.get_cmap("plasma"))
+                        cs = ax.contourf(lon, lat, indata_cyclic, nlevels, transform=ccrs.PlateCarree(), cmap=cm,
+                                         extend=None)
+                else:
+                    cs = ax.contourf(lon, lat, indata_cyclic, 20, transform=ccrs.PlateCarree(), cmap=plt.cm.get_cmap("plasma"),
+                                     extend=None)
+
+
         else:
             cs = ax.contourf(lon, lat, indata_cyclic, nlevels, transform=ccrs.PlateCarree(), cmap=cmap,
                              extend='both')

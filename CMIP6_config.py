@@ -19,23 +19,23 @@ class Config_albedo():
                            for ii in range(n) for iii in range(n) for iv in range(n)]
 
         self.experiment_ids = ["ssp585"]  # ,"ssp245"] #,"ssp245"]  # 'abrupt-4xCO2',
-        self.source_ids = ["MPI-ESM1-2-LR","UKESM1-0-LL", "ACCESS-ESM1-5","CanESM5"] #,"ACCESS-ESM1-5","CanESM5","UKESM1-0-LL"] #"MPI-ESM1-2-HR"] #"ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5-CanOE"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"]
+        self.source_ids = ["ACCESS-ESM1-5","MPI-ESM1-2-LR","UKESM1-0-LL","CanESM5"] #,"ACCESS-ESM1-5","CanESM5","UKESM1-0-LL"] #"MPI-ESM1-2-HR"] #"ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5-CanOE"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"]
         # #"GFDL-ESM4"] #,"MPI-ESM1-2-HR","CanESM5"] #"CanESM5"] #["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
-        self.variable_ids = ["clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
-        self.table_ids = ["Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon",
-                          "SImon",
-                          "Amon"]  # ,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
+        self.variable_ids = ["prw"] #["clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
+        self.table_ids = ["Amon"] #["Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon",
+                         # "SImon",
+                         # "Amon"]  # ,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
         #  self.variable_ids = ["sithick", "siconc", "sisnthick", "sisnconc"]  # ,"toz"]
         #  self.table_ids = ["SImon", "SImon", "SImon","SImon"]  #
         self.dset_dict = {}
-        self.start_date = "1950-01-01"
-        self.end_date = "2099-12-16"
+        self.start_date = "2000-01-01"
+        self.end_date = "2009-12-16"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = True
-        self.write_CMIP6_to_file = False
-        self.perform_light_calculations = True
+        self.use_local_CMIP6_files = False
+        self.write_CMIP6_to_file = True
+        self.perform_light_calculations = False
 
         self.cmip6_netcdf_dir = "../oceanography/cmip6/light"  # /Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
         self.cmip6_outdir = "../oceanography/cmip6/light"

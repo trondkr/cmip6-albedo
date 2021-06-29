@@ -47,8 +47,8 @@ def calculate_direct_reflection_from_chl(λ, chl, alpha_chl, alpha_w, beta_w, σ
     # Backscattering by chlorophyll:
 
     if float(chl) == 0.0 or np.isnan(chl):
-        a_bp=0.0*λ
-        b_chl=0.0*λ
+        a_bp = 0.0 * λ
+        b_chl = 0.0 * λ
     else:
         a_bp = 0.06 * alpha_chl * np.exp(np.log(chl) * 0.65) + 0.2 * (
                 0.00635 + 0.06 * (np.exp(np.log(chl) * 0.65)) * np.exp(0.014 * (440.0 - λ)))
@@ -124,9 +124,9 @@ def calculate_spectral_and_broadband_OSA(wind, alpha_wc, alpha_direct, alpha_dif
 
     # PAR/VIS
     OSA_VIS[0, 0] = np.sum(OSA_direct[start_index_visible:end_index_visible] * \
-                       solar_energy[start_index_visible:end_index_visible])
+                           solar_energy[start_index_visible:end_index_visible])
     OSA_VIS[0, 1] = np.sum(OSA_diffuse[start_index_visible:end_index_visible] * \
-                       solar_energy[start_index_visible:end_index_visible])
+                           solar_energy[start_index_visible:end_index_visible])
     # UV
     OSA_UV[0, 0] = np.sum(OSA_direct[start_index_uv:end_index_uv] * solar_energy[start_index_uv:end_index_uv])
     OSA_UV[0, 1] = np.sum(OSA_diffuse[start_index_uv:end_index_uv] * solar_energy[start_index_uv:end_index_uv])
@@ -151,11 +151,12 @@ def calculate_OSA(µ_deg, uv, chl, wavelengths, refractive_indexes, alpha_chl, a
     # Diffuse reflection
     alpha_diffuse = calculate_diffuse_reflection(refractive_indexes, σ)
     # Reflection from chlorophyll and biological pigments
+
     alpha_direct_chl = calculate_direct_reflection_from_chl(wavelengths, chl, alpha_chl, alpha_w, beta_w, σ, µ,
                                                             alpha_direct)
     # Diffuse reflection interior of water from chlorophyll
     alpha_diffuse_chl = calculate_diffuse_reflection_from_chl(wavelengths, chl, alpha_chl, alpha_w, beta_w, σ,
-                                                              alpha_direct)
+                                                              alpha_diffuse)
     # OSA
     return calculate_spectral_and_broadband_OSA(uv, alpha_wc, alpha_direct, alpha_diffuse, alpha_direct_chl,
                                                 alpha_diffuse_chl, solar_energy)

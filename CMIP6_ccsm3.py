@@ -36,8 +36,7 @@ class CMIP6_CCSM3():
 
     # http://www.cesm.ucar.edu/models/cesm1.2/cesm/cesmBbrowser/html_code/cice/ice_shortwave.F90.html#COMPUTE_ALBEDOS
     def direct_and_diffuse_albedo_from_snow_and_ice(self,
-                                                    osa_direct: np.ndarray,
-                                                    osa_diffuse: np.ndarray,
+                                                    osa: np.ndarray,
                                                     snow_concentration: np.ndarray,
                                                     snow_thickness: np.ndarray,
                                                     ice_concentration: np.ndarray,
@@ -79,43 +78,29 @@ class CMIP6_CCSM3():
         # bare ice, thickness dependence
         fh = np.where((np.arctan(ice_thickness * 4.0) / fhtan) >= 1.0, 1.0, np.arctan(ice_thickness * 4.0) / fhtan)
 
-        albo_dr = np.where(np.isnan(osa_direct), albicev, osa_direct)
+        albo_dr = np.where(np.isnan(osa), albicev, osa)
         albo = albo_dr * (1.0 - fh)
         albo_i = albicev * fh + albo
-        albo_dr = np.where(ice_thickness > 0, albo_i, albo_dr)
+        albo_dr = np.where(ice_thickness > 0, albo_i*ice_concentration, albo_dr)
 
         # bare ice, temperature dependence (where snow is zero)
         dTs = Timelt - air_temp
-        fT = np.min(((dTs / dT_mlt) - 1), 0)
+        fT = np.nanmin(((dTs / dT_mlt) - 1), 0)
 
-        albo_dr = np.where((ice_thickness > 0) & (snow_thickness < puny), albo_dr - dalb_mlt * fT, albo_dr)
+        albo_dr = np.where((ice_thickness > 0) & (snow_thickness < puny), (albicev - dalb_mlt * fT)*ice_concentration, albo_dr)
+        albo_dr = np.where(snow_thickness > 0.05, albsnowv* snow_concentration, albo_dr)
 
-        albo_dr = np.where(albo_dr < 0, 0.06, albo_dr)
+
+        # Avoid very low values where melting too strong
+        albo_dr = np.where(albo_dr < 0.02, osa, albo_dr)
 
         # avoid negative albedo for thin, bare, melting ice
-        albo_dr = np.where(albo_dr > 0, albo_dr, osa_direct)
-        return albo_dr
+        albo_dr = np.where(albo_dr > 0, albo_dr, osa)
 
-        # Effect of snow
-        albo_dr = np.where(snow_thickness > puny, albsnowv, albo_dr)
-
-        # snow on ice, temperature dependence
-        albo_dr = np.where(snow_thickness > puny, albo_dr - dalb_mltv * fT, albo_dr)
-
-        # fractional area of snow cover
-        asnow = snow_concentration / (snow_concentration+0.02)
-
-        # Combine snow and ice albedo. In areas with snow we only use snow albedo while in areas with
-        # ice and no snow only ice. This is scaled using asnow.
-        albo_dr = albo_dr * (1.0 - asnow) + albo_dr * asnow
-
-        # Remove problem at 90N singularity
-        albo_dr = np.where(albo_dr < 0, osa_direct, albo_dr)
-
-
-    #    albo_dr = np.where(np.isnan(albo_dr),albicev, albo_dr)
+        albo_dr = np.where(np.isnan(albo_dr), np.nanmean(osa), albo_dr)
 
         return albo_dr
+
 
     def calc_snow_attenuation(self, dr, snow_thickness: np.ndarray):
         attenuation_snow = 20  # unit : m-1
@@ -203,8 +188,7 @@ class CMIP6_CCSM3():
     # absorbed_solar - shortwave radiation absorbed by ice, ocean
     # Compute solar radiation absorbed in ice and penetrating to ocean
     def compute_surface_solar_for_specific_wavelength_band(self,
-                                                           is_albedo_df_vis: np.ndarray,
-                                                           is_albedo_dr_vis: np.ndarray,
+                                                           osa: np.ndarray,
                                                            direct_sw: np.ndarray,
                                                            diffuse_sw: np.ndarray,
                                                            chl: np.ndarray,
@@ -225,49 +209,30 @@ class CMIP6_CCSM3():
         # For OSA_uv and OSA_vis we just use the output of alvdfn and alvdrn as identical  but with different fraction
         # of energy component in total energy.
         # is_ = ice-snow
-     #   is_albedo_df_vis, is_albedo_dr_vis = self.direct_and_diffuse_albedo_from_snow_and_ice(osa_albedo_dr,
-     #                                                                                         osa_albedo_df,
-     #                                                                                         snow_concentration,
-     #                                                                                         snow_thickness,
-     #                                                                                         ice_thickness,
-     #                                                                                         air_temp)
+
         plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 
         # Effect of snow and ice
         # Albedo from snow and ice - direct where sea ice concentration is above zero
-        direct_sw_ice = (direct_sw * sea_ice_concentration) * (1.0 - is_albedo_dr_vis)
-
-        # Areas where sea ice concentration is less than 1 we have a combination of sea ice, snow
-        # and ocean albedo
-        direct_sw_ocean = (direct_sw * (1.0 - sea_ice_concentration)) * (1.0 - is_albedo_dr_vis)
-
-        # Albedo from snow and ice - diffuse
-        diffuse_sw_ice = (diffuse_sw * sea_ice_concentration) * (1.0 - is_albedo_df_vis)
-        diffuse_sw_ocean = (diffuse_sw * (1.0 - sea_ice_concentration)) * (1.0 - is_albedo_df_vis)
-
-        # The amount of shortwave irradiance reaching into the snow, water, ice after albedo corrected
-        sw_albedo_corrected = np.nan_to_num(direct_sw_ice) + \
-                              np.nan_to_num(direct_sw_ocean) + \
-                              np.nan_to_num(diffuse_sw_ice) + \
-                              np.nan_to_num(diffuse_sw_ocean)
+        sw_ice_ocean = (direct_sw + diffuse_sw)* (1.0 - osa)
 
         #  The effect of snow on attenuation
-        sw_albedo_corrected_snow = np.where(snow_thickness > 0,
-                                            self.calc_snow_attenuation(sw_albedo_corrected, snow_thickness),
-                                            sw_albedo_corrected)
+        sw_attenuation_corrected_for_snow = np.where(snow_thickness > 0,
+                                            self.calc_snow_attenuation(sw_ice_ocean, snow_thickness),
+                                            sw_ice_ocean)
 
         # The wavelength dependent effect of ice on attenuation
-        sw_albedo_corrected_ice = np.where(ice_thickness > 0,
-                                           self.calc_ice_attenuation(spectrum, sw_albedo_corrected_snow,
+        sw_attenuation_corrected_for_snow_and_ice = np.where(ice_thickness > 0,
+                                           self.calc_ice_attenuation(spectrum, sw_attenuation_corrected_for_snow,
                                                                      ice_thickness),
-                                           sw_albedo_corrected_snow)
+                                           sw_attenuation_corrected_for_snow)
 
 
         if spectrum == "uv":
-            return sw_albedo_corrected_ice
+            return sw_attenuation_corrected_for_snow
 
         # Account for the chlorophyll abundance and effect on attenuation of visible light
-        return self.calculate_chl_attenuated_shortwave(sw_albedo_corrected_ice, chl)
+        return self.calculate_chl_attenuated_shortwave(sw_attenuation_corrected_for_snow, chl)
 
     def calculate_chl_attenuated_shortwave(self, dr: np.ndarray, chl: np.ndarray, depth: float = 0.1):
         """
