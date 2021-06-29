@@ -132,7 +132,7 @@ class CMIP6_IO:
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
-
+                                print(ds.time, type(ds.time))
                                 tt = ds.time[-1].values
                                 print("tt.time.dt.year", tt)
                                 print("tt.time.dt.year", type(tt[0]), tt[0])
