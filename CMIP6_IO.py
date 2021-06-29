@@ -131,9 +131,8 @@ class CMIP6_IO:
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
-                                print(ds)
 
-                                ds = ds.sel(time=slice(config.start_date, config.end_date))
+                                #ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
                                 ds = ds.isel(time=index)
