@@ -199,7 +199,7 @@ class CMIP6_IO:
 
         model_object.ds_sets[member_id] = existing_ds
 
-    def perform_cmip6_query(self, config: CMIP6_config.CMIP6_config, query_string: str) -> xr.Dataset:
+    def perform_cmip6_query(self, config, query_string: str) -> xr.Dataset:
         df_sub = config.df.query(query_string)
         if df_sub.zstore.values.size == 0:
             return df_sub
