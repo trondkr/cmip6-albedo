@@ -1,3 +1,4 @@
+import datetime
 import logging
 import xarray as xr
 import cftime
@@ -131,10 +132,10 @@ class CMIP6_IO:
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
-                                print("ds.time.dt.year", ds.time[-1].values)
+
                                 tt = ds.time[-1].values
                                 print("tt.time.dt.year", tt)
-                                print("tt.time.dt.year", tt[0:4])
+                                print("tt.time.dt.year", datetime.datetime(tt))
 
                                 if int(tt[0:4]) > 2100:
                                     start = np.where(int(ds.time[:][0]) == 1950)
