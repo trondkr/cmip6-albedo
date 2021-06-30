@@ -95,7 +95,7 @@ class CMIP6_IO:
         time1 = ds.time.copy()
         for itime in range(ds.sizes['time']):
             bb = ds.time.values[itime].timetuple()
-            time1.values[itime] = cftime.Datetime360Day(bb[0], bb[1], 16)
+            time1.values[itime] = cftime.datetime(bb[0], bb[1], 16)
             print(time1.values[itime])
 
         # We rename the time dimension and coordinate to time360 to make it clear it isn't
