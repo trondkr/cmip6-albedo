@@ -158,7 +158,7 @@ class CMIP6_IO:
                                     # 1 kg of rain water spread over 1 square meter of surface is 1 mm in thickness
                                     # The pvlib functions takes cm so we convert values
                                     ds[variable_id].values = ds[variable_id].values / 10.0
-                                    ds[variable_id].units = "cm"
+                                    ds.units = "cm"
                                     logging.info(
                                         "[CMIP6_IO] Minimum {} and maximum {} values after converting to {} units".format(np.nanmin(ds[variable_id].values),
                                                                                                                  np.nanmax(ds[variable_id].values),
