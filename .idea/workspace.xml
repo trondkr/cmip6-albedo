@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing to find index where year == 2100 for datasets with time longer than 2262">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
     </list>
@@ -125,14 +125,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="36440000" />
-    </task>
-    <task id="LOCAL-00076" summary="Fxing problem with ACCESS and sea-ice">
-      <created>1621258744816</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
-      <option name="project" value="LOCAL" />
-      <updated>1621258744816</updated>
+      <workItem from="1624627568599" duration="36517000" />
     </task>
     <task id="LOCAL-00077" summary="Fxing problem with ACCESS and sea-ice">
       <created>1621259775330</created>
@@ -470,7 +463,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625022539891</updated>
     </task>
-    <option name="localTasksCounter" value="125" />
+    <task id="LOCAL-00125" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
+      <created>1625023576429</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1625023576429</updated>
+    </task>
+    <option name="localTasksCounter" value="126" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -500,7 +500,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Fixes some issues to run on GG" />
     <MESSAGE value="Fixed path to ozone" />
     <MESSAGE value="Testing to find bug with array" />
     <MESSAGE value="Potential solution by removing select of lat and lon prior to regridding" />
@@ -525,7 +524,8 @@
     <MESSAGE value="Testing xr.set_options(enable_cftimeindex=True)" />
     <MESSAGE value="Testing np.datetime64" />
     <MESSAGE value="Testing to find index where year == 2100 for datasets with time longer than 2262" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing to find index where year == 2100 for datasets with time longer than 2262" />
+    <MESSAGE value="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1625000082823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
