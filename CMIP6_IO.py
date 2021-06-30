@@ -135,9 +135,11 @@ class CMIP6_IO:
                                 print(ds.time, type(ds.time))
                                 tt = ds.time[-1].values
                                 print("tt.time.dt.year", tt)
-                                print("tt.time.dt.year", type(tt[0]), tt[0])
+                                aDateTime = datetime.datetime.fromisoformat(tt)
 
-                                if int(tt[0:4]) > 2100:
+                                print("tt.time.dt.year", aDateTime)
+
+                                if aDateTime.year > 2100:
                                     start = np.where(int(ds.time[:][0]) == 1950)
                                     end=np.where(int(ds.time[:][0])==2100)
                                     ds = ds.isel(time=slice(start, end))
