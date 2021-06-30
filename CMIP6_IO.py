@@ -145,13 +145,18 @@ class CMIP6_IO:
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
                                 print(type(ds.indexes["time"]))
                                 if not ds.indexes["time"].dtype in ["datetime64[ns]"]:
+                                    start_date = datetime.fromisoformat(config.start_date)
+                                    end_date = datetime.fromisoformat(config.end_date)
                                     ds = self.to_360day_monthly(ds)
+                                else:
+                                    start_date = config.start_date
+                                    end_date = config.end_date
                                 ds = xr.decode_cf(ds)
 
                                 print(ds)
                                 print(ds.time)
 
-                                ds = ds.sel(time=slice(config.start_date, config.end_date))
+                                ds = ds.sel(time=slice(start_date, end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
                                 ds = ds.isel(time=index)
@@ -159,6 +164,7 @@ class CMIP6_IO:
                                     ds["time"] = ds.indexes["time"].to_datetimeindex()
 
                                 # Extract the time period of interest
+                                ds = ds.sel(time=slice(start_date, end_date))
 
                                 logging.info(
                                     "[CMIP6_IO] {} => Extracted {} range from {} to {} for member {}".format(source_id,
