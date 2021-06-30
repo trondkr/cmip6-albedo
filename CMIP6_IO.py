@@ -56,7 +56,7 @@ class CMIP6_IO:
                                                                   member_id,
                                                                   config.current_experiment_id,
                                                                   variable_id)
-                    print(netcdf_filename)
+
                     if os.path.exists(netcdf_filename):
                         ds = xr.open_dataset(netcdf_filename, decode_cf=True)
 
@@ -152,7 +152,7 @@ class CMIP6_IO:
                                     start_date = config.start_date
                                     end_date = config.end_date
                                 ds = xr.decode_cf(ds)
-
+                                print("Variable: {} attributes {} and units {}".format(variable_id, ds[variable_id].attrs, ds[variable_id].units))
                                 ds = ds.sel(time=slice(start_date, end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
