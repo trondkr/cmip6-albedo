@@ -146,7 +146,7 @@ class CMIP6_IO:
                                 print(type(ds.indexes["time"]))
                                 if not ds.indexes["time"].dtype in ["datetime64[ns]"]:
                                     ds = self.to_360day_monthly(ds)
-                                    ds = xr.decode_cf(ds)
+                                ds = xr.decode_cf(ds)
 
                                 print(ds)
                                 print(ds.time)
