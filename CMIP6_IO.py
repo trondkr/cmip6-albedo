@@ -153,9 +153,6 @@ class CMIP6_IO:
                                     end_date = config.end_date
                                 ds = xr.decode_cf(ds)
 
-                                print(ds)
-                                print(ds.time)
-
                                 ds = ds.sel(time=slice(start_date, end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
@@ -199,6 +196,8 @@ class CMIP6_IO:
                                 self.dataset_into_model_dictionary(member_id, variable_id,
                                                                    dset_processed,
                                                                    model_object)
+
+                                print(ds)
 
                             else:
                                 logging.error("[CMIP6_IO] Error - unable to find variable {}".format(variable_id))
