@@ -143,7 +143,9 @@ class CMIP6_IO:
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
-                                ds = self.to_360day_monthly(ds)
+
+                                if not isinstance((ds.indexes["time"]), np.datetime64):
+                                    ds = self.to_360day_monthly(ds)
 
                                 print(ds)
                                 print(ds.time)
