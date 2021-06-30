@@ -163,7 +163,18 @@ class CMIP6_IO:
                                         "[CMIP6_IO] Minimum {} and maximum {} values after converting to {} units".format(np.nanmin(ds[variable_id].values),
                                                                                                                  np.nanmax(ds[variable_id].values),
                                                                                                                  ds[variable_id].units))
-                                ds = ds.sel(time=slice(start_date, end_date))
+
+                                if variable_id in ["tas"]:
+                                    if ds[variable_id].units in ["K","Kelvin","kelvin"]:
+                                        ds[variable_id].values = ds[variable_id].values - 273.15
+                                        ds.attrs["units"] = "C"
+                                        logging.info(
+                                            "[CMIP6_IO] Minimum {} and maximum {} values after converting to {} units".format(
+                                                np.nanmin(ds[variable_id].values),
+                                                np.nanmax(ds[variable_id].values),
+                                                ds[variable_id].units))
+
+
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
                                 ds = ds.isel(time=index)
