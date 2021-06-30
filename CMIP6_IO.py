@@ -193,11 +193,10 @@ class CMIP6_IO:
                                     current_vars.append(variable_id)
                                     model_object.ocean_vars[member_id] = current_vars
 
+                                print(dset_processed)
                                 self.dataset_into_model_dictionary(member_id, variable_id,
                                                                    dset_processed,
                                                                    model_object)
-
-                                print(ds)
 
                             else:
                                 logging.error("[CMIP6_IO] Error - unable to find variable {}".format(variable_id))
