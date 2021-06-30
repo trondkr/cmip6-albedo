@@ -135,11 +135,14 @@ class CMIP6_IO:
                                 print(ds.time, type(ds.time))
                                 tt = ds.time[-1].values
                                 print("tt.time.dt.year", tt)
-                                aDateTime = datetime.datetime.fromisoformat(str(tt))
+                                if isinstance(tt, cftime.DatetimeProlepticGregorian):
 
-                                print("tt.time.dt.year", aDateTime)
+                                    print("YES WE HAVE cftime.DatetimeProlepticGregorian", tt)
+                                    for dtime in ds.time.values:
+                                        time = datetime(dtime.year, dtime.month, dtime.day)
+                                        print("time", time)
 
-                                if aDateTime.year > 2100:
+
                                     start = np.where(datetime.datetime.fromisoformat(str(ds.time[:][0])).year == 1950)
                                     end =  np.where(datetime.datetime.fromisoformat(str(ds.time[:][0])).year == 2100)
                                     ds = ds.isel(time=slice(start, end))
