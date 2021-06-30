@@ -152,7 +152,17 @@ class CMIP6_IO:
                                     start_date = config.start_date
                                     end_date = config.end_date
                                 ds = xr.decode_cf(ds)
-                                print("Variable: {} attributes {} and units {}".format(variable_id, ds[variable_id].attrs, ds[variable_id].units))
+                                logging.info(
+                                    "[CMIP6_IO] Variable: {} and units {}".format(variable_id, ds[variable_id].units))
+                                if variable_id in ["prw"]:
+                                    # 1 kg of rain water spread over 1 square meter of surface is 1 mm in thickness
+                                    # The pvlib functions takes cm so we convert values
+                                    ds[variable_id].values = ds[variable_id].values / 10.0
+                                    ds[variable_id].units = "cm"
+                                    logging.info(
+                                        "[CMIP6_IO] Minimum {} and maximum {} values after converting to {} units".format(np.nanmin(ds[variable_id].values),
+                                                                                                                 np.nanmax(ds[variable_id].values),
+                                                                                                                 ds[variable_id].units))
                                 ds = ds.sel(time=slice(start_date, end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
