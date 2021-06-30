@@ -91,12 +91,12 @@ class CMIP6_IO:
 
     def to_360day_monthly(self, ds:xr.Dataset):
         """Change the calendar to datetime and precision to monthly."""
-
+        # https://github.com/pydata/xarray/issues/3320
         time1 = ds.time.copy()
         for itime in range(ds.sizes['time']):
             bb = ds.time.values[itime].timetuple()
             time1.values[itime] = datetime(bb[0], bb[1], 16)
-        print("Fixed time units start at {} and end at {}".format(time1.values[0],time1.values[-1]))
+        logging.info("[CMIP6_IO] Fixed time units start at {} and end at {}".format(time1.values[0],time1.values[-1]))
         ds = ds.assign_coords({'time': time1})
         return ds
 
@@ -159,8 +159,9 @@ class CMIP6_IO:
                                 ds = ds.isel(time=index)
                                # if not isinstance((ds.indexes["time"]), pd.DatetimeIndex):
                                #     ds["time"] = ds.indexes["time"].to_datetimeindex()
+
                                 ds["time"] = pd.to_datetime(ds.indexes["time"])
-                                print("ds[time]",ds["time"])
+
                                 # Extract the time period of interest
                                 ds = ds.sel(time=slice(start_date, end_date))
 
