@@ -90,18 +90,13 @@ class CMIP6_IO:
                                                                               model_object.name))
 
     def to_360day_monthly(self, ds:xr.Dataset):
-        """Change the calendar to 360_day and precision to monthly."""
+        """Change the calendar to datetime and precision to monthly."""
 
         time1 = ds.time.copy()
         for itime in range(ds.sizes['time']):
             bb = ds.time.values[itime].timetuple()
             time1.values[itime] = cftime.datetime(bb[0], bb[1], 16)
-            print(time1.values[itime])
-
-        # We rename the time dimension and coordinate to time360 to make it clear it isn't
-        # the original time coordinate.
-        #val = ds.rename({'time': 'time360'})
-        #time1 = time1.rename({'time': 'time360'})
+        print("Fixed time units start at {} and end at {}".format(time1.values[0],time1.values[-1]))
         ds = ds.assign_coords({'time': time1})
         return ds
 
@@ -151,6 +146,7 @@ class CMIP6_IO:
                                 ds = self.to_360day_monthly(ds)
 
                                 print(ds)
+                                print(ds.time)
 
                                 ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
@@ -160,6 +156,7 @@ class CMIP6_IO:
                                     ds["time"] = ds.indexes["time"].to_datetimeindex()
 
                                 # Extract the time period of interest
+                                print("second", ds.time)
 
                                 ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 logging.info(
