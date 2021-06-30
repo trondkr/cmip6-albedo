@@ -786,7 +786,7 @@ if __name__ == '__main__':
     dask.config.set(scheduler='processes')
     # dask.config.set({'array.slicing.split_large_chunks': True})
 
-    with Client() as client: #n_workers=20, threads_per_worker=10, processes=True, memory_limit='20GB') as client:
+    with Client(n_workers=1, threads_per_worker=10, processes=True, memory_limit='50GB') as client:
         status = client.scheduler_info()['services']
         assert client.status == "running"
         main()

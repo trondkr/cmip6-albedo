@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Trying to extract and save all variables required for light calculations for two scenarios and two models">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,14 +124,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="47231000" />
-    </task>
-    <task id="LOCAL-00110" summary="Testing np.datetime64">
-      <created>1624999094663</created>
-      <option name="number" value="00110" />
-      <option name="presentableId" value="LOCAL-00110" />
-      <option name="project" value="LOCAL" />
-      <updated>1624999094663</updated>
+      <workItem from="1624627568599" duration="47530000" />
     </task>
     <task id="LOCAL-00111" summary="Testing np.datetime64">
       <created>1624999214397</created>
@@ -470,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625077875959</updated>
     </task>
-    <option name="localTasksCounter" value="159" />
+    <task id="LOCAL-00159" summary="Trying to extract and save all variables required for light calculations for two scenarios and two models">
+      <created>1625078115355</created>
+      <option name="number" value="00159" />
+      <option name="presentableId" value="LOCAL-00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1625078115355</updated>
+    </task>
+    <option name="localTasksCounter" value="160" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
