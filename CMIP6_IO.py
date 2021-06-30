@@ -156,9 +156,7 @@ class CMIP6_IO:
                                     ds["time"] = ds.indexes["time"].to_datetimeindex()
 
                                 # Extract the time period of interest
-                                print("second", ds.time)
 
-                                ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 logging.info(
                                     "[CMIP6_IO] {} => Extracted {} range from {} to {} for member {}".format(source_id,
                                                                                                              variable_id,

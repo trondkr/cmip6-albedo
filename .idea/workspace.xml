@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -125,14 +124,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="37335000" />
-    </task>
-    <task id="LOCAL-00082" summary="Downloading data again">
-      <created>1621268058623</created>
-      <option name="number" value="00082" />
-      <option name="presentableId" value="LOCAL-00082" />
-      <option name="project" value="LOCAL" />
-      <updated>1621268058623</updated>
+      <workItem from="1624627568599" duration="37395000" />
     </task>
     <task id="LOCAL-00083" summary="Downloading data again">
       <created>1621306890469</created>
@@ -470,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625024090011</updated>
     </task>
-    <option name="localTasksCounter" value="131" />
+    <task id="LOCAL-00131" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
+      <created>1625024448832</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1625024448832</updated>
+    </task>
+    <option name="localTasksCounter" value="132" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
