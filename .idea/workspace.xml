@@ -125,14 +125,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="46993000" />
-    </task>
-    <task id="LOCAL-00109" summary="Testing xr.set_options(enable_cftimeindex=True)">
-      <created>1624998858479</created>
-      <option name="number" value="00109" />
-      <option name="presentableId" value="LOCAL-00109" />
-      <option name="project" value="LOCAL" />
-      <updated>1624998858479</updated>
+      <workItem from="1624627568599" duration="47231000" />
     </task>
     <task id="LOCAL-00110" summary="Testing np.datetime64">
       <created>1624999094663</created>
@@ -470,7 +463,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625073988365</updated>
     </task>
-    <option name="localTasksCounter" value="158" />
+    <task id="LOCAL-00158" summary="Trying to extract and save all variables required for light calculations for two scenarios and two models">
+      <created>1625077875959</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1625077875959</updated>
+    </task>
+    <option name="localTasksCounter" value="159" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
