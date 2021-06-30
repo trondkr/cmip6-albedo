@@ -89,6 +89,21 @@ class CMIP6_IO:
             logging.info("[CMIP6_IO] Stored {} variables for model {}".format(len(model_object.ocean_vars),
                                                                               model_object.name))
 
+    def to_360day_monthly(self, ds:xr.Dataset):
+        """Change the calendar to 360_day and precision to monthly."""
+
+        time1 = ds.time.copy()
+        for itime in range(ds.sizes['time']):
+            bb = ds.time.values[itime].timetuple()
+            time1.values[itime] = cftime.Datetime360Day(bb[0], bb[1], 16)
+
+        # We rename the time dimension and coordinate to time360 to make it clear it isn't
+        # the original time coordinate.
+        #val = ds.rename({'time': 'time360'})
+        #time1 = time1.rename({'time': 'time360'})
+        ds = ds.assign_coords({'time': time1})
+        return ds
+
     # Loop over all models and scenarios listed in CMIP6_light.config
     # and store each CMIP6 variable and scenario into a CMIP6 model object
     def organize_cmip6_datasets(self, config: CMIP6_config.Config_albedo):
@@ -132,22 +147,12 @@ class CMIP6_IO:
                             if isinstance(ds_proj, xr.Dataset) and isinstance(ds_hist, xr.Dataset):
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
-                                print(ds.time, type(ds.time))
-                                tt = ds.time[-1].values
-                                print("tt.time.dt.year", tt)
-                                if isinstance(tt, cftime.DatetimeProlepticGregorian):
+                                ds = ds.assign_coords({'model_id': ds.model_id})
+                                ds = self.to_360day_monthly(ds)
 
-                                    print("YES WE HAVE cftime.DatetimeProlepticGregorian", tt)
-                                    for dtime in ds.time.values:
-                                        time = datetime(dtime.year, dtime.month, dtime.day)
-                                        print("time", time)
+                                print(ds)
 
-
-                                    start = np.where(datetime.datetime.fromisoformat(str(ds.time[:][0])).year == 1950)
-                                    end =  np.where(datetime.datetime.fromisoformat(str(ds.time[:][0])).year == 2100)
-                                    ds = ds.isel(time=slice(start, end))
-                                else:
-                                    ds = ds.sel(time=slice(config.start_date, config.end_date))
+                                ds = ds.sel(time=slice(config.start_date, config.end_date))
                                 # Remove the duplicate overlapping times (e.g. 2001-2014)
                                 _, index = np.unique(ds["time"], return_index=True)
                                 ds = ds.isel(time=index)
