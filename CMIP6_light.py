@@ -790,8 +790,8 @@ if __name__ == '__main__':
         status = client.scheduler_info()['services']
         assert client.status == "running"
         main()
-    client.close()
-    assert client.status == "closed"
+        client.close()
+        assert client.status == "closed"
 
     logging.info("[CMIP6_light] Execution of downscaling completed")
 
