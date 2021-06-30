@@ -180,7 +180,7 @@ class CMIP6_IO:
                                 ds = ds.isel(time=index)
                                # if not isinstance((ds.indexes["time"]), pd.DatetimeIndex):
                                #     ds["time"] = ds.indexes["time"].to_datetimeindex()
-
+                                ds = ds.sel(time=slice(start_date, end_date))
                                 ds["time"] = pd.to_datetime(ds.indexes["time"])
 
                                 # Extract the time period of interest
