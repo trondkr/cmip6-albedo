@@ -135,13 +135,13 @@ class CMIP6_IO:
                                 print(ds.time, type(ds.time))
                                 tt = ds.time[-1].values
                                 print("tt.time.dt.year", tt)
-                                aDateTime = datetime.datetime.fromisoformat(tt)
+                                aDateTime = datetime.datetime.fromisoformat(str(tt))
 
                                 print("tt.time.dt.year", aDateTime)
 
                                 if aDateTime.year > 2100:
-                                    start = np.where(int(ds.time[:][0]) == 1950)
-                                    end=np.where(int(ds.time[:][0])==2100)
+                                    start = np.where(datetime.datetime.fromisoformat(str(ds.time[:][0])).year == 1950)
+                                    end =  np.where(datetime.datetime.fromisoformat(str(ds.time[:][0])).year == 2100)
                                     ds = ds.isel(time=slice(start, end))
                                 else:
                                     ds = ds.sel(time=slice(config.start_date, config.end_date))
