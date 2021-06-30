@@ -95,7 +95,7 @@ class CMIP6_IO:
         time1 = ds.time.copy()
         for itime in range(ds.sizes['time']):
             bb = ds.time.values[itime].timetuple()
-            time1.values[itime] = cftime.datetime(bb[0], bb[1], 16)
+            time1.values[itime] = datetime(bb[0], bb[1], 16)
         print("Fixed time units start at {} and end at {}".format(time1.values[0],time1.values[-1]))
         ds = ds.assign_coords({'time': time1})
         return ds
