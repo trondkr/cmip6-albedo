@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -124,14 +125,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="37855000" />
-    </task>
-    <task id="LOCAL-00085" summary="Testing with different transpose to get sea ice correct when saving to file">
-      <created>1621308287635</created>
-      <option name="number" value="00085" />
-      <option name="presentableId" value="LOCAL-00085" />
-      <option name="project" value="LOCAL" />
-      <updated>1621308287635</updated>
+      <workItem from="1624627568599" duration="37945000" />
     </task>
     <task id="LOCAL-00086" summary="Tesing with MPI-ESM1-2-LR">
       <created>1621313226550</created>
@@ -469,7 +463,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625024673100</updated>
     </task>
-    <option name="localTasksCounter" value="134" />
+    <task id="LOCAL-00134" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
+      <created>1625024972070</created>
+      <option name="number" value="00134" />
+      <option name="presentableId" value="LOCAL-00134" />
+      <option name="project" value="LOCAL" />
+      <updated>1625024972070</updated>
+    </task>
+    <option name="localTasksCounter" value="135" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

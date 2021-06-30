@@ -144,7 +144,7 @@ class CMIP6_IO:
                                 # Concatenate the historical and projections datasets
                                 ds = xr.concat([ds_hist, ds_proj], dim="time")
                                 print(type(ds.indexes["time"]))
-                                if not ds.indexes["time"].dtype in ["datetime64[ns]", "object"]:
+                                if not ds.indexes["time"].dtype in ["datetime64[ns]"]:
                                     ds = self.to_360day_monthly(ds)
 
                                 print(ds)
