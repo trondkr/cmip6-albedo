@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import logging
 import xarray as xr
 import cftime

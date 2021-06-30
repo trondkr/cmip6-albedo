@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing to fix the datetime for various calendars">
       <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,14 +124,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="40383000" />
-    </task>
-    <task id="LOCAL-00092" summary="Adding preciptable water as variable.">
-      <created>1624926053881</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1624926053881</updated>
+      <workItem from="1624627568599" duration="40546000" />
     </task>
     <task id="LOCAL-00093" summary="Adding preciptable water as variable.">
       <created>1624926135457</created>
@@ -471,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625067471263</updated>
     </task>
-    <option name="localTasksCounter" value="141" />
+    <task id="LOCAL-00141" summary="Testing to fix the datetime for various calendars">
+      <created>1625068349351</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1625068349351</updated>
+    </task>
+    <option name="localTasksCounter" value="142" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -501,7 +499,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Fixed path to ozone" />
     <MESSAGE value="Testing to find bug with array" />
     <MESSAGE value="Potential solution by removing select of lat and lon prior to regridding" />
     <MESSAGE value="Have to convert datetim64[ns] to DatetimeIndex" />
@@ -526,7 +523,8 @@
     <MESSAGE value="Testing np.datetime64" />
     <MESSAGE value="Testing to find index where year == 2100 for datasets with time longer than 2262" />
     <MESSAGE value="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html" />
+    <MESSAGE value="Testing to fix the datetime for various calendars" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing to fix the datetime for various calendars" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1625000082823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
