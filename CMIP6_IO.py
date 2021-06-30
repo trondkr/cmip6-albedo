@@ -58,7 +58,7 @@ class CMIP6_IO:
                                                                   variable_id)
                     print(netcdf_filename)
                     if os.path.exists(netcdf_filename):
-                        ds = xr.open_dataset(netcdf_filename, decode_cf=False)
+                        ds = xr.open_dataset(netcdf_filename, decode_cf=True)
 
                         # Extract the time period of interest
                         ds = ds.sel(time=slice(config.start_date, config.end_date))

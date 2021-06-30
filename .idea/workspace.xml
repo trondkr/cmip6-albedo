@@ -125,14 +125,7 @@
       <workItem from="1623946139616" duration="621000" />
       <workItem from="1623961878407" duration="21636000" />
       <workItem from="1624379103003" duration="30071000" />
-      <workItem from="1624627568599" duration="39270000" />
-    </task>
-    <task id="LOCAL-00090" summary="Test write shortwave raditaion to file prior to ocean attenuation for comparison with ERA5">
-      <created>1624497122837</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1624497122837</updated>
+      <workItem from="1624627568599" duration="39571000" />
     </task>
     <task id="LOCAL-00091" summary="Adding preciptable water as variable.">
       <created>1624925892438</created>
@@ -470,7 +463,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625066200886</updated>
     </task>
-    <option name="localTasksCounter" value="139" />
+    <task id="LOCAL-00139" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
+      <created>1625067167584</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1625067167584</updated>
+    </task>
+    <option name="localTasksCounter" value="140" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
