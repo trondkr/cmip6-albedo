@@ -16,16 +16,17 @@ class Config_albedo():
         self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r10i1p1f1", "r4i1p1f1", "r10i1p2f1", "r3i1p2f1", "r2i1p1f2", "r4i1p1f2",
                            "r2i1p1f1"]  # ,"r1i1p1f1","r1i1p1f1","r1i1p1f2"]
-
         n = 1
         self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(n)
                            for ii in range(n) for iii in range(n) for iv in range(n)]
 
-        self.experiment_ids = ["ssp585","ssp245"] #,"ssp245"]  # 'abrupt-4xCO2',
-        self.source_ids = ["MPI-ESM1-2-HR"] #,"UKESM1-0-LL"] #["ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"] #,"ACCESS-ESM1-5","CanESM5","UKESM1-0-LL"] #"MPI-ESM1-2-HR"] #"ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5-CanOE"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"]
-        # #"GFDL-ESM4"] #,"MPI-ESM1-2-HR","CanESM5"] #"CanESM5"] #["CanESM5"] #,"GFDL-ESM4"]  # , "MPI-ESM1-2-LR", "MPI-ESM1-2-HR"]  # ["CanESM5"] #"MPI-ESM1-2-LR"]
+        self.experiment_ids = ["ssp585","ssp245"]
+        self.source_ids = ["ACCESS-ESM1-5"] #["MPI-ESM1-2-HR"] #,"UKESM1-0-LL"] #["ACCESS-ESM1-5","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
         self.variable_ids = ["prw","clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
         self.table_ids = ["Amon","Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon", "SImon","Amon"]  # ,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
+
+        self.bias_correct_ghi = True
+        self.bias_correct_file = "bias_correct/ghi_deltas.nc"
 
         self.dset_dict = {}
         self.start_date = "1950-01-01"
@@ -33,16 +34,16 @@ class Config_albedo():
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = False
-        self.write_CMIP6_to_file = True
-        self.perform_light_calculations = False
+        self.use_local_CMIP6_files = True
+        self.write_CMIP6_to_file = False
+        self.perform_light_calculations = True
 
         self.cmip6_netcdf_dir = "../oceanography/cmip6/light"  # /Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
         self.cmip6_outdir = "../oceanography/cmip6/light"
         self.current_experiment_id = None
 
         # Cut the region of the global data to these longitude and latitudes
-        self.min_lat = 0
+        self.min_lat = 50
         self.max_lat = 90
         self.min_lon = 0
         self.max_lon = 360

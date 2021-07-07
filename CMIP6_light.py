@@ -23,12 +23,13 @@ import CMIP6_regrid
 import CMIP6_ccsm3
 from CMIP6_model import CMIP6_MODEL
 from calendar import monthrange
-
+from pvlib.forecast import GFS
+import texttable
 
 class CMIP6_light:
 
     def __init__(self):
-
+        np.seterr(divide='ignore')
         self.config = CMIP6_config.Config_albedo()
         if not self.config.use_local_CMIP6_files:
             self.config.read_cmip6_repository()
@@ -69,35 +70,32 @@ class CMIP6_light:
         # Ref: Marco Ernst, Hendrik Holst, Matthias Winter, Pietro P. Altermatt,
         # SunCalculator: A program to calculate the angular and spectral distribution of direct and diffuse solar radiation,
         # Solar Energy Materials and Solar Cells, Volume 157, 2016, Pages 913-922,
-
+        np.seterr(divide='ignore', invalid='ignore')
         rho = I_diff_clouds / I_ghi_clouds
 
-        I_diff_s = np.trapz(y=spectra['poa_sky_diffuse'], x=spectra['wavelength'], axis=0)
+        I_diff_s = np.trapz(y=spectra['poa_sky_diffuse'], x=spectra['wavelength'], axis=0)  +\
+                   np.trapz(y=spectra['poa_ground_diffuse'], x=spectra['wavelength'], axis=0)
         I_dir_s = np.trapz(y=spectra['poa_direct'], x=spectra['wavelength'], axis=0)
         I_glob_s = np.trapz(y=spectra['poa_global'], x=spectra['wavelength'], axis=0)
-
-      #  I_diff_s = np.trapz(y=spectra['dhi'], x=spectra['wavelength'], axis=0)
-      #  I_dir_s = np.trapz(y=spectra['dni'], x=spectra['wavelength'], axis=0)
-      #  I_glob_s = np.trapz(y=spectra['poa_global'], x=spectra['wavelength'], axis=0)
 
         rho_spectra = I_diff_s / I_glob_s
 
         N_rho = (rho - rho_spectra) / (1 - rho_spectra)
 
         # Direct light. Equation 6 Ernst et al. 2016
-        F_diff_s = spectra['poa_sky_diffuse'][:, :]
+        F_diff_s = spectra['poa_sky_diffuse'][:, :] + spectra['poa_ground_diffuse'][:, :]
         F_dir_s = spectra['poa_direct'][:, :]
-
-        F_dir = (F_dir_s / I_dir_s) * I_dir_clouds
+        F_dir = np.multiply(F_dir_s / I_dir_s[None, :], I_dir_clouds[None, :])
 
         # Diffuse light scaling factor. Equation 7 Ernst et al. 2016
-        s_diff = (1 - N_rho) * (F_diff_s / I_diff_s) + N_rho * ((F_dir_s + F_diff_s) / I_glob_s)
+        s_diff = (1 - N_rho[None, :]) * (F_diff_s / I_diff_s[None, :]) + N_rho[None, :] * (
+                    (F_dir_s + F_diff_s) / I_glob_s[None, :])
 
         # Equation 8 Ernst et al. 2016
-        F_diff = s_diff * I_diff_clouds
+        F_diff = s_diff * I_diff_clouds[None, :]
         return F_dir, F_diff
 
-    def radiation(self, cloud_covers, latitude, ctime, system, albedo, ozone) -> np.array:
+    def radiation(self, cloud_covers, water_vapor_content, temp, latitude, ctime, system, albedo, ozone, altitude=0.0, bias_delta=None) -> np.array:
         """Returns an array of calculated diffuse and direct light for each longitude index
         around the globe (fixed latitude). Output has the shape:  [len(wavelengths), 361, 3] and
         the indexes refer to:
@@ -118,7 +116,6 @@ class CMIP6_light:
         """
         wavelengths = np.arange(200, 2700, 10)
         results = np.zeros((len(wavelengths), np.shape(cloud_covers)[0], 3))
-        altitude = 0.0
 
         # Some calculations are done only on Greenwhich meridian line as they are identical around the globe at the
         # same latitude. For that reason longitude is set to Greenwhich meridian and do not change. The only reason
@@ -129,26 +126,29 @@ class CMIP6_light:
         longitude = 0.0
         # get_solar-position returns a Pandas dataframe with index so we convert the value
         # to numpy after calculating
-        solpos = pvlib.solarposition.get_solarposition(ctime, latitude, longitude, altitude=altitude)
+
+        solpos = pvlib.solarposition.get_solarposition(ctime, latitude, longitude,
+                                                       altitude=altitude)  # , temperature=temp)
 
         airmass_relative = pvlib.atmosphere.get_relative_airmass(solpos['apparent_zenith'].to_numpy(),
-                                                                 model='kastenyoung1989')
+                                                                 model='kasten1966')
         pressure = pvlib.atmosphere.alt2pres(altitude)
         apparent_zenith = np.ones((np.shape(cloud_covers))) * solpos['apparent_zenith'].to_numpy()
         zenith = np.ones((np.shape(cloud_covers))) * solpos['zenith'].to_numpy()
         azimuth = np.ones((np.shape(cloud_covers))) * solpos['azimuth'].to_numpy()
         surface_azimuth = np.ones((np.shape(cloud_covers))) * system['surface_azimuth']
 
-        # Always we use zero tilt when working with PVlib and incoming
+        # Always we use zero tilt when working with pvlib and incoming
         # irradiance on a horizontal plane flat on earth
         surface_tilt = np.zeros((np.shape(cloud_covers)))
 
         # cloud cover in fraction units here. this is used in campbell_norman functions
-        transmittance = (1.0 - cloud_covers) * 0.75
+        # TODO: Use the implemented function instead :
+        # pvlib.forecast.GFS.cloud_cover_to_irradiance_campbell_norman
+
         aoi = pvlib.irradiance.aoi(surface_tilt, surface_azimuth, apparent_zenith, azimuth)
 
         # Fixed atmospheric components used from pvlib example
-        water_vapor_content = np.ones((np.shape(cloud_covers))) * 0.5
         tau500 = np.ones((np.shape(cloud_covers))) * 0.1
 
         # day of year is an int64index array so access first item
@@ -176,24 +176,66 @@ class CMIP6_light:
             aerosol_turbidity_500nm=tau500,
             dayofyear=day_of_year)
 
-        irrads_clouds = pvlib.irradiance.campbell_norman(zenith, transmittance)
+        dni_extra = pvlib.irradiance.get_extra_radiation(day_of_year)
+        transmittance = (1.0 - cloud_covers) * 0.75
+        irrads_clouds = pvlib.irradiance.campbell_norman(apparent_zenith, transmittance, dni_extra=dni_extra)
+
+        if bias_delta is not None:
+            delta = bias_delta
+        else:
+            delta=0.0
+        ghi_cloud_corrected = irrads_clouds["ghi"] + delta
+
+        """
+            Estimate Direct Normal Irradiance from Global Horizontal Irradiance
+            using the DISC model.
+
+            The DISC algorithm converts global horizontal irradiance to direct
+            normal irradiance through empirical relationships between the global
+            and direct clearness indices.
+
+            The pvlib implementation limits the clearness index to 1.
+        """
+
+        # Correct the clear sky for clouds
+       # ghi_cloud_corrected = (0.35 + (1 - 0.35) * (1 - cloud_covers)) * ghi_cloud_corrected
+       # ghi_cloud_corrected = ghi_cloud_corrected # + bias_delta.values
+
+        ghi_cloud_corrected = np.where(ghi_cloud_corrected < 0, 0.0, ghi_cloud_corrected)
+
+        bad_values = (np.isnan(ghi_cloud_corrected))
+        ghi_cloud_corrected = np.where(bad_values, 0, ghi_cloud_corrected)
+
+        kt = pvlib.irradiance.clearness_index(ghi_cloud_corrected, zenith,
+                                              dni_extra,
+                                              min_cos_zenith=0.065,
+                             max_clearness_index=1)
+
+        am = pvlib.atmosphere.get_absolute_airmass(airmass_relative, pressure)
+
+        Kn, am =pvlib.irradiance._disc_kn(kt, am, max_airmass=12)
+        dni = Kn * dni_extra
+
+        bad_values = (zenith > 87) | (ghi_cloud_corrected < 0) | (dni < 0) | (np.isnan(ghi_cloud_corrected))
+        dni = np.where(bad_values, 0, dni)
+        dhi = ghi_cloud_corrected - dni * np.cos(np.radians(zenith))
 
         # Convert the irradiance to a plane with tilt zero horizontal to the earth. This is done applying tilt=0 to POA
         # calculations using the output from campbell_norman. The POA calculations include calculating sky and ground
-        # diffuse light where specific models can be selected (we use default)
+        # diffuse light where specific models can be selected (we use default). Here, albedo is used to calculate
+        # ground diffuse irradiance
 
         POA_irradiance_clouds = pvlib.irradiance.get_total_irradiance(
             surface_tilt=surface_tilt,
             surface_azimuth=surface_azimuth,
-            dni=irrads_clouds['dni'],
-            ghi=irrads_clouds['ghi'],
-            dhi=irrads_clouds['dhi'],
-          #  dni_extra=np.zeros(np.shape(irrads_clouds["dni"]))*pvlib.irradiance.get_extra_radiation(day_of_year),
+            dni=dni,
+            ghi=ghi_cloud_corrected,
+            dhi=dhi,
             solar_zenith=apparent_zenith,
             solar_azimuth=azimuth,
             albedo=albedo,
-          #  model="perez",
-            surface_type=None)
+            model="klucher",
+            model_perez="allsitescomposite1990")
 
         # Account for cloud opacity on the spectral radiation
         F_dir, F_diff = self.cloud_opacity_factor(POA_irradiance_clouds['poa_diffuse'],
@@ -205,19 +247,9 @@ class CMIP6_light:
         for lon_index in range(len(F_dir[0, :])):
             interp_fdir = np.interp(wavelengths, spectra["wavelength"], F_dir[:, lon_index])
             interp_fdiff = np.interp(wavelengths, spectra["wavelength"], F_diff[:, lon_index])
-
-            #    print("1",lon_index, np.trapz(y=F_dir[:,lon_index], x=spectra["wavelength"]))
-            #    print("2",lon_index,np.trapz(y=interp_fdir, x=wavelengths))
-
-            #    print("3",lon_index, np.trapz(y=F_diff[:, lon_index], x=spectra["wavelength"]))
-            #    print("4", lon_index,np.trapz(y=interp_fdiff, x=wavelengths))
-
-            #    print("shape results", np.shape(results), np.shape(interp_fdir))
-
             results[:, lon_index, 0] = np.squeeze(interp_fdir)
             results[:, lon_index, 1] = np.squeeze(interp_fdiff)
-        results[0, :, 2] = POA_irradiance_clouds['poa_global']
-      #  results[0, :, 3] = irrads_noclouds['ghi']
+        results[0, :, 2] = ghi_cloud_corrected
 
         # return direct, diffuse, and ghi cloud affected radiation at wavelengths
         return results
@@ -332,7 +364,19 @@ class CMIP6_light:
     def filter_extremes(self, df):
         return np.where(((df < -1000) | (df > 1000)), np.nan, df)
 
-    def values_for_timestep(self, extracted_ds):
+    def get_linke_turbidity(self, ctime, lat, lon=0.0):
+
+        # Calculating the linke turbidity requires opening a h5 file which crashes dask. Therefore,
+        # we do the calculations outside of the loop and send the ready made array into the radiation
+        # function. This variable is used by inchein clearsky calculation
+        # https://meteonorm.com/assets/publications/ieashc36_report_TL_AOD_climatologies.pdf
+
+        linke_turbidity = np.zeros(len(lat[:, 0]))
+        for i in range(len(lat[:, 0])):
+            linke_turbidity[i] = pvlib.clearsky.lookup_linke_turbidity(ctime, lat[i, 0], lon, interp_turbidity=False)
+        return linke_turbidity
+
+    def values_for_timestep(self, extracted_ds, model_object):
 
         lat = np.squeeze(extracted_ds["uas"].lat.values)
         lon = np.squeeze(extracted_ds["uas"].lon.values)
@@ -344,14 +388,9 @@ class CMIP6_light:
         uas = np.squeeze(extracted_ds["uas"].values)
         vas = np.squeeze(extracted_ds["vas"].values)
         clt = np.squeeze(extracted_ds["clt"].values)
-        tas = np.squeeze(extracted_ds["tas"].values - 273.15)
-        tas = np.where(tas < -100, np.nan, tas)
+        prw = np.squeeze(extracted_ds["prw"].values)
+        tas = np.squeeze(extracted_ds["tas"].values)
 
-        print("Before Max clt {:3.3f} sisnc {:3.3f} sic {:3.3f} tas {:3.3f} min tas {:3.3f}".format(np.nanmax(clt),
-                                                                                                    np.nanmax(sisnconc),
-                                                                                                    np.nanmax(siconc),
-                                                                                                    np.nanmin(tas),
-                                                                                                    np.nanmax(tas)))
         clt = self.filter_extremes(clt)
         chl = self.filter_extremes(chl)
         uas = self.filter_extremes(uas)
@@ -361,6 +400,7 @@ class CMIP6_light:
         siconc = self.filter_extremes(siconc)
         sithick = self.filter_extremes(sithick)
         tas = self.filter_extremes(tas)
+        prw = self.filter_extremes(prw)
 
         percentage_to_ratio = 1.0 / 100.
 
@@ -376,35 +416,52 @@ class CMIP6_light:
 
         m = len(wind[:, 0])
         n = len(wind[0, :])
-        print("wind", np.shape(wind), m, n)
 
-        print("Max clt {:3.3f} sisnc {:3.3f} sic {:3.3f} tas {:3.3f} min tas {:3.3f}".format(np.nanmax(clt),
-                                                                                             np.nanmax(sisnconc),
-                                                                                             np.nanmax(siconc),
-                                                                                             np.nanmin(tas),
-                                                                                             np.nanmax(tas)))
-        #  assert np.nanmax(clt) <= 1.5, "Clouds needs to be scaled to between 0 and 1"
-        #  assert np.nanmax(sisnconc) <= 2.5, "Sea-ice snow concentration needs to be scaled to between 0 and 1"
-        #  assert np.nanmax(siconc) <= 2.5, "Sea-ice needs to be scaled to between 0 and 1"
-        #  assert np.nanmax(tas) <= 60, "Temperature needs to be in Celsius"
-        #  assert np.nanmin(tas) > -60, "Temperature wrongly converted"
+        table = texttable.Texttable()
+        table.set_cols_align(["c", "c", "c"])
+        table.set_cols_valign(["m", "m", "m"])
 
-        return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n
+        table.header(["Model", "Variable", "Range"])
+        table.add_rows([
+            ["", "clt", "{:3.3f} to {:3.3f}.".format(np.nanmin(clt), np.nanmax(clt))],
+            ["", "chl", "{:3.3f} to {:3.3f}.".format(np.nanmin(chl), np.nanmax(chl))],
+            ["", "prw", "{:3.3f} to {:3.3f}.".format(np.nanmin(prw), np.nanmax(prw))],
+            ["{}".format(model_object.name), "tas", "{:3.3f} to {:3.3f}.".format(np.nanmin(tas), np.nanmax(tas))],
+            ["", "uas", "{:3.3f} to {:3.3f}.".format(np.nanmin(uas), np.nanmax(uas))],
+            ["", "vas", "{:3.3f} to {:3.3f}.".format(np.nanmin(vas), np.nanmax(vas))],
+            ["", "siconc", "{:3.3f} to {:3.3f}.".format(np.nanmin(siconc), np.nanmax(siconc))],
+            ["", "sithick", "{:3.3f} to {:3.3f}.".format(np.nanmin(sithick), np.nanmax(sithick))],
+            ["", "sisnconc", "{:3.3f} to {:3.3f}.".format(np.nanmin(sisnconc), np.nanmax(sisnconc))],
+            ["", "sisnthick", "{:3.3f} to {:3.3f}.".format(np.nanmin(sisnthick), np.nanmax(sisnthick))]
+        ])
+        table.set_cols_width([30, 20, 30])
+        print(table.draw() + "\n")
+
+        return wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, prw, m, n
 
     def calculate_radiation(self,
                             ctime, pv_system,
                             clt: np.ndarray,
+                            prw: np.ndarray,
+                            tas: np.ndarray,
                             ozone: np.ndarray,
                             direct_OSA: np.ndarray,
                             lat: np.ndarray,
-                            m: int, n: int) -> np.ndarray:
-        logging.info("[CMIP6_light] Running for hour {}".format(ctime))
+                            m: int, n: int, bias_delta: np.ndarray = None) -> (np.ndarray, np.ndarray, np.ndarray):
 
         wavelengths = np.arange(200, 2700, 10)
-        calc_radiation = [
-            dask.delayed(self.radiation)(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
-            #self.radiation(clt[j, :], lat[j, 0], ctime, pv_system, direct_OSA[j, :], ozone[j, :]) for j
-            in range(m)]
+
+        if self.config.bias_correct_ghi:
+            bias = np.zeros(np.shape(bias_delta["ghi"][ctime.month[0] - 1, :, :])) + np.nanmean(np.squeeze(bias_delta["ghi"][ctime.month[0] - 1, :, :]))
+            #print("Averaged bias month {}: {}".format(ctime.month[0], np.nanmean(bias)))
+            calc_radiation = [
+                dask.delayed(self.radiation)(clt[j, :], prw[j, :], tas[j, :], lat[j, 0], ctime,
+                                             pv_system, direct_OSA[j, :], ozone[j, :], bias_delta=bias[j, :]) for j in range(m)]
+        else:
+            calc_radiation = [
+                dask.delayed(self.radiation)(clt[j, :], prw[j, :], tas[j, :], lat[j, 0], ctime,
+                                             pv_system, direct_OSA[j, :], ozone[j, :]) for j in range(m)]
+
 
         # https://github.com/dask/dask/issues/5464
         rad = dask.compute(calc_radiation)
@@ -416,6 +473,7 @@ class CMIP6_light:
         direct_sw = np.squeeze(rads[:, :, :, 0])
         diffuse_sw = np.squeeze(rads[:, :, :, 1])
         ghi = np.squeeze(rads[0, :, :, 2])
+
         return direct_sw, diffuse_sw, ghi
 
     def get_ozone_dataset(self) -> xr.Dataset:
@@ -465,7 +523,11 @@ class CMIP6_light:
         self.cmip6_ccsm3 = CMIP6_ccsm3.CMIP6_CCSM3()
 
         toz_ds = self.get_ozone_dataset()
-        time_counter=0
+        time_counter = 0
+
+        if self.config.bias_correct_ghi:
+            bias_delta = xr.open_dataset(self.config.bias_correct_file)
+            bias_delta = bias_delta.assign_coords(lon=(bias_delta.lon % 360)).sortby('lon')
 
         for selected_time in range(0, len(times.values)):
             sel_time = times.values[selected_time]
@@ -478,19 +540,18 @@ class CMIP6_light:
             model_object.current_time = sel_time
             extracted_ds = self.extract_dataset_and_regrid(model_object, selected_time)
 
-            wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, m, n = self.values_for_timestep(
-                extracted_ds)
+            wind, lat, lon, clt, chl, sisnconc, sisnthick, siconc, sithick, tas, prw, m, n = self.values_for_timestep(
+                extracted_ds, model_object)
 
             ozone = self.convert_dobson_units_to_atm_cm(toz_ds["TOZ"][selected_time, :, :].values)
 
-            print("Ozone {} to {} mean {}".format(np.nanmin(ozone), np.nanmax(ozone), np.nanmean(ozone)))
             num_days = monthrange(sel_time.year, sel_time.month)[1]
-            for day in [15]: #range(num_days):
+            for day in [15]:  # range(num_days):
 
-                for hour_of_day in range(0, 23, 1):
+                for hour_of_day in range(0, 23, 2):
 
                     model_object.current_time = datetime.datetime(year=sel_time.year, month=sel_time.month,
-                                                                  day=day+1, hour=hour_of_day)
+                                                                  day=day + 1, hour=hour_of_day)
 
                     logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                                          model_object.name))
@@ -516,10 +577,9 @@ class CMIP6_light:
                             wind_scale = 0.0
                         else:
                             wind_scale = 1.0
-                      #  logging.info("[CMIP6_light] Running scenario: {}".format(scenario))
+                        #  logging.info("[CMIP6_light] Running scenario: {}".format(scenario))
                         # Calculate OSA for each grid point (this is without the effect of sea ice and snow)
                         if hour_of_day == 0:
-
                             zr = [CMIP6_albedo_utils.calculate_OSA(zeniths[i], wind[i, j] * wind_scale,
                                                                    chl[i, j] * chl_scale,
                                                                    self.config.wavelengths,
@@ -537,22 +597,11 @@ class CMIP6_light:
                             direct_OSA = np.squeeze(OSA[:, :, 0])
                             diffuse_OSA = np.squeeze(OSA[:, :, 1])
 
-                            OSA_UV = res[:, 1, :].reshape((m, n, 2))
-                            OSA_VIS = res[:, 2, :].reshape((m, n, 2))
-
-                            # Initialize the ccsm3 object for calculating effect of snow and ice. We want to calculate the
-                            # albedo for visible and for UV light in two steps.
-                            albedo_druv = OSA_UV[:, :, 0]
-                            albedo_dfuv = OSA_UV[:, :, 1]
-
-                            is_albedo_df_vis=diffuse_OSA
-                            is_albedo_dr_vis = direct_OSA
-                            plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
-
                         # Calculate radiation calculation uses the direct_OSA to calculate the diffuse radiation
                         # Effect of albedo is added in `compute_surface_solar_for_specific_wavelength_band`
-                        direct_sw, diffuse_sw, ghi = self.calculate_radiation(ctime, pv_system, clt, ozone, direct_OSA*0.0, lat, m, n)
 
+                        direct_sw, diffuse_sw, ghi = self.calculate_radiation(ctime, pv_system, clt, prw, tas, ozone,
+                                                                              direct_OSA, lat, m, n, bias_delta)
 
                         wavelengths = np.arange(200, 2700, 10)
 
@@ -561,17 +610,17 @@ class CMIP6_light:
 
                         # Scale the diffuse and direct albedo to get total broadband albedo for use going forward
                         # Equation 17 in Sefarian et al. 2018
-                        OSA = (direct_OSA*dr_sw_broadband+diffuse_OSA*df_sw_broadband)/(dr_sw_broadband+df_sw_broadband)
-                        OSA = np.where(np.isnan(OSA),np.nanmean(OSA),OSA)
+                        OSA = (direct_OSA * dr_sw_broadband + diffuse_OSA * df_sw_broadband) / (
+                                    dr_sw_broadband + df_sw_broadband)
+                        OSA = np.where(np.isnan(OSA), np.nanmean(OSA), OSA)
 
                         # Add the effect of snow and ice on broadband albedo
                         OSA_ice_ocean = self.cmip6_ccsm3.direct_and_diffuse_albedo_from_snow_and_ice(OSA,
-                                                                                                        sisnconc,
-                                                                                                        sisnthick,
-                                                                                                        siconc,
-                                                                                                        sithick,
-                                                                                                        tas)
-
+                                                                                                     sisnconc,
+                                                                                                     sisnthick,
+                                                                                                     siconc,
+                                                                                                     sithick,
+                                                                                                     tas)
 
                         if scenario == "normal":
                             is_albedo_dr_vis = np.where(direct_OSA < 0.08, 0.06, OSA_ice_ocean)
@@ -666,17 +715,18 @@ class CMIP6_light:
                                                  OSA_VIS=OSA_ice_ocean,
                                                  plotname_postfix="_OSA_BROADBAND_{}".format(scenario))
 
-
                         for data_list, vari in zip([dr_vis, dr_uv, uvi, dr_vis_air, df_vis_air, ghi, OSA_ice_ocean],
-                                                   ["par","uv","uvi","drair","dfair","ghi", "osa"]): #, data_list_ghics]:
+                                                   ["par", "uv", "uvi", "drair", "dfair", "ghi",
+                                                    "osa"]):  # , data_list_ghics]:
                             self.save_irradiance_to_netcdf(model_object.name,
                                                            model_object.current_member_id,
                                                            data_list, scenario, time_counter,
-                                                           vari,model_object.current_time,
-                                                           lat[:, 0],lon[0,:])
+                                                           vari, model_object.current_time,
+                                                           lat[:, 0], lon[0, :])
 
-                        time_counter+=1
-    def save_irradiance_to_netcdf(self, model_name, member_id, da, scenario, time_counter,vari, time,lat,lon):
+                        time_counter += 1
+
+    def save_irradiance_to_netcdf(self, model_name, member_id, da, scenario, time_counter, vari, time, lat, lon):
         out = self.config.outdir + "ncfiles/"
 
         result_file = out + "{}_{}_{}_{}-{}_scenario_{}_{}.nc".format(vari, model_name,
@@ -734,9 +784,7 @@ class CMIP6_light:
                                                                calendar="standard")
         cdf.close()
 
-
-
-       # logging.info("[CMIP6_light] Wrote results to {}".format(result_file))
+    # logging.info("[CMIP6_light] Wrote results to {}".format(result_file))
 
     def calculate_light(self):
 
@@ -782,16 +830,16 @@ if __name__ == '__main__':
     # https://docs.dask.org/en/latest/setup/single-distributed.html
     from dask.distributed import Client
 
-    #  os.environ['NUMEXPR_MAX_THREADS'] = '16'
+    os.environ['NUMEXPR_MAX_THREADS'] = '16'
     dask.config.set(scheduler='processes')
     # dask.config.set({'array.slicing.split_large_chunks': True})
 
-    with Client(n_workers=1, threads_per_worker=10, processes=True, memory_limit='50GB') as client:
+    with Client() as client:  # (n_workers=4, threads_per_worker=4, processes=True, memory_limit='15GB') as client:
         status = client.scheduler_info()['services']
         assert client.status == "running"
+        logging.info("[CMIP6_light] client {}".format(client))
         main()
         client.close()
         assert client.status == "closed"
 
     logging.info("[CMIP6_light] Execution of downscaling completed")
-

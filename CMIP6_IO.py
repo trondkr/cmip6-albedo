@@ -61,12 +61,10 @@ class CMIP6_IO:
                         ds = xr.open_dataset(netcdf_filename, decode_cf=True)
 
                         # Extract the time period of interest
-                        ds = ds.sel(time=slice(config.start_date, config.end_date))
+                        ds = ds.sel(time=slice(config.start_date, config.end_date),y=slice(config.min_lat, config.max_lat))
                         logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
                                                                                                         variable_id,
-                                                                                                        ds[
-                                                                                                            "time"].values[
-                                                                                                            0],
+                                                                                                        ds["time"].values[0],
                                                                                                         ds[
                                                                                                             "time"].values[
                                                                                                             -1]))
