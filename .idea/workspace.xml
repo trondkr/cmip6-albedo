@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Trying to extract and save all variables required for light calculations for two scenarios and two models">
-      <change afterPath="$PROJECT_DIR$/CMIP6_ERA5_create_bias_file.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMIP6_light_map.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMIP6_download_ERA5.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMIP6_seaice_plot.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_light_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light_map.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +16,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Jupyter Notebook" />
         <option value="Python Script" />
+        <option value="Jupyter Notebook" />
       </list>
     </option>
   </component>
@@ -60,6 +56,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="add_unversioned_files" value="$PROJECT_DIR$/Figures/OSA_VIS_ICE_MPI-ESM1-2-LR_r1i1p1f1_2000-01-16 21:00:00_None.png" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -69,6 +66,11 @@
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="CMIP6_light" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
@@ -147,14 +149,7 @@
       <workItem from="1624379103003" duration="30071000" />
       <workItem from="1624627568599" duration="77160000" />
       <workItem from="1625250254075" duration="207000" />
-      <workItem from="1625250477460" duration="76137000" />
-    </task>
-    <task id="LOCAL-00112" summary="Testing np.datetime64">
-      <created>1624999630406</created>
-      <option name="number" value="00112" />
-      <option name="presentableId" value="LOCAL-00112" />
-      <option name="project" value="LOCAL" />
-      <updated>1624999630406</updated>
+      <workItem from="1625250477460" duration="106459000" />
     </task>
     <task id="LOCAL-00113" summary="Testing np.datetime64">
       <created>1624999695255</created>
@@ -492,7 +487,14 @@
       <option name="project" value="LOCAL" />
       <updated>1625078415715</updated>
     </task>
-    <option name="localTasksCounter" value="161" />
+    <task id="LOCAL-00161" summary="Trying to extract and save all variables required for light calculations for two scenarios and two models">
+      <created>1625680776978</created>
+      <option name="number" value="00161" />
+      <option name="presentableId" value="LOCAL-00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1625680776978</updated>
+    </task>
+    <option name="localTasksCounter" value="162" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

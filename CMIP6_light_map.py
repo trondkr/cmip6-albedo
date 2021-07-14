@@ -43,7 +43,7 @@ def plot_monthly_climatology(clim, varname,
         lev=np.arange(-15,15,1)
         cm = level_colormap(lev, cmap=plt.cm.get_cmap("RdBu_r"))
         units = 'Bias (Wm$^{2}$)'
-    elif varname == "oas":
+    elif varname == "osa":
         lev=np.arange(0.01,0.9,0.001)
         cm = level_colormap(lev, cmap=plt.cm.get_cmap("RdBu_r"))
         units = 'Bias (Wm$^{2}$)'
