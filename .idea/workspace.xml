@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Added script to plot the CMIP6 variables such as cloud cover etc." />
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Added script to plot the CMIP6 variables such as cloud cover etc.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_seaice_plot.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_seaice_plot.ipynb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -143,14 +146,7 @@
       <workItem from="1624379103003" duration="30071000" />
       <workItem from="1624627568599" duration="77160000" />
       <workItem from="1625250254075" duration="207000" />
-      <workItem from="1625250477460" duration="106676000" />
-    </task>
-    <task id="LOCAL-00114" summary="Testing to find index where year == 2100 for datasets with time longer than 2262">
-      <created>1625000015366</created>
-      <option name="number" value="00114" />
-      <option name="presentableId" value="LOCAL-00114" />
-      <option name="project" value="LOCAL" />
-      <updated>1625000015366</updated>
+      <workItem from="1625250477460" duration="107008000" />
     </task>
     <task id="LOCAL-00115" summary="Testing to find index where year == 2100 for datasets with time longer than 2262">
       <created>1625000088510</created>
@@ -488,7 +484,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626277143352</updated>
     </task>
-    <option name="localTasksCounter" value="163" />
+    <task id="LOCAL-00163" summary="Added script to plot the CMIP6 variables such as cloud cover etc.">
+      <created>1626277338911</created>
+      <option name="number" value="00163" />
+      <option name="presentableId" value="LOCAL-00163" />
+      <option name="project" value="LOCAL" />
+      <updated>1626277338911</updated>
+    </task>
+    <option name="localTasksCounter" value="164" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
