@@ -21,9 +21,10 @@ class Config_albedo():
                            for ii in range(n) for iii in range(n) for iv in range(n)]
 
         self.experiment_ids = ["ssp585","ssp245"]
-        self.source_ids = ["ACCESS-ESM1-5","MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
-        self.variable_ids = ["prw","clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
-        self.table_ids = ["Amon","Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon", "SImon","Amon"]  # ,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
+        self.source_ids = ["GFDL-ESM4","IPSL-CM6A-LR"] # ["CanESM5-CanOE","UKESM1-O-LL"] #["UKESM1-0-LL","MPI-ESM1-2-LR"] #["MPI-ESM1-2-HR"] #["ACCESS-ESM1-5"] #,"MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
+        self.variable_ids = ["tos","ph"] #["prw","clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
+        self.table_ids = ["Omon","Omon"] #["Amon","Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon", "SImon","Amon"]
+        # ,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
 
         self.bias_correct_ghi = True
         self.bias_correct_file = "bias_correct/ghi_deltas.nc"
@@ -43,7 +44,7 @@ class Config_albedo():
         self.current_experiment_id = None
 
         # Cut the region of the global data to these longitude and latitudes
-        self.min_lat = 50
+        self.min_lat = 0
         self.max_lat = 90
         self.min_lon = 0
         self.max_lon = 360

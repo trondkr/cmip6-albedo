@@ -203,6 +203,10 @@ class CMIP6_IO:
                                     dset_processed = dset_processed.isel(lev_partial=config.selected_depth)
                                 else:
                                     dset_processed = dset_processed.isel(lev=config.selected_depth)
+                            if variable_id in ["ph"]:
+                                
+                                logging.info("[CMIP6_IO] => Extract only depth level {}".format(config.selected_depth))
+                                dset_processed = dset_processed.isel(lev=config.selected_depth)
 
                             # Save the info to model object
                             if not member_id in model_object.member_ids:
@@ -307,7 +311,7 @@ class CMIP6_IO:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertices', 'y', 'x')
             else:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
-
+    
             if key in ["uas", "vas", "clt", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
