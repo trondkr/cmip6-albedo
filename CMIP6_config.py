@@ -16,14 +16,14 @@ class Config_albedo():
         self.grid_labels = ["gn"]  # Can be gr=grid rotated, or gn=grid native
         self.member_ids = ["r10i1p1f1", "r4i1p1f1", "r10i1p2f1", "r3i1p2f1", "r2i1p1f2", "r4i1p1f2",
                            "r2i1p1f1"]  # ,"r1i1p1f1","r1i1p1f1","r1i1p1f2"]
-        n = 1
+        n = 2
         self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(n)
                            for ii in range(n) for iii in range(n) for iv in range(n)]
 
         self.experiment_ids = ["ssp585","ssp245"]
-        self.source_ids = ["GFDL-ESM4","IPSL-CM6A-LR"] # ["CanESM5-CanOE","UKESM1-O-LL"] #["UKESM1-0-LL","MPI-ESM1-2-LR"] #["MPI-ESM1-2-HR"] #["ACCESS-ESM1-5"] #,"MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
-        self.variable_ids = ["tos","ph"] #["prw","clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
-        self.table_ids = ["Omon","Omon"] #["Amon","Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon", "SImon","Amon"]
+        self.source_ids = ["CMCC-ESM2","UKESM1-O-LL"] # ["CanESM5-CanOE","UKESM1-O-LL"] #["UKESM1-0-LL","MPI-ESM1-2-LR"] #["MPI-ESM1-2-HR"] #["ACCESS-ESM1-5"] #,"MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
+        self.variable_ids = ["prw","clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
+        self.table_ids = ["Amon","Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon", "SImon","Amon"]
         # ,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
 
         self.bias_correct_ghi = True
