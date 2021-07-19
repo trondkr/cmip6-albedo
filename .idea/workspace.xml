@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Fixed bug in path">
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Potential bug in not getting the correct scenario when grasping datasets.">
+      <change afterPath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_seaice_plot.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_seaice_plot.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -148,14 +147,8 @@
       <workItem from="1624379103003" duration="30071000" />
       <workItem from="1624627568599" duration="77160000" />
       <workItem from="1625250254075" duration="207000" />
-      <workItem from="1625250477460" duration="110140000" />
-    </task>
-    <task id="LOCAL-00116" summary="Testing to find index where year == 2100 for datasets with time longer than 2262">
-      <created>1625000213247</created>
-      <option name="number" value="00116" />
-      <option name="presentableId" value="LOCAL-00116" />
-      <option name="project" value="LOCAL" />
-      <updated>1625000213247</updated>
+      <workItem from="1625250477460" duration="115743000" />
+      <workItem from="1626410075404" duration="7555000" />
     </task>
     <task id="LOCAL-00117" summary="Testing to find index where year == 2100 for datasets with time longer than 2262">
       <created>1625000292237</created>
@@ -493,7 +486,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626282463274</updated>
     </task>
-    <option name="localTasksCounter" value="165" />
+    <task id="LOCAL-00165" summary="Potential bug in not getting the correct scenario when grasping datasets.">
+      <created>1626296644853</created>
+      <option name="number" value="00165" />
+      <option name="presentableId" value="LOCAL-00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1626296644853</updated>
+    </task>
+    <option name="localTasksCounter" value="166" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -523,7 +523,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Write datasets to file and run locally" />
     <MESSAGE value="Fixed bug in format_netcdf_filename" />
     <MESSAGE value="Trying to loop over member ids to see which are available and continue if not" />
     <MESSAGE value="Fixed bug in path to ozone" />
@@ -548,9 +547,10 @@
     <MESSAGE value="Trying to extract and save all variables required for light calculations for two scenarios and two models" />
     <MESSAGE value="Added script to plot the CMIP6 variables such as cloud cover etc." />
     <MESSAGE value="Fixed bug in path" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug in path" />
+    <MESSAGE value="Potential bug in not getting the correct scenario when grasping datasets." />
+    <option name="LAST_COMMIT_MESSAGE" value="Potential bug in not getting the correct scenario when grasping datasets." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1625665022412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1626410102656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
