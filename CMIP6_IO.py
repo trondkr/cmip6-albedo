@@ -38,7 +38,7 @@ class CMIP6_IO:
         table.set_cols_width([30, 30, 50])
         print(table.draw() + "\n")
 
-    def organize_cmip6_netcdf_files_into_datasets(self, config: CMIP6_config.Config_albedo):
+    def organize_cmip6_netcdf_files_into_datasets(self, config: CMIP6_config.Config_albedo, current_experiment_id):
 
         for source_id in config.source_ids:
             if source_id in config.models.keys():
@@ -54,7 +54,7 @@ class CMIP6_IO:
                     netcdf_filename = self.format_netcdf_filename(config.cmip6_netcdf_dir,
                                                                   model_object.name,
                                                                   member_id,
-                                                                  config.current_experiment_id,
+                                                                  current_experiment_id,
                                                                   variable_id)
 
                     if os.path.exists(netcdf_filename):
@@ -62,12 +62,10 @@ class CMIP6_IO:
 
                         # Extract the time period of interest
                         ds = ds.sel(time=slice(config.start_date, config.end_date),y=slice(config.min_lat, config.max_lat))
-                        logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {}".format(source_id,
+                        logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {} for {}".format(source_id,
                                                                                                         variable_id,
                                                                                                         ds["time"].values[0],
-                                                                                                        ds[
-                                                                                                            "time"].values[
-                                                                                                            -1]))
+                                                                                                        ds["time"].values[-1],current_experiment_id))
                         # Save the info to model object
                         if not member_id in model_object.member_ids:
                             model_object.member_ids.append(member_id)
@@ -100,7 +98,7 @@ class CMIP6_IO:
 
     # Loop over all models and scenarios listed in CMIP6_light.config
     # and store each CMIP6 variable and scenario into a CMIP6 model object
-    def organize_cmip6_datasets(self, config: CMIP6_config.Config_albedo):
+    def organize_cmip6_datasets(self, config: CMIP6_config.Config_albedo, current_experiment_id):
 
        # for experiment_id in config.experiment_ids:
         for grid_label in config.grid_labels:
@@ -133,7 +131,7 @@ class CMIP6_IO:
                             table_id,
                             member_id,
                             grid_label,
-                            config.current_experiment_id,
+                            current_experiment_id,
                             variable_id,
                         )
                         print("query_string: {}".format(query_string))
@@ -204,7 +202,7 @@ class CMIP6_IO:
                                 else:
                                     dset_processed = dset_processed.isel(lev=config.selected_depth)
                             if variable_id in ["ph"]:
-                                
+
                                 logging.info("[CMIP6_IO] => Extract only depth level {}".format(config.selected_depth))
                                 dset_processed = dset_processed.isel(lev=config.selected_depth)
 
@@ -282,7 +280,7 @@ class CMIP6_IO:
         2x2 degrees grid and then subsequently to a 1x1 degree grid.
     """
 
-    def extract_dataset_and_save_to_netcdf(self, model_obj, config: CMIP6_config.Config_albedo):
+    def extract_dataset_and_save_to_netcdf(self, model_obj, config: CMIP6_config.Config_albedo, current_experiment_id):
 
         if os.path.exists(config.cmip6_outdir) is False:
             os.mkdir(config.cmip6_outdir)
@@ -311,7 +309,7 @@ class CMIP6_IO:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertices', 'y', 'x')
             else:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
-    
+
             if key in ["uas", "vas", "clt", "tas"]:
                 out_amon = re.regrid_variable(key,
                                               ds_trans,
@@ -329,15 +327,15 @@ class CMIP6_IO:
                                          use_esmf_v801=config.use_esmf_v801)
 
             if config.write_CMIP6_to_file:
-                out_dir = "{}/{}/{}".format(config.cmip6_outdir, config.current_experiment_id, model_obj.name)
+                out_dir = "{}/{}/{}".format(config.cmip6_outdir, current_experiment_id, model_obj.name)
                 if not os.path.exists(out_dir):
                     os.makedirs(out_dir)
                 outfile = "{}/{}/{}/CMIP6_{}_{}_{}_{}.nc".format(config.cmip6_outdir,
-                                                                 config.current_experiment_id,
+                                                                 current_experiment_id,
                                                                  model_obj.name,
                                                                  model_obj.name,
                                                                  model_obj.current_member_id,
-                                                                 config.current_experiment_id,
+                                                                 current_experiment_id,
                                                                  key)
                 if os.path.exists(outfile): os.remove(outfile)
 

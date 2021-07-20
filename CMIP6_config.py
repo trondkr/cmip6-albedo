@@ -41,7 +41,7 @@ class Config_albedo():
 
         self.cmip6_netcdf_dir = "../oceanography/cmip6/light"  # /Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
         self.cmip6_outdir = "../oceanography/cmip6/light"
-        self.current_experiment_id = None
+     #   self.current_experiment_id = None
 
         # Cut the region of the global data to these longitude and latitudes
         self.min_lat = 0
