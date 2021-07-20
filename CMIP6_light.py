@@ -722,11 +722,11 @@ class CMIP6_light:
                                                            model_object.current_member_id,
                                                            data_list, scenario, time_counter,
                                                            vari, model_object.current_time,
-                                                           lat[:, 0], lon[0, :])
+                                                           lat[:, 0], lon[0, :], current_experiment_id)
 
                         time_counter += 1
 
-    def save_irradiance_to_netcdf(self, model_name, member_id, da, scenario, time_counter, vari, time, lat, lon):
+    def save_irradiance_to_netcdf(self, model_name, member_id, da, scenario, time_counter, vari, time, lat, lon, current_experiment_id):
         out = self.config.outdir + "ncfiles/"
 
         result_file = out + "{}_{}_{}_{}-{}_scenario_{}_{}.nc".format(vari, model_name,
@@ -734,7 +734,7 @@ class CMIP6_light:
                                                                       self.config.start_date,
                                                                       self.config.end_date,
                                                                       scenario,
-                                                                      self.config.current_experiment_id)
+                                                                      current_experiment_id)
 
         if not os.path.exists(out): os.makedirs(out, exist_ok=True)
         if time_counter == 0:
