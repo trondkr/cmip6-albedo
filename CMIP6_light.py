@@ -517,7 +517,7 @@ class CMIP6_light:
         assert np.nanmin(ozone) > 0
         return ozone
 
-    def perform_light_calculations(self, model_object):
+    def perform_light_calculations(self, model_object, current_experiment_id):
 
         times = model_object.ds_sets[model_object.current_member_id]["uas"].time
         self.cmip6_ccsm3 = CMIP6_ccsm3.CMIP6_CCSM3()
@@ -786,13 +786,13 @@ class CMIP6_light:
 
     # logging.info("[CMIP6_light] Wrote results to {}".format(result_file))
 
-    def calculate_light(self):
+    def calculate_light(self,current_experiment_id):
 
         io = CMIP6_IO.CMIP6_IO()
         if self.config.use_local_CMIP6_files:
-            io.organize_cmip6_netcdf_files_into_datasets(self.config)
+            io.organize_cmip6_netcdf_files_into_datasets(self.config, current_experiment_id)
         else:
-            io.organize_cmip6_datasets(self.config)
+            io.organize_cmip6_datasets(self.config, current_experiment_id)
         io.print_table_of_models_and_members()
 
         self.cmip6_models = io.models
@@ -810,9 +810,9 @@ class CMIP6_light:
 
                 # Save datafiles to do calculations locally
                 if self.config.write_CMIP6_to_file:
-                    io.extract_dataset_and_save_to_netcdf(model, self.config)
+                    io.extract_dataset_and_save_to_netcdf(model, self.config, current_experiment_id)
                 if self.config.perform_light_calculations:
-                    self.perform_light_calculations(model)
+                    self.perform_light_calculations(model, current_experiment_id)
 
 
 def main():
@@ -820,8 +820,8 @@ def main():
     light.config.setup_logging()
     light.config.setup_parameters()
     logging.info("[CMIP6_config] logging started")
-    for light.config.current_experiment_id in light.config.experiment_ids:
-        light.calculate_light()
+    for current_experiment_id in light.config.experiment_ids:
+        light.calculate_light(current_experiment_id)
 
 
 if __name__ == '__main__':
