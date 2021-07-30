@@ -183,7 +183,6 @@ class CMIP6_IO:
 
                             # Extract the time period of interest
                             ds = ds.sel(time=slice(start_date, end_date))
-                            ds.isel(time=0).to_netcdf("../oceanography/cmcc_siconc.nc")
 
                             logging.info(
                                 "[CMIP6_IO] {} => Extracted {} range from {} to {} for member {}".format(source_id,
@@ -326,6 +325,7 @@ class CMIP6_IO:
                                          ds_out,
                                          interpolation_method=config.interp,
                                          use_esmf_v801=config.use_esmf_v801)
+                out.isel(time=0).to_netcdf("../oceanography/cmcc_regridded.nc")
 
             if config.write_CMIP6_to_file:
                 out_dir = "{}/{}/{}".format(config.cmip6_outdir, current_experiment_id, model_obj.name)
