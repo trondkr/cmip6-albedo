@@ -62,6 +62,7 @@ class CMIP6_IO:
 
                         # Extract the time period of interest
                         ds = ds.sel(time=slice(config.start_date, config.end_date),y=slice(config.min_lat, config.max_lat))
+
                         logging.info("[CMIP6_IO] {} => NetCDF: Extracted {} range from {} to {} for {}".format(source_id,
                                                                                                         variable_id,
                                                                                                         ds["time"].values[0],
@@ -182,6 +183,7 @@ class CMIP6_IO:
 
                             # Extract the time period of interest
                             ds = ds.sel(time=slice(start_date, end_date))
+                            ds.to_netcdf("../oceanography/cmcc_siconc.nc")
 
                             logging.info(
                                 "[CMIP6_IO] {} => Extracted {} range from {} to {} for member {}".format(source_id,
@@ -217,7 +219,6 @@ class CMIP6_IO:
                                 current_vars.append(variable_id)
                                 model_object.ocean_vars[member_id] = current_vars
 
-                            print(dset_processed)
                             self.dataset_into_model_dictionary(member_id, variable_id,
                                                                dset_processed,
                                                                model_object)
