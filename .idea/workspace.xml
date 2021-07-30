@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Testing plotting several ghi and par light results">
-      <change afterPath="$PROJECT_DIR$/compare_ERA5_figures/comparison_GHI_UV_ERA5.ai" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ERA5_comparison_v2.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_albedo_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_albedo_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_ccsm3.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_ccsm3.py" afterDir="false" />
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Extracting more CMIP6 models">
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_light.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_seaice_plot.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_seaice_plot.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,13 +147,6 @@
       <workItem from="1625250254075" duration="207000" />
       <workItem from="1625250477460" duration="115743000" />
       <workItem from="1626410075404" duration="11515000" />
-    </task>
-    <task id="LOCAL-00119" summary="Testing to find index where year == 2100 for datasets with time longer than 2262">
-      <created>1625000905638</created>
-      <option name="number" value="00119" />
-      <option name="presentableId" value="LOCAL-00119" />
-      <option name="project" value="LOCAL" />
-      <updated>1625000905638</updated>
     </task>
     <task id="LOCAL-00120" summary="Testing to find index where year == 2100 for datasets with time longer than 2262">
       <created>1625000974451</created>
@@ -503,7 +484,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626726885833</updated>
     </task>
-    <option name="localTasksCounter" value="168" />
+    <task id="LOCAL-00168" summary="Extracting more CMIP6 models">
+      <created>1627654084381</created>
+      <option name="number" value="00168" />
+      <option name="presentableId" value="LOCAL-00168" />
+      <option name="project" value="LOCAL" />
+      <updated>1627654084381</updated>
+    </task>
+    <option name="localTasksCounter" value="169" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -533,7 +521,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Trying to loop over member ids to see which are available and continue if not" />
     <MESSAGE value="Fixed bug in path to ozone" />
     <MESSAGE value="Fixed problem with writing too much to file" />
     <MESSAGE value="Changing radiation calculation to dask delayed" />
@@ -558,7 +545,8 @@
     <MESSAGE value="Fixed bug in path" />
     <MESSAGE value="Potential bug in not getting the correct scenario when grasping datasets." />
     <MESSAGE value="Testing plotting several ghi and par light results" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing plotting several ghi and par light results" />
+    <MESSAGE value="Extracting more CMIP6 models" />
+    <option name="LAST_COMMIT_MESSAGE" value="Extracting more CMIP6 models" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cmip6_albedo$CMIP6_light.coverage" NAME="CMIP6_light Coverage Results" MODIFIED="1627580865899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

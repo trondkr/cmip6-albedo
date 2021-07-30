@@ -29,6 +29,7 @@ class Config_albedo():
         self.bias_correct_ghi = True
         self.bias_correct_file = "bias_correct/ghi_deltas.nc"
 
+
         self.dset_dict = {}
         self.start_date = "1979-01-01"
         self.end_date = "2099-12-16"
