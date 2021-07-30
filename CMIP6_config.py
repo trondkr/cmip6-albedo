@@ -19,9 +19,9 @@ class Config_albedo():
         n = 2
         self.member_ids = ["r{}i{}p{}f{}".format(str(i + 1), str(ii + 1), str(iii + 1), str(iv + 1)) for i in range(n)
                            for ii in range(n) for iii in range(n) for iv in range(n)]
-
-        self.experiment_ids = ["ssp245"]
-        self.source_ids = ["CMCC-ESM2","UKESM1-O-LL"] # ["CanESM5-CanOE","UKESM1-O-LL"] #["UKESM1-0-LL","MPI-ESM1-2-LR"] #["MPI-ESM1-2-HR"] #["ACCESS-ESM1-5"] #,"MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
+        self.member_ids  = ["r1i1p2f1","r10i1p1f1","r1i1p1f1","r1i1p1f2"]
+        self.experiment_ids = ["ssp245","ssp585"]
+        self.source_ids = ["CMCC-ESM2","CanESM5","UKESM1-0-LL"] #["MPI-ESM1-2-HR"]#["MPI-ESM1-2-LR","ACCESS-ESM1-5"] # "CMCC-ESM2",["CanESM5-CanOE","UKESM1-O-LL"] #["UKESM1-0-LL","MPI-ESM1-2-LR"] #["MPI-ESM1-2-HR"] #["ACCESS-ESM1-5"] #,"MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
         self.variable_ids = ["prw","clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
         self.table_ids = ["Amon","Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon", "SImon","Amon"]
         # ,"AERmon"]  # Amon=atmospheric variables, Omon=Ocean variables, SImon=sea-ice variables
@@ -30,14 +30,14 @@ class Config_albedo():
         self.bias_correct_file = "bias_correct/ghi_deltas.nc"
 
         self.dset_dict = {}
-        self.start_date = "1950-01-01"
+        self.start_date = "1979-01-01"
         self.end_date = "2099-12-16"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = True
-        self.write_CMIP6_to_file = False
-        self.perform_light_calculations = True
+        self.use_local_CMIP6_files = False
+        self.write_CMIP6_to_file = True
+        self.perform_light_calculations = False
 
         self.cmip6_netcdf_dir = "../oceanography/cmip6/light"  # /Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
         self.cmip6_outdir = "../oceanography/cmip6/light"
@@ -81,8 +81,8 @@ class Config_albedo():
         self.alpha_wc = wl["a_wc(λ)"].values
         self.solar_energy = wl["E(λ)"].values
       #  logging.info("[CMIP6_config] {}".format(wl.head()))
-        start_index_uv = len(np.arange(200, 280, 10))
-        end_index_uv = len(np.arange(200, 390, 10))
+        start_index_uv = len(np.arange(200, 200, 10))
+        end_index_uv = len(np.arange(200, 440, 10))
         start_index_visible = len(np.arange(200, 400, 10))
         end_index_visible = len(np.arange(200, 710, 10))
         start_index_nir = len(np.arange(200, 800, 10))
@@ -119,7 +119,7 @@ class Config_albedo():
         # A = 	1		for  250 <= W <= 298
         # A = 	10^(0.094(298- W))	for 298 < W < 328
         # A = 	10^(0.015(139-W-))	for 328 < W < 400
-        wavelengths = np.arange(280, 390, 10)
+        wavelengths = np.arange(200, 440, 10)
         self.erythema_spectrum = np.zeros(len(wavelengths))
 
         # https://www.nature.com/articles/s41598-018-36850-x
@@ -130,7 +130,7 @@ class Config_albedo():
                 self.erythema_spectrum[i] = 10.0 ** (0.094 * (298 - wavelength))
             elif 328 < wavelength < 400:
                 self.erythema_spectrum[i] = 10.0 ** (0.015 * (139 - wavelength))
-        logging.info("[CMIP6_config] Calculated erythema action spectrum for wavelengths 280-400 at 10 nm increment")
+        logging.info("[CMIP6_config] Calculated erythema action spectrum for wavelengths 290-400 at 10 nm increment")
 
     def setup_ozone_uv_spectrum(self):
         # Data collected from Figure 4
@@ -142,12 +142,12 @@ class Config_albedo():
         o3_wavelength = df["wavelength"].values
         o3_abs = df["o3_absorption"].values
 
-        wavelengths = np.arange(280, 390, 10)
+        wavelengths = np.arange(200, 440, 10)
 
         # Do the linear interpolation
         o3_abs_interp = np.interp(wavelengths, o3_wavelength, o3_abs)
 
-        logging.info("[CMIP6_config] Calculated erythema action spectrum for wavelengths 280-400 at 10 nm increment")
+        logging.info("[CMIP6_config] Calculated erythema action spectrum for wavelengths 290-400 at 10 nm increment")
         return o3_abs_interp, wavelengths
 
     def setup_absorption_chl(self):

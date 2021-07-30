@@ -117,8 +117,8 @@ def calculate_spectral_and_broadband_OSA(wind, alpha_wc, alpha_direct, alpha_dif
     OSA[0, 1] = np.sum(OSA_diffuse * solar_energy)
 
     # Calculate the visible direct OSA
-    start_index_uv = len(np.arange(200, 280, 10))
-    end_index_uv = len(np.arange(200, 390, 10))
+    start_index_uv = len(np.arange(200, 200, 10))
+    end_index_uv = len(np.arange(200, 440, 10))
     start_index_visible = len(np.arange(200, 400, 10))
     end_index_visible = len(np.arange(200, 710, 10))
 

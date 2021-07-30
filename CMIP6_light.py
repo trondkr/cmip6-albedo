@@ -548,7 +548,7 @@ class CMIP6_light:
             num_days = monthrange(sel_time.year, sel_time.month)[1]
             for day in [15]:  # range(num_days):
 
-                for hour_of_day in range(0, 23, 2):
+                for hour_of_day in range(0, 23, 4):
 
                     model_object.current_time = datetime.datetime(year=sel_time.year, month=sel_time.month,
                                                                   day=day + 1, hour=hour_of_day)
@@ -648,8 +648,8 @@ class CMIP6_light:
                             model_object,
                             spectrum="vis")
 
-                        start_index_uv = len(np.arange(200, 280, 10))
-                        end_index_uv = len(np.arange(200, 390, 10))
+                        start_index_uv = len(np.arange(200, 200, 10))
+                        end_index_uv = len(np.arange(200, 440, 10))
 
                         sw_uv_attenuation_corrected_for_snow_ice_chl = self.cmip6_ccsm3.compute_surface_solar_for_specific_wavelength_band(
                             OSA_ice_ocean,
@@ -664,17 +664,29 @@ class CMIP6_light:
                             lon, lat,
                             model_object,
                             spectrum="uv")
-
-                        dr_vis = np.squeeze(np.trapz(y=sw_vis_attenuation_corrected_for_snow_ice_chl,
+                        # d
+                        par = np.squeeze(np.trapz(y=sw_vis_attenuation_corrected_for_snow_ice_chl,
                                                      x=wavelengths[start_index_visible:end_index_visible], axis=0))
-                        dr_uv = np.squeeze(np.trapz(y=sw_uv_attenuation_corrected_for_snow_ice_chl,
+                        uv = np.squeeze(np.trapz(y=sw_uv_attenuation_corrected_for_snow_ice_chl,
                                                     x=wavelengths[start_index_uv:end_index_uv], axis=0))
 
-                        dr_vis_air = np.squeeze(np.trapz(y=direct_sw,
+                        sw_srf = np.squeeze(np.trapz(y=direct_sw,
+                                                         x=wavelengths, axis=0)) + \
+                                  np.squeeze(np.trapz(y=diffuse_sw,
                                                          x=wavelengths, axis=0))
 
-                        df_vis_air = np.squeeze(np.trapz(y=diffuse_sw,
-                                                         x=wavelengths, axis=0))
+                        uv_srf = np.squeeze(np.trapz(y=direct_sw[start_index_uv:end_index_uv],
+                                                         x=wavelengths[start_index_uv:end_index_uv], axis=0)) + \
+                                 np.squeeze(np.trapz(y=diffuse_sw[start_index_uv:end_index_uv],
+                                                         x=wavelengths[start_index_uv:end_index_uv], axis=0))
+
+                        start_index_uvb = len(np.arange(200, 280, 10))
+                        end_index_uvb = len(np.arange(200, 320, 10))
+
+                        uv_b = np.squeeze(np.trapz(y=diffuse_sw[start_index_uvb:end_index_uvb],
+                                                         x=wavelengths[start_index_uvb:end_index_uvb], axis=0))+\
+                               np.squeeze(np.trapz(y=direct_sw[start_index_uvb:end_index_uvb],
+                                            x=wavelengths[start_index_uvb:end_index_uvb], axis=0))
 
                         uvi = self.cmip6_ccsm3.calculate_uvi(sw_uv_attenuation_corrected_for_snow_ice_chl, ozone,
                                                              wavelengths[start_index_uv:end_index_uv])
@@ -684,7 +696,7 @@ class CMIP6_light:
                             plotter = CMIP6_albedo_plot.CMIP6_albedo_plot()
 
                             plotter.create_plots(lon, lat, model_object,
-                                                 direct_sw=dr_vis,
+                                                 direct_sw=dr_par,
                                                  plotname_postfix="_vis_{}".format(scenario))
 
                             plotter.create_plots(lon, lat, model_object,
@@ -715,9 +727,11 @@ class CMIP6_light:
                                                  OSA_VIS=OSA_ice_ocean,
                                                  plotname_postfix="_OSA_BROADBAND_{}".format(scenario))
 
-                        for data_list, vari in zip([dr_vis, dr_uv, uvi, dr_vis_air, df_vis_air, ghi, OSA_ice_ocean],
-                                                   ["par", "uv", "uvi", "drair", "dfair", "ghi",
-                                                    "osa"]):  # , data_list_ghics]:
+                        for data_list, vari in zip([par, sw_srf, ghi, uv_b, uv, uv_srf, uvi,
+                                                    OSA_ice_ocean],
+                                                   ["par","sw_srf", "ghi", "uvb", "uv", "uv_srf","uvi",
+                                                    "osa"]):
+
                             self.save_irradiance_to_netcdf(model_object.name,
                                                            model_object.current_member_id,
                                                            data_list, scenario, time_counter,

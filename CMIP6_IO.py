@@ -56,7 +56,7 @@ class CMIP6_IO:
                                                                   member_id,
                                                                   current_experiment_id,
                                                                   variable_id)
-
+                    print(netcdf_filename)
                     if os.path.exists(netcdf_filename):
                         ds = xr.open_dataset(netcdf_filename, decode_cf=True)
 

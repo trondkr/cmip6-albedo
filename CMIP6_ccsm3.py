@@ -124,8 +124,8 @@ class CMIP6_CCSM3():
         logging.info("[CMIP6_ccsm3] calc_ice_attenuation started for spectrum {}".format(spectrum))
 
         if spectrum == "uv":
-            start_index = len(np.arange(200, 280, 10))
-            end_index = len(np.arange(200, 390, 10))
+            start_index = len(np.arange(200, 200, 10))
+            end_index = len(np.arange(200, 440, 10))
 
         elif spectrum == "vis":
             start_index = len(np.arange(200, 400, 10))
