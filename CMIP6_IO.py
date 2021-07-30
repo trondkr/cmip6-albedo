@@ -183,7 +183,7 @@ class CMIP6_IO:
 
                             # Extract the time period of interest
                             ds = ds.sel(time=slice(start_date, end_date))
-                            ds.to_netcdf("../oceanography/cmcc_siconc.nc")
+                            ds.isel(time=0).to_netcdf("../oceanography/cmcc_siconc.nc")
 
                             logging.info(
                                 "[CMIP6_IO] {} => Extracted {} range from {} to {} for member {}".format(source_id,
