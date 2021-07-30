@@ -31,7 +31,7 @@ class Config_albedo():
 
 
         self.dset_dict = {}
-        self.start_date = "1979-01-01"
+        self.start_date = "1950-01-01"
         self.end_date = "2099-12-16"
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
