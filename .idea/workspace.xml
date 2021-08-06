@@ -3,10 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Test of siconc and CMCC">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_IO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_pivotTables.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compare_ERA5_figures/comparison_GHI_UV_ERA5.ai" beforeDir="false" afterPath="$PROJECT_DIR$/compare_ERA5_figures/comparison_GHI_UV_ERA5.ai" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,14 +150,7 @@
       <workItem from="1625250254075" duration="207000" />
       <workItem from="1625250477460" duration="115743000" />
       <workItem from="1626410075404" duration="11515000" />
-      <workItem from="1628108889346" duration="1522000" />
-    </task>
-    <task id="LOCAL-00128" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
-      <created>1625023836453</created>
-      <option name="number" value="00128" />
-      <option name="presentableId" value="LOCAL-00128" />
-      <option name="project" value="LOCAL" />
-      <updated>1625023836453</updated>
+      <workItem from="1628108889346" duration="2840000" />
     </task>
     <task id="LOCAL-00129" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
       <created>1625023925817</created>
@@ -496,7 +488,14 @@
       <option name="project" value="LOCAL" />
       <updated>1627670568279</updated>
     </task>
-    <option name="localTasksCounter" value="177" />
+    <task id="LOCAL-00177" summary="Test of siconc and CMCC">
+      <created>1628283947064</created>
+      <option name="number" value="00177" />
+      <option name="presentableId" value="LOCAL-00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1628283947064</updated>
+    </task>
+    <option name="localTasksCounter" value="178" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
