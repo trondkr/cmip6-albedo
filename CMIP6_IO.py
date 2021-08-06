@@ -56,7 +56,7 @@ class CMIP6_IO:
                                                                   member_id,
                                                                   current_experiment_id,
                                                                   variable_id)
-                    print(netcdf_filename)
+
                     if os.path.exists(netcdf_filename):
                         ds = xr.open_dataset(netcdf_filename, decode_cf=True)
 
@@ -307,6 +307,10 @@ class CMIP6_IO:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertex', 'y', 'x')
             elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'vertices', 'bnds']):
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'vertices', 'y', 'x')
+            elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'bnds']):
+                ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
+            elif all(item in current_ds.dims for item in ['time', 'y', 'x', 'nvertices']):
+                ds_trans = current_ds.chunk({'time': -1}).transpose('time', 'y', 'x','nvertices')
             else:
                 ds_trans = current_ds.chunk({'time': -1}).transpose('bnds', 'time', 'y', 'x')
 
