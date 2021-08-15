@@ -840,20 +840,25 @@ def main():
 
 if __name__ == '__main__':
     np.warnings.filterwarnings('ignore')
-    # https://docs.dask.org/en/latest/diagnostics-distributed.html
-    # https://docs.dask.org/en/latest/setup/single-distributed.html
-    from dask.distributed import Client
+    use_dask=False
 
-    os.environ['NUMEXPR_MAX_THREADS'] = '16'
-    dask.config.set(scheduler='processes')
-    # dask.config.set({'array.slicing.split_large_chunks': True})
-
-    with Client() as client:  # (n_workers=4, threads_per_worker=4, processes=True, memory_limit='15GB') as client:
-        status = client.scheduler_info()['services']
-        assert client.status == "running"
-        logging.info("[CMIP6_light] client {}".format(client))
+    if use_dask is False:
         main()
-        client.close()
-        assert client.status == "closed"
+    else:
+        # https://docs.dask.org/en/latest/diagnostics-distributed.html
+        # https://docs.dask.org/en/latest/setup/single-distributed.html
+        from dask.distributed import Client
 
-    logging.info("[CMIP6_light] Execution of downscaling completed")
+        os.environ['NUMEXPR_MAX_THREADS'] = '16'
+        dask.config.set(scheduler='processes')
+        # dask.config.set({'array.slicing.split_large_chunks': True})
+
+        with Client() as client:  # (n_workers=4, threads_per_worker=4, processes=True, memory_limit='15GB') as client:
+            status = client.scheduler_info()['services']
+            assert client.status == "running"
+            logging.info("[CMIP6_light] client {}".format(client))
+            main()
+            client.close()
+            assert client.status == "closed"
+
+        logging.info("[CMIP6_light] Execution of downscaling completed")
