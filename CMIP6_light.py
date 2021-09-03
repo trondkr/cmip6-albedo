@@ -476,11 +476,11 @@ class CMIP6_light:
 
         return direct_sw, diffuse_sw, ghi
 
-    def get_ozone_dataset(self) -> xr.Dataset:
+    def get_ozone_dataset(self, current_experiment_id:str) -> xr.Dataset:
         # Method that reads the total ozone column from input4MPI dataset (Micahela Heggelin)
         # and regrid to consistent 1x1 degree dataset.
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
-        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ.nc")
+        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ_{}.nc".format(current_experiment_id))
         toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date)) \
             .sel(
             lat=slice(self.config.min_lat, self.config.max_lat),
@@ -522,7 +522,7 @@ class CMIP6_light:
         times = model_object.ds_sets[model_object.current_member_id]["uas"].time
         self.cmip6_ccsm3 = CMIP6_ccsm3.CMIP6_CCSM3()
 
-        toz_ds = self.get_ozone_dataset()
+        toz_ds = self.get_ozone_dataset(current_experiment_id)
         time_counter = 0
 
         if self.config.bias_correct_ghi:
@@ -555,11 +555,6 @@ class CMIP6_light:
 
                     logging.info("[CMIP6_light] Running for timestep {} model {}".format(model_object.current_time,
                                                                                          model_object.name))
-
-                    # Calculate zenith for each grid point
-                    # Not currently used...
-                    #  albedo_simple = self.cmip6_ccsm3.calculate_diffuse_albedo_per_grid_point(sisnconc=sisnconc,
-                    #                                                               siconc=siconc)
 
                     ctime, pv_system = self.setup_pv_system(model_object.current_time)
                     calc_zenith = [dask.delayed(self.calculate_zenith)(lat[j, 0], ctime) for j in range(m)]
@@ -834,6 +829,7 @@ def main():
     light.config.setup_logging()
     light.config.setup_parameters()
     logging.info("[CMIP6_config] logging started")
+    
     for current_experiment_id in light.config.experiment_ids:
         light.calculate_light(current_experiment_id)
 
@@ -850,14 +846,17 @@ if __name__ == '__main__':
         from dask.distributed import Client
 
         os.environ['NUMEXPR_MAX_THREADS'] = '16'
-        dask.config.set(scheduler='processes')
+        dask.config.set(scheduler='threads')
         # dask.config.set({'array.slicing.split_large_chunks': True})
 
         with Client() as client:  # (n_workers=4, threads_per_worker=4, processes=True, memory_limit='15GB') as client:
             status = client.scheduler_info()['services']
             assert client.status == "running"
             logging.info("[CMIP6_light] client {}".format(client))
+            logging.info("Dask started with status at: http://localhost:{}/status".format(status["dashboard"]))
+    
             main()
+            
             client.close()
             assert client.status == "closed"
 
