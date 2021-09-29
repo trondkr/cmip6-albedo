@@ -3,17 +3,13 @@ matplotlib.use('Agg')
 from pylab import *
 import os, datetime
 import numpy as np
-from netCDF4 import Dataset, date2num, num2date
+from netCDF4 import Dataset, num2date
 import mpl_util
 import sys
 import pandas as pd
-from operator import and_
 import xarray as xr
 
-from mpl_toolkits.basemap import Basemap, interp, shiftgrid, addcyclic
-import brewer2mpl
 import calendar
-from scipy.stats.mstats import gmean
 
 __author__ = 'Trond Kristiansen'
 __email__ = 'trond.kristiansen@niva.no'
