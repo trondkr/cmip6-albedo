@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+from calendar import monthrange
 from typing import List, Any
 
 # Computational modules
@@ -10,21 +11,18 @@ import netCDF4
 import numpy as np
 import pandas as pd
 import pvlib
+import texttable
 import xarray as xr
 import xesmf as xe
-from distributed import Client, LocalCluster
 
 import CMIP6_IO
 import CMIP6_albedo_plot
 import CMIP6_albedo_utils
+import CMIP6_ccsm3
 import CMIP6_config
 import CMIP6_date_tools
 import CMIP6_regrid
-import CMIP6_ccsm3
-from CMIP6_model import CMIP6_MODEL
-from calendar import monthrange
-from pvlib.forecast import GFS
-import texttable
+
 
 class CMIP6_light:
 
@@ -73,7 +71,7 @@ class CMIP6_light:
         np.seterr(divide='ignore', invalid='ignore')
         rho = I_diff_clouds / I_ghi_clouds
 
-        I_diff_s = np.trapz(y=spectra['poa_sky_diffuse'], x=spectra['wavelength'], axis=0)  +\
+        I_diff_s = np.trapz(y=spectra['poa_sky_diffuse'], x=spectra['wavelength'], axis=0) + \
                    np.trapz(y=spectra['poa_ground_diffuse'], x=spectra['wavelength'], axis=0)
         I_dir_s = np.trapz(y=spectra['poa_direct'], x=spectra['wavelength'], axis=0)
         I_glob_s = np.trapz(y=spectra['poa_global'], x=spectra['wavelength'], axis=0)
@@ -89,13 +87,14 @@ class CMIP6_light:
 
         # Diffuse light scaling factor. Equation 7 Ernst et al. 2016
         s_diff = (1 - N_rho[None, :]) * (F_diff_s / I_diff_s[None, :]) + N_rho[None, :] * (
-                    (F_dir_s + F_diff_s) / I_glob_s[None, :])
+                (F_dir_s + F_diff_s) / I_glob_s[None, :])
 
         # Equation 8 Ernst et al. 2016
         F_diff = s_diff * I_diff_clouds[None, :]
         return F_dir, F_diff
 
-    def radiation(self, cloud_covers, water_vapor_content, temp, latitude, ctime, system, albedo, ozone, altitude=0.0, bias_delta=None) -> np.array:
+    def radiation(self, cloud_covers, water_vapor_content, temp, latitude, ctime, system, albedo, ozone, altitude=0.0,
+                  bias_delta=None) -> np.array:
         """Returns an array of calculated diffuse and direct light for each longitude index
         around the globe (fixed latitude). Output has the shape:  [len(wavelengths), 361, 3] and
         the indexes refer to:
@@ -183,7 +182,7 @@ class CMIP6_light:
         if bias_delta is not None:
             delta = bias_delta
         else:
-            delta=0.0
+            delta = 0.0
         ghi_cloud_corrected = irrads_clouds["ghi"] + delta
 
         """
@@ -198,8 +197,8 @@ class CMIP6_light:
         """
 
         # Correct the clear sky for clouds
-       # ghi_cloud_corrected = (0.35 + (1 - 0.35) * (1 - cloud_covers)) * ghi_cloud_corrected
-       # ghi_cloud_corrected = ghi_cloud_corrected # + bias_delta.values
+        # ghi_cloud_corrected = (0.35 + (1 - 0.35) * (1 - cloud_covers)) * ghi_cloud_corrected
+        # ghi_cloud_corrected = ghi_cloud_corrected # + bias_delta.values
 
         ghi_cloud_corrected = np.where(ghi_cloud_corrected < 0, 0.0, ghi_cloud_corrected)
 
@@ -209,11 +208,11 @@ class CMIP6_light:
         kt = pvlib.irradiance.clearness_index(ghi_cloud_corrected, zenith,
                                               dni_extra,
                                               min_cos_zenith=0.065,
-                             max_clearness_index=1)
+                                              max_clearness_index=1)
 
         am = pvlib.atmosphere.get_absolute_airmass(airmass_relative, pressure)
 
-        Kn, am =pvlib.irradiance._disc_kn(kt, am, max_airmass=12)
+        Kn, am = pvlib.irradiance._disc_kn(kt, am, max_airmass=12)
         dni = Kn * dni_extra
 
         bad_values = (zenith > 87) | (ghi_cloud_corrected < 0) | (dni < 0) | (np.isnan(ghi_cloud_corrected))
@@ -452,16 +451,17 @@ class CMIP6_light:
         wavelengths = np.arange(200, 2700, 10)
 
         if self.config.bias_correct_ghi:
-            bias = np.zeros(np.shape(bias_delta["ghi"][ctime.month[0] - 1, :, :])) + np.nanmean(np.squeeze(bias_delta["ghi"][ctime.month[0] - 1, :, :]))
-            #print("Averaged bias month {}: {}".format(ctime.month[0], np.nanmean(bias)))
+            bias = np.zeros(np.shape(bias_delta["ghi"][ctime.month[0] - 1, :, :])) + np.nanmean(
+                np.squeeze(bias_delta["ghi"][ctime.month[0] - 1, :, :]))
+            # print("Averaged bias month {}: {}".format(ctime.month[0], np.nanmean(bias)))
             calc_radiation = [
                 dask.delayed(self.radiation)(clt[j, :], prw[j, :], tas[j, :], lat[j, 0], ctime,
-                                             pv_system, direct_OSA[j, :], ozone[j, :], bias_delta=bias[j, :]) for j in range(m)]
+                                             pv_system, direct_OSA[j, :], ozone[j, :], bias_delta=bias[j, :]) for j in
+                range(m)]
         else:
             calc_radiation = [
                 dask.delayed(self.radiation)(clt[j, :], prw[j, :], tas[j, :], lat[j, 0], ctime,
                                              pv_system, direct_OSA[j, :], ozone[j, :]) for j in range(m)]
-
 
         # https://github.com/dask/dask/issues/5464
         rad = dask.compute(calc_radiation)
@@ -476,11 +476,14 @@ class CMIP6_light:
 
         return direct_sw, diffuse_sw, ghi
 
-    def get_ozone_dataset(self, current_experiment_id:str) -> xr.Dataset:
+
+    def get_ozone_dataset(self, current_experiment_id: str) -> xr.Dataset:
         # Method that reads the total ozone column from input4MPI dataset (Micahela Heggelin)
         # and regrid to consistent 1x1 degree dataset.
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
-        toz_full = xr.open_dataset(self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ_{}.nc".format(current_experiment_id))
+        toz_full = xr.open_dataset(
+            self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ_{}.nc".format(current_experiment_id))
+
         toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date)) \
             .sel(
             lat=slice(self.config.min_lat, self.config.max_lat),
@@ -606,7 +609,7 @@ class CMIP6_light:
                         # Scale the diffuse and direct albedo to get total broadband albedo for use going forward
                         # Equation 17 in Sefarian et al. 2018
                         OSA = (direct_OSA * dr_sw_broadband + diffuse_OSA * df_sw_broadband) / (
-                                    dr_sw_broadband + df_sw_broadband)
+                                dr_sw_broadband + df_sw_broadband)
                         OSA = np.where(np.isnan(OSA), np.nanmean(OSA), OSA)
 
                         # Add the effect of snow and ice on broadband albedo
@@ -661,27 +664,27 @@ class CMIP6_light:
                             spectrum="uv")
                         # d
                         par = np.squeeze(np.trapz(y=sw_vis_attenuation_corrected_for_snow_ice_chl,
-                                                     x=wavelengths[start_index_visible:end_index_visible], axis=0))
+                                                  x=wavelengths[start_index_visible:end_index_visible], axis=0))
                         uv = np.squeeze(np.trapz(y=sw_uv_attenuation_corrected_for_snow_ice_chl,
-                                                    x=wavelengths[start_index_uv:end_index_uv], axis=0))
+                                                 x=wavelengths[start_index_uv:end_index_uv], axis=0))
 
                         sw_srf = np.squeeze(np.trapz(y=direct_sw,
-                                                         x=wavelengths, axis=0)) + \
-                                  np.squeeze(np.trapz(y=diffuse_sw,
-                                                         x=wavelengths, axis=0))
+                                                     x=wavelengths, axis=0)) + \
+                                 np.squeeze(np.trapz(y=diffuse_sw,
+                                                     x=wavelengths, axis=0))
 
                         uv_srf = np.squeeze(np.trapz(y=direct_sw[start_index_uv:end_index_uv],
-                                                         x=wavelengths[start_index_uv:end_index_uv], axis=0)) + \
+                                                     x=wavelengths[start_index_uv:end_index_uv], axis=0)) + \
                                  np.squeeze(np.trapz(y=diffuse_sw[start_index_uv:end_index_uv],
-                                                         x=wavelengths[start_index_uv:end_index_uv], axis=0))
+                                                     x=wavelengths[start_index_uv:end_index_uv], axis=0))
 
                         start_index_uvb = len(np.arange(200, 280, 10))
                         end_index_uvb = len(np.arange(200, 320, 10))
 
                         uv_b = np.squeeze(np.trapz(y=diffuse_sw[start_index_uvb:end_index_uvb],
-                                                         x=wavelengths[start_index_uvb:end_index_uvb], axis=0))+\
+                                                   x=wavelengths[start_index_uvb:end_index_uvb], axis=0)) + \
                                np.squeeze(np.trapz(y=direct_sw[start_index_uvb:end_index_uvb],
-                                            x=wavelengths[start_index_uvb:end_index_uvb], axis=0))
+                                                   x=wavelengths[start_index_uvb:end_index_uvb], axis=0))
 
                         uvi = self.cmip6_ccsm3.calculate_uvi(sw_uv_attenuation_corrected_for_snow_ice_chl, ozone,
                                                              wavelengths[start_index_uv:end_index_uv])
@@ -724,9 +727,8 @@ class CMIP6_light:
 
                         for data_list, vari in zip([par, sw_srf, ghi, uv_b, uv, uv_srf, uvi,
                                                     OSA_ice_ocean],
-                                                   ["par","sw_srf", "ghi", "uvb", "uv", "uv_srf","uvi",
+                                                   ["par", "sw_srf", "ghi", "uvb", "uv", "uv_srf", "uvi",
                                                     "osa"]):
-
                             self.save_irradiance_to_netcdf(model_object.name,
                                                            model_object.current_member_id,
                                                            data_list, scenario, time_counter,
@@ -735,7 +737,8 @@ class CMIP6_light:
 
                         time_counter += 1
 
-    def save_irradiance_to_netcdf(self, model_name, member_id, da, scenario, time_counter, vari, time, lat, lon, current_experiment_id):
+    def save_irradiance_to_netcdf(self, model_name, member_id, da, scenario, time_counter, vari, time, lat, lon,
+                                  current_experiment_id):
         out = self.config.outdir + "ncfiles/"
 
         result_file = out + "{}_{}_{}_{}-{}_scenario_{}_{}.nc".format(vari, model_name,
@@ -795,7 +798,7 @@ class CMIP6_light:
 
     # logging.info("[CMIP6_light] Wrote results to {}".format(result_file))
 
-    def calculate_light(self,current_experiment_id):
+    def calculate_light(self, current_experiment_id):
 
         io = CMIP6_IO.CMIP6_IO()
         if self.config.use_local_CMIP6_files:
@@ -829,14 +832,14 @@ def main():
     light.config.setup_logging()
     light.config.setup_parameters()
     logging.info("[CMIP6_config] logging started")
-    
+
     for current_experiment_id in light.config.experiment_ids:
         light.calculate_light(current_experiment_id)
 
 
 if __name__ == '__main__':
     np.warnings.filterwarnings('ignore')
-    use_dask=False
+    use_dask = False
 
     if use_dask is False:
         main()
@@ -845,8 +848,9 @@ if __name__ == '__main__':
         # https://docs.dask.org/en/latest/setup/single-distributed.html
         from dask.distributed import Client
 
-        os.environ['NUMEXPR_MAX_THREADS'] = '16'
-        dask.config.set(scheduler='threads')
+        os.environ['NUMEXPR_MAX_THREADS'] = '8'
+        dask.config.set(scheduler='processes')
+
         # dask.config.set({'array.slicing.split_large_chunks': True})
 
         with Client() as client:  # (n_workers=4, threads_per_worker=4, processes=True, memory_limit='15GB') as client:
@@ -854,9 +858,7 @@ if __name__ == '__main__':
             assert client.status == "running"
             logging.info("[CMIP6_light] client {}".format(client))
             logging.info("Dask started with status at: http://localhost:{}/status".format(status["dashboard"]))
-    
             main()
-            
             client.close()
             assert client.status == "closed"
 
