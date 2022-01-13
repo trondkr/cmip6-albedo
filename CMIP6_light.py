@@ -476,12 +476,14 @@ class CMIP6_light:
 
         return direct_sw, diffuse_sw, ghi
 
+
     def get_ozone_dataset(self, current_experiment_id: str) -> xr.Dataset:
         # Method that reads the total ozone column from input4MPI dataset (Micahela Heggelin)
         # and regrid to consistent 1x1 degree dataset.
         logging.info("[CMIP6_light] Regridding ozone data to standard grid")
         toz_full = xr.open_dataset(
             self.config.cmip6_netcdf_dir + "/ozone-absorption/TOZ_{}.nc".format(current_experiment_id))
+
         toz_full = toz_full.sel(time=slice(self.config.start_date, self.config.end_date)) \
             .sel(
             lat=slice(self.config.min_lat, self.config.max_lat),
@@ -848,6 +850,7 @@ if __name__ == '__main__':
 
         os.environ['NUMEXPR_MAX_THREADS'] = '8'
         dask.config.set(scheduler='processes')
+
         # dask.config.set({'array.slicing.split_large_chunks': True})
 
         with Client() as client:  # (n_workers=4, threads_per_worker=4, processes=True, memory_limit='15GB') as client:
@@ -855,9 +858,7 @@ if __name__ == '__main__':
             assert client.status == "running"
             logging.info("[CMIP6_light] client {}".format(client))
             logging.info("Dask started with status at: http://localhost:{}/status".format(status["dashboard"]))
-
             main()
-
             client.close()
             assert client.status == "closed"
 

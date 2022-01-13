@@ -48,7 +48,7 @@ class CMIP6_ozone():
 
         return ds
 
-    def convert_vmro3_to_toz(self, scenario: str, ds: xr.Dataset):
+    def convert_vmro3_to_toz(self, scenario: str, ds: xr.Dataset, baseurl: str):
 
         R = 287.3  # Jkg-1K-1 (Specific gas constant for air)
         T0 = 273.15  # Kelvin(Standard temperaure)
@@ -91,7 +91,7 @@ class CMIP6_ozone():
                     'lon': (['lon'], ds["lon"].values)},
             dims=["time", "lat", "lon"],
         ).to_dataset()
-        toz_ds.to_netcdf("../oceanography/cmip6/ozone/TOZ.nc")
+        toz_ds.to_netcdf(baseurl+"/TOZ_{}.nc".format(scenario))
            
         logging.info("[CMIP6_ozone] Results written to file covering period {} to {}".format(times_plus[0],times_plus[-1]))
         logging.info("[CMIP6_ozone] TOZ min {} to max {} and mean {}".format(np.nanmin(TOZ),np.nanmax(TOZ),np.nanmean(TOZ)))
@@ -102,9 +102,9 @@ class CMIP6_ozone():
 
     def convert_to_toz(self):
         scenario = "ssp585"
-        baseurl = "../oceanography/cmip6/ozone/"  # "/Users/trondkr/Dropbox/NIVA/cmip6-albedo/ozone-absorption/"
+        baseurl = "../oceanography/cmip6/ozone-absorption/"
         ds = self.get_input4mpis_forcing(scenario, baseurl)
-        self.convert_vmro3_to_toz(scenario, ds)
+        self.convert_vmro3_to_toz(scenario, ds, baseurl)
 
 
 def main():
