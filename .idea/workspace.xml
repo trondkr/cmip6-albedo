@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Adding models to run for light" />
+    <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Adding models to run for light">
+      <change afterPath="$PROJECT_DIR$/.idea/markdown.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/mypy.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/find_duplicates.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_plot_forcing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_forcing.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,10 +44,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file:///opt/anaconda3/envs/xesmf2/lib/python3.8/site-packages/xesmf/util.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/CMIP6_light.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file:///opt/anaconda3/envs/xesmf2/lib/python3.8/site-packages/pvlib/irradiance.py" root0="SKIP_INSPECTION" />
-    <setting file="file:///opt/anaconda3/envs/xesmf2/lib/python3.8/site-packages/pvlib/spectrum/spectrl2.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/environment.yml" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="1mhqiam4kaiU4KkVUXCQWtexz0Y" />
   <component name="ProjectLevelVcsManager">
@@ -51,20 +63,22 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="add_unversioned_files" value="$PROJECT_DIR$/Figures/OSA_VIS_ICE_MPI-ESM1-2-LR_r1i1p1f1_2000-01-16 21:00:00_None.png" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Downloads" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$USER_HOME$/Downloads" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -85,6 +99,28 @@
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/CMIP6_light.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="cmip6-albedo" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -166,6 +202,20 @@
       <workItem from="1632752088924" duration="596000" />
       <workItem from="1632753160781" duration="1097000" />
       <workItem from="1632763187045" duration="477000" />
+      <workItem from="1642038538164" duration="7870000" />
+      <workItem from="1642095685884" duration="2009000" />
+      <workItem from="1642098276686" duration="289000" />
+      <workItem from="1642098582839" duration="3894000" />
+      <workItem from="1642112176224" duration="7098000" />
+      <workItem from="1642123299933" duration="2219000" />
+      <workItem from="1642133283626" duration="9306000" />
+      <workItem from="1642373271059" duration="4409000" />
+      <workItem from="1642445258434" duration="3487000" />
+      <workItem from="1642479751593" duration="839000" />
+      <workItem from="1642526901782" duration="6671000" />
+      <workItem from="1642712651607" duration="16732000" />
+      <workItem from="1643390152193" duration="282000" />
+      <workItem from="1643591787841" duration="428000" />
     </task>
     <task id="LOCAL-00131" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
       <created>1625024448832</created>

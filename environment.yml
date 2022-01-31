@@ -1,0 +1,35 @@
+name: light
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - cartopy
+  - iris
+  - pandas
+  - xarray
+  - python=3.9
+  - netcdf4
+  - dask
+  - matplotlib
+  - seaborn
+  - distributed
+  - beautifulsoup4
+  - seawater
+  - pip
+  - texttable
+  - nose2
+  - gitpython
+  - google-cloud-firestore
+  - google-cloud-storage
+  - cmocean
+  - numba
+  - cmip6_preprocessing
+  - esmf
+  - xesmf
+  - gcsfs
+  - cdsapi
+  - scipy
+  - xclim
+  - wrf-python
+  - flake8-black
