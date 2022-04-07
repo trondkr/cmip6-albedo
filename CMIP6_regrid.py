@@ -32,6 +32,6 @@ class CMIP6_regrid:
 
         print("[CMIP6_regrid] regridding {}".format(varname))
 
-        return regridder(ds_in[varname])
+        return regridder(ds_in[varname]).to_dataset(name=varname)
 
 

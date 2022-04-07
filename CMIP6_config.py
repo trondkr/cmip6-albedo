@@ -18,13 +18,13 @@ class Config_albedo():
                            for ii in range(n) for iii in range(n) for iv in range(n)]
 
     #    self.member_ids  = ["r1i1p1f1","r1i1p1f2","r10i1p1f1"] #,"r1i1p1f1","r1i1p1f2"]
-        self.experiment_ids = ["ssp245"] #,"ssp585"]
-        self.source_ids = ["UKESM1-0-LL","MPI-ESM1-2-LR","ACCESS-ESM1-5","CanESM5"] # "CMCC-ESM2",["CanESM5-CanOE","UKESM1-O-LL"] #["UKESM1-0-LL","MPI-ESM1-2-LR"] #["MPI-ESM1-2-HR"] #["ACCESS-ESM1-5"] #,"MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
+        self.experiment_ids = ["ssp245","ssp585"]
+        self.source_ids = ["CanESM5","CMCC-ESM2","MPI-ESM1-2-HR", "ACCESS-ESM1-5", "MPI-ESM1-2-LR"]# "CMCC-ESM2",["CanESM5-CanOE","UKESM1-O-LL"] #["UKESM1-0-LL","MPI-ESM1-2-LR"] #["MPI-ESM1-2-HR"] #["ACCESS-ESM1-5"] #,"MPI-ESM1-2-HR"] #,"UKESM1-0-LL","MPI-ESM1-2-LR","CanESM5"] #,"MPI-ESM1-2-HR","UKESM1-0-LL"] #,"UKESM1-0-LL","CanESM5"]
         self.variable_ids = ["prw","clt", "uas", "vas", "chl", "sithick", "siconc", "sisnthick", "sisnconc", "tas"]  # ,"toz"]
         self.table_ids = ["Amon","Amon", "Amon", "Amon", "Omon", "SImon", "SImon", "SImon", "SImon","Amon"]
         
-        self.variable_ids = ["tos"]  # ,"toz"]
-        self.table_ids = ["Omon"]
+      #  self.variable_ids = ["tos"]  # ,"toz"]
+      #  self.table_ids = ["Omon"]
         
         self.bias_correct_ghi = True
         self.bias_correct_file = "bias_correct/ghi_deltas.nc"
@@ -35,9 +35,9 @@ class Config_albedo():
         self.clim_start = "1961-01-01"
         self.clim_end = "1990-01-01"
         self.use_esmf_v801 = True
-        self.use_local_CMIP6_files = False
-        self.write_CMIP6_to_file = True
-        self.perform_light_calculations = False
+        self.use_local_CMIP6_files = True
+        self.write_CMIP6_to_file = False
+        self.perform_light_calculations = True
 
         self.cmip6_netcdf_dir = "../oceanography/cmip6/light"  # /Volumes/DATASETS/cmip6/ACCESS-ESM1-5/" #"../oceanography/cmip6/light/" #"/Volumes/DATASETS/cmip6/"
         self.cmip6_outdir = "../oceanography/cmip6/light"

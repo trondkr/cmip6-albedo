@@ -498,9 +498,8 @@ class CMIP6_light:
         toz_ds = re.regrid_variable("TOZ", toz_full,
                                     ds_out,
                                     interpolation_method=self.config.interp,
-                                    use_esmf_v801=self.config.use_esmf_v801).to_dataset()
+                                    use_esmf_v801=self.config.use_esmf_v801)
 
-        # toz_ds.to_netcdf("test_toz.nc")
         return toz_ds
 
     def convert_dobson_units_to_atm_cm(self, ozone):
