@@ -5,7 +5,7 @@ import os
 
 
 def export_ice_absoprtion():
-    # Data exported from publication Warren et al. 2008 (Fig. 1) but originated in
+    # Data exported from publication Warren et al. 2006 (Fig. 1) but originated in
     # Perovich and Govoni 1991.
     # Data are interpolated to a fixed wavelength grid that fits with the wavelengths of
     # Seferian et al. 2018

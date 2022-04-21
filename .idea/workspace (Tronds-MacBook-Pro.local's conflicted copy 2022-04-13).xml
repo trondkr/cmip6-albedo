@@ -10,16 +10,13 @@
       <change afterPath="$PROJECT_DIR$/CMIP6_ridgeplot.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/old/CMIP6_analyse.ipynb" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/old/CMIP6_date_tools.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/old/CMIP6_plot_light_results (Tronds-MacBook-Pro.local's conflicted copy 2022-04-13).ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_analyse.ipynb" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_conversions.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_conversions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_date_tools.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_growth_potential.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_growth_potential.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_plot_forcing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_forcing.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_plot_lhedges_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_lhedges_results.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/MEOW-TNC.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmip6-albedo/.idea/cmip6-albedo.iml" beforeDir="false" />
@@ -77,8 +74,7 @@
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+    "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -225,8 +221,7 @@
       <workItem from="1644542346882" duration="1184000" />
       <workItem from="1645815882609" duration="249000" />
       <workItem from="1648160592235" duration="58115000" />
-      <workItem from="1649857219545" duration="1369000" />
-      <workItem from="1650495718621" duration="8425000" />
+      <workItem from="1649857219545" duration="773000" />
     </task>
     <task id="LOCAL-00131" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
       <created>1625024448832</created>
