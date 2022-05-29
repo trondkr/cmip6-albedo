@@ -5,28 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4e36f429-99cc-4aa4-981f-549c8b7de6a9" name="Default Changelist" comment="Adding models to run for light">
-      <change afterPath="$PROJECT_DIR$/CMIP6_area_calculations.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMIP6_create_ensembles.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMIP6_ridgeplot.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/old/CMIP6_analyse.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/old/CMIP6_date_tools.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/old/CMIP6_plot_light_results (Tronds-MacBook-Pro.local's conflicted copy 2022-04-13).ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmip6-albedo.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMIP6_downscale_iris.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMIP6_plot_light_length_winter.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMIP6_plot_uvb_results.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_analyse.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_conversions.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_conversions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMIP6_date_tools.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMIP6_create_ensembles.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_create_ensembles.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_growth_potential.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_growth_potential.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_plot_forcing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_forcing.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_plot_lhedges_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_lhedges_results.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CMIP6_plot_light_results.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cache/MEOW-TNC.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmip6-albedo/.idea/cmip6-albedo.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmip6-albedo/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/find_duplicates.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/plot-CMIP6-timeseries.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/regionmask.yaml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,20 +58,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/trondkr/Dropbox/NIVA/cmip6-albedo&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$USER_HOME$/Downloads" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$USER_HOME$/Downloads" />
     </key>
   </component>
   <component name="RunManager">
@@ -224,9 +212,12 @@
       <workItem from="1644431541840" duration="9686000" />
       <workItem from="1644542346882" duration="1184000" />
       <workItem from="1645815882609" duration="249000" />
-      <workItem from="1648160592235" duration="58115000" />
-      <workItem from="1649857219545" duration="1369000" />
-      <workItem from="1650495718621" duration="8425000" />
+      <workItem from="1648160592235" duration="64714000" />
+      <workItem from="1651074562316" duration="40252000" />
+      <workItem from="1652816698120" duration="3583000" />
+      <workItem from="1652823033567" duration="5652000" />
+      <workItem from="1652832828439" duration="6009000" />
+      <workItem from="1652994412979" duration="29000" />
     </task>
     <task id="LOCAL-00131" summary="Testing changing to default calendar https://climate-cms.org/2019/11/12/Calendars-and-monthly-data.html">
       <created>1625024448832</created>
